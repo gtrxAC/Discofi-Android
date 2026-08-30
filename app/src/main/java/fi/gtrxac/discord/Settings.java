@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 
 import java.util.Vector;
 
+import cc.nnproject.json.JSON;
+import cc.nnproject.json.JSONArray;
+
 /**
  * Created by gtrx on 29.8.2026.
  */
@@ -22,17 +25,12 @@ public class Settings {
             Accounts.list = new Vector<>();
 
             for (int i = 0; i < numAccounts; i++) {
-                Account acc = new Account();
+                String accountStr = settings.getString("account" + i, null);
+                if (accountStr == null) continue;
 
-                acc.token = settings.getString("accountToken" + i, "");
-                acc.username = settings.getString("accountUsername" + i, null);
-                acc.useProxy = settings.getBoolean("accountUseProxy" + i, false);
-                acc.useGateway = settings.getBoolean("accountUseGateway" + i, true);
-                acc.apiUrl = settings.getString("accountApiUrl" + i, null);
-                acc.gatewayUrl = settings.getString("accountGatewayUrl" + i, null);
-                acc.cdnUrl = settings.getString("accountCdnUrl" + i, null);
-
-                Accounts.list.add(acc);
+                JSONArray accountJson = JSON.getArray(accountStr);
+                Account account = new Account(accountJson);
+                Accounts.list.add(account);
             }
 
             int activeAccount = settings.getInt("activeAccount", -1);
@@ -49,14 +47,7 @@ public class Settings {
 
         for (int i = 0; i < numAccounts; i++) {
             Account acc = Accounts.list.elementAt(i);
-
-            editor.putString("accountToken" + i, acc.token);
-            editor.putString("accountUsername" + i, acc.username);
-            editor.putBoolean("accountUseProxy" + i, acc.useProxy);
-            editor.putBoolean("accountUseGateway" + i, acc.useGateway);
-            editor.putString("accountApiUrl" + i, acc.apiUrl);
-            editor.putString("accountGatewayUrl" + i, acc.gatewayUrl);
-            editor.putString("accountCdnUrl" + i, acc.cdnUrl);
+            editor.putString("account" + i, acc.toJSON().build());
         }
 
         editor.putInt("activeAccount", Accounts.getActiveIndex());
