@@ -1,7 +1,9 @@
 package fi.gtrxac.discord;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -61,7 +63,10 @@ public class LoginActivity extends Activity {
 
                 if (hasError) return;
 
-                //setContentView(R.layout.mfa_entry);
+                App.pendingAccount.email = email;
+                App.pendingAccount.password = password;
+
+                initiateLogin();
             }
         });
     }
@@ -81,17 +86,57 @@ public class LoginActivity extends Activity {
                     return;
                 }
 
-                token = token.replace("\"", "").trim();
-
                 /*if (token.length() < 66 || token.length() > 76 || !token.matches(TOKEN_REGEX)) {
                     tokenField.setError("Invalid token. The token should be a string of about 70 characters.");
                     return;
                 }
                 */
 
+                tokenField.setError(null);
 
+                finishLogin(v.getContext(), token.replace("\"", "").trim());
             }
         });
+    }
+
+    private void initiateLogin() {
+        final Context c = this;
+
+        final ProgressDialog dialog = ProgressDialog.show(c, "", "Logging in...", true);
+
+        new Thread() {
+            @Override
+            public void run() {
+
+                try {
+                    Thread.sleep(5000);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.dismiss();
+                    }
+                });
+
+                finishLogin(c, "Mzk4ODc4NzI3OTM4ODk5OTc3.FAKEFAKE." + App.pendingAccount.password);
+                finish();
+            }
+        }.start();
+    }
+
+    public static void finishLogin(Context c, String token) {
+        App.pendingAccount.token = token;
+
+        Accounts.list.addElement(App.pendingAccount);
+        App.pendingAccount = null;
+        Settings.save(c);
+
+        Intent intent = new Intent(c, AccountListActivity.class);
+        c.startActivity(intent);
     }
 
 }

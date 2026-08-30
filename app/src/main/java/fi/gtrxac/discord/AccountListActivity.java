@@ -17,11 +17,30 @@ import java.util.ArrayList;
  */
 
 public class AccountListActivity extends Activity {
+    private ListView accountList;
 
     public void onCreate(Bundle savedInstanceState) {
         final Context context = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.accounts);
+
+        Accounts.setActive(-1);
+        Settings.save(this);
+
+        accountList = (ListView) findViewById(R.id.accountList);
+
+        // Account selected -> login to that account and go to main menu
+        accountList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Accounts.setActive(position);
+                Settings.save(view.getContext());
+
+                Intent intent = new Intent(view.getContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         updateAccountList();
 
@@ -30,14 +49,14 @@ public class AccountListActivity extends Activity {
         addAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), LoginActivity.class);
+                App.pendingAccount = new Account();
+                Intent intent = new Intent(v.getContext(), ConnectionModeActivity.class);
                 startActivity(intent);
             }
         });
     }
 
     private void updateAccountList() {
-        ListView accountList = (ListView) findViewById(R.id.accountList);
         View noAccountsText = findViewById(R.id.noAccountsText);
 
         if (Accounts.list.size() == 0) {
@@ -61,11 +80,5 @@ public class AccountListActivity extends Activity {
             accountList.setAdapter(adapter);
         }
 
-        accountList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-        });
     }
 }

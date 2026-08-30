@@ -29,5 +29,10 @@
             android:name="fi.gtrxac.discord.LoginActivity">
         </activity>
 
+        <activity
+            android:label="Connection setup"
+            android:name="fi.gtrxac.discord.ConnectionModeActivity">
+        </activity>
+
     </application>
 </manifest>

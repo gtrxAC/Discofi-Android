@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="No accounts defined"
+        android:text="No accounts defined. Select 'Add account' to log in."
         android:textAlignment="center" />
 
     <ListView

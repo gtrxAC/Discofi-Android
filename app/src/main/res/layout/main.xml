@@ -8,9 +8,15 @@
     android:weightSum="1">
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/mainTest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Hello m,ain activity" />
+
+    <Button
+        android:id="@+id/logoutTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="logoout" />
 </LinearLayout>
 

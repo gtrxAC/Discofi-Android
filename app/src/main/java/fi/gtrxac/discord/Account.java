@@ -1,7 +1,6 @@
 package fi.gtrxac.discord;
 
-import android.util.Base64;
-
+import util.Base64;
 /**
  * Created by gtrx on 29.8.2026.
  */
@@ -16,9 +15,10 @@ public class Account {
     public String gatewayUrl;
     public String cdnUrl;
 
-    public Account(String token, String username) {
-        this.token = token;
-        this.username = username;
+    public String email;
+    public String password;
+
+    public Account() {
     }
 
     public String getDisplayTitle() {
@@ -27,8 +27,8 @@ public class Account {
     }
 
     public String getUserID() {
-        String tokenIDPart = token.split(".")[0];
-        byte[] decodeBytes = Base64.decode(tokenIDPart, Base64.URL_SAFE);
+        String tokenIDPart = token.split("\\.")[0];
+        byte[] decodeBytes = Base64.decodeFast(tokenIDPart);
         return new String(decodeBytes);
     }
 }

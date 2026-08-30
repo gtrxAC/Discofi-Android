@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.RadioGroup;
 
 /**
@@ -16,13 +17,11 @@ import android.widget.RadioGroup;
 
 public class ConnectionModeActivity extends Activity {
     private View proxySettings;
-    private boolean useProxy = false;
-    private boolean useGateway = true;
 
     public void onCreate(Bundle savedInstanceState) {
         final Context context = this;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.accounts);
+        setContentView(R.layout.connection);
 
         App.pendingAccount = new Account();
 
@@ -35,8 +34,8 @@ public class ConnectionModeActivity extends Activity {
         connectionGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                useProxy = (checkedId == R.id.proxyOption);
-                proxySettings.setVisibility(useProxy ? View.VISIBLE : View.GONE);
+                App.pendingAccount.useProxy = (checkedId == R.id.proxyOption);
+                proxySettings.setVisibility(App.pendingAccount.useProxy ? View.VISIBLE : View.GONE);
             }
         });
 
@@ -45,7 +44,7 @@ public class ConnectionModeActivity extends Activity {
         gatewayCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                useGateway = isChecked;
+                App.pendingAccount.useGateway = isChecked;
             }
         });
 
@@ -54,7 +53,36 @@ public class ConnectionModeActivity extends Activity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (App.pendingAccount.useProxy) {
+                    EditText apiUrlField = (EditText) findViewById(R.id.apiUrlField);
+                    EditText gatewayUrlField = (EditText) findViewById(R.id.gatewayUrlField);
+                    EditText cdnUrlField = (EditText) findViewById(R.id.cdnUrlField);
 
+                    String apiUrl = apiUrlField.getText().toString().trim();
+                    String gatewayUrl = gatewayUrlField.getText().toString().trim();
+                    String cdnUrl = cdnUrlField.getText().toString().trim();
+
+                    boolean hasError = false;
+                    apiUrlField.setError(null);
+                    gatewayUrlField.setError(null);
+                    cdnUrlField.setError(null);
+
+                    if (apiUrl.length() == 0) {
+                        apiUrlField.setError("API URL is required");
+                        hasError = true;
+                    }
+
+                    if (App.pendingAccount.useGateway && gatewayUrl.length() == 0) {
+                        gatewayUrlField.setError("Gateway URL is required for real-time chat");
+                        hasError = true;
+                    }
+
+                    if (hasError) return;
+
+                    App.pendingAccount.apiUrl = apiUrl;
+                    App.pendingAccount.gatewayUrl = gatewayUrl;
+                    App.pendingAccount.cdnUrl = cdnUrl;
+                }
 
                 Intent intent = new Intent(v.getContext(), LoginActivity.class);
                 startActivity(intent);
