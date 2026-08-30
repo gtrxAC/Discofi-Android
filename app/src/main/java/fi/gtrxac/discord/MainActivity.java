@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
             return;
         }
 
-        TextView t = (TextView) findViewById(R.id.mainTest);
+        /*TextView t = (TextView) findViewById(R.id.mainTest);
         t.setText("Current account " + Accounts.getActive().getDisplayTitle());
 
         Button b = (Button) findViewById(R.id.logoutTest);
@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 goToLoginScreen();
             }
-        });
+        });*/
 	}
 
 	private void goToLoginScreen() {
