@@ -2,8 +2,11 @@ package fi.gtrxac.discord;
 
 import java.util.Vector;
 
+import cc.nnproject.json.JSON;
 import cc.nnproject.json.JSONArray;
+import cc.nnproject.json.JSONException;
 import cc.nnproject.json.JSONObject;
+import fi.gtrxac.bluewap.http.HTTP;
 import util.Base64;
 /**
  * Created by gtrx on 29.8.2026.
@@ -77,5 +80,55 @@ public class Account {
         String tokenIDPart = token.split("\\.")[0];
         byte[] decodeBytes = Base64.decodeFast(tokenIDPart);
         return new String(decodeBytes);
+    }
+
+    public String getApiUrl() {
+        return useProxy ? apiUrl : "https://discord.com";
+    }
+
+    public String getCdnUrl() {
+        return useProxy ? cdnUrl : "https://cdn.discordapp.com";
+    }
+
+    public HTTP createApiRequest(String method, String route) throws Exception {
+        HTTP result = HTTP.createRequest(method, getApiUrl() + "/api/v9" + route);
+        result.setHeader("Authorization", token);
+        result.setHeader("X-Super-Properties", SuperProperties.get());
+        return result;
+    }
+
+    public String getApiErrorMessage(int responseCode, String responseText) {
+        try {
+            JSONObject json = JSON.getObject(responseText);
+            return json.getString("message");
+        }
+        catch (JSONException e) {}
+
+        return "HTTP error " + responseCode;
+    }
+
+    public boolean guildsAvailable() {
+        return guilds.size() != 0;
+    }
+
+    public Vector<Guild> getGuilds(boolean refresh) throws Exception {
+        if (!refresh && guildsAvailable()) return guilds;
+
+        HTTP h = createApiRequest("GET", "/users/@me/guilds");
+        int responseCode = h.getResponseCode();
+        String responseText = h.getResponseString();
+
+        if (responseCode < 200 || responseCode >= 300) {
+            throw new Exception(getApiErrorMessage(responseCode, responseText));
+        }
+
+        JSONArray guildsJson = JSON.getArray(responseText);
+
+        for (int i = 0; i < guildsJson.size(); i++) {
+            JSONObject guildJson = guildsJson.getObject(i);
+            guilds.add(new Guild(guildJson));
+        }
+
+        return guilds;
     }
 }

@@ -2,6 +2,8 @@ package fi.gtrxac.bluewap.http;
 
 import java.io.*;
 
+import util.Base64;
+
 public class StandardHTTP extends HTTP {
 
 	public StandardHTTP(String method, String url) {
@@ -16,12 +18,22 @@ public class StandardHTTP extends HTTP {
 			responseCode = 401;
 			return "{\"message\": \"401: Unauthorized\", \"code\": 0}";
 		}
-		if (url.equals("https://discord.com/api/v9/")) {
-			return "";
+        if (requestHeaders.get("X-Super-Properties") == null) {
+            responseCode = 400;
+            return "{\"message\": \"Super properties missing\", \"code\": 0}";
+        }
+
+        try {
+            Base64.decodeFast(requestHeaders.get("X-Super-Properties"));
+        }
+        catch (Exception e) {
+            responseCode = 400;
+            return "{\"message\": \"Super properties invalid: '" + e.toString() + "'\", \"code\": 0}";
+        }
 		}
 
 		responseCode = 404;
-		return "";
+		return "{\"message\": \"Unknown route '" + url + "'\", \"code\": 0}";
 	}
 
 	protected InputStream makeRequest() throws Exception {

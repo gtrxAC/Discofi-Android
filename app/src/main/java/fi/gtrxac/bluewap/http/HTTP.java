@@ -8,8 +8,8 @@ public abstract class HTTP {
 	protected String method;
 	protected String url;
 	protected byte[] data;
-	protected Hashtable requestHeaders;
-	protected Hashtable responseHeaders;
+	protected Hashtable<String, String> requestHeaders;
+	protected Hashtable<String, String> responseHeaders;
 	protected int responseCode;
 	protected byte[] responseBytes;
 	protected InputStream is;
