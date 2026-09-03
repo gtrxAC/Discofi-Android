@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,6 +31,8 @@ public class AccountListActivity extends Activity {
 
         accountList = (ListView) findViewById(R.id.accountList);
 
+        registerForContextMenu(accountList);
+
         // Account selected -> login to that account and go to main menu
         accountList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -39,6 +43,13 @@ public class AccountListActivity extends Activity {
                 Intent intent = new Intent(view.getContext(), MainActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        accountList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                return false;
             }
         });
 
@@ -79,6 +90,30 @@ public class AccountListActivity extends Activity {
 
             accountList.setAdapter(adapter);
         }
-
     }
+
+    private static final int EDIT_ID = 0;
+    private static final int DELETE_ID = 1;
+
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, EDIT_ID, 0, "Edit");
+        menu.add(0, DELETE_ID, 0,  "Delete");
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case EDIT_ID:
+                //editNote(info.id);
+                return true;
+            case DELETE_ID:
+                //deleteNote(info.id);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
 }
