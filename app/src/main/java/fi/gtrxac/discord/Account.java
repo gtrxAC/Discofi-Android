@@ -26,9 +26,11 @@ public class Account {
     public String password;
 
     private Vector<Guild> guilds;
+    private Vector<DMChannel> dmChannels;
 
     public Account() {
         guilds = new Vector<>();
+        dmChannels = new Vector<>();
     }
 
     public Account(JSONArray data) {
@@ -46,6 +48,13 @@ public class Account {
         for (int i = 0; i < guildsJson.size(); i++) {
             JSONArray guildData = guildsJson.getArray(i);
             guilds.add(new Guild(guildData));
+        }
+
+        JSONArray dmChannelsJson = data.getArray(8, new JSONArray());
+
+        for (int i = 0; i < dmChannelsJson.size(); i++) {
+            JSONArray dmChannelData = dmChannelsJson.getArray(i);
+            dmChannels.add(new DMChannel(dmChannelData));
         }
     }
 
@@ -67,6 +76,15 @@ public class Account {
         }
 
         result.add(guildsJson);
+
+        JSONArray dmChannelsJson = new JSONArray();
+
+        for (int i = 0; i < dmChannels.size(); i++) {
+            DMChannel d = dmChannels.elementAt(i);
+            dmChannelsJson.add(d.toJSON());
+        }
+
+        result.add(dmChannelsJson);
 
         return result;
     }
@@ -111,10 +129,12 @@ public class Account {
         return guilds.size() != 0;
     }
 
-    public Vector<Guild> getGuilds(boolean refresh) throws Exception {
-        if (!refresh && guildsAvailable()) return guilds;
+    public boolean dmChannelsAvailable() {
+        return dmChannels.size() != 0;
+    }
 
-        HTTP h = createApiRequest("GET", "/users/@me/guilds");
+    private JSONArray fetchGuildsOrDms(String route) throws Exception {
+        HTTP h = createApiRequest("GET", route);
         int responseCode = h.getResponseCode();
         String responseText = h.getResponseString();
 
@@ -122,7 +142,13 @@ public class Account {
             throw new Exception(getApiErrorMessage(responseCode, responseText));
         }
 
-        JSONArray guildsJson = JSON.getArray(responseText);
+        return JSON.getArray(responseText);
+    }
+
+    public Vector<Guild> getGuilds(boolean refresh) throws Exception {
+        if (!refresh && guildsAvailable()) return guilds;
+
+        JSONArray guildsJson = fetchGuildsOrDms("/users/@me/guilds");
 
         for (int i = 0; i < guildsJson.size(); i++) {
             JSONObject guildJson = guildsJson.getObject(i);
@@ -130,5 +156,18 @@ public class Account {
         }
 
         return guilds;
+    }
+
+    public Vector<DMChannel> getDmChannels(boolean refresh) throws Exception {
+        if (!refresh && dmChannelsAvailable()) return dmChannels;
+
+        JSONArray dmsJson = fetchGuildsOrDms("/users/@me/channels");
+
+        for (int i = 0; i < dmsJson.size(); i++) {
+            JSONObject dmJson = dmsJson.getObject(i);
+            dmChannels.add(new DMChannel(dmJson));
+        }
+
+        return dmChannels;
     }
 }

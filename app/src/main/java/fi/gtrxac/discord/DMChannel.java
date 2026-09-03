@@ -1,0 +1,92 @@
+package fi.gtrxac.discord;
+
+import cc.nnproject.json.*;
+
+/**
+ * Created by gtrx on 3.9.2026.
+ */
+
+public class DMChannel {
+    public String id;
+    public String name;
+    public String username;
+    public boolean isGroup;
+    public long lastMessageID;
+    public String iconID;  // for groups, group ID. for users, recipient ID (not DM channel ID)
+    public String iconHash;
+
+    public DMChannel(JSONObject data) {
+        id = data.getString("id");
+        isGroup = data.getInt("type") == 3;
+
+        String msgIdStr = data.getString("last_message_id");
+        if (msgIdStr != null) {
+            lastMessageID = Long.parseLong(msgIdStr);
+        } else {
+            lastMessageID = Long.parseLong(id);
+        }
+
+        if (isGroup) {
+            name = data.getString("name", null);
+            if (name == null) {
+                JSONArray recipients = data.getArray("recipients");
+                StringBuffer nameBuf = new StringBuffer();
+
+                int i = 0;
+                while (i < recipients.size()) {
+                    JSONObject recipient = recipients.getObject(i);
+                    String name = recipient.getString("global_name", null);
+                    if (name == null) {
+                        name = recipient.getString("username");
+                    }
+                    nameBuf.append(name);
+                    i++;
+                    if (i >= 3 || i >= recipients.size()) break;
+                    nameBuf.append(", ");
+                }
+                name = nameBuf.toString();
+            }
+
+            iconID = id;
+            iconHash = data.getString("icon", null);
+        } else {
+            try {
+                JSONObject recipient = data.getArray("recipients").getObject(0);
+
+                name = recipient.getString("global_name", null);
+                if (name == null) {
+                    name = recipient.getString("username");
+                } else {
+                    username = recipient.getString("username", null);
+                }
+
+                iconID = recipient.getString("id");
+                iconHash = recipient.getString("avatar");
+            }
+            catch (Exception e) {}
+        }
+        if (name == null) name = "(unknown)";
+    }
+
+    public DMChannel(JSONArray saveData) {
+        id = saveData.getString(0);
+        name = saveData.getString(1);
+        username = saveData.getString(2, null);
+        isGroup = saveData.getBoolean(3, false);
+        lastMessageID = saveData.getLong(4, 0);
+        iconID = saveData.getString(5, null);
+        iconHash = saveData.getString(6, null);
+    }
+
+    public JSONArray toJSON() {
+        JSONArray result = new JSONArray();
+        result.add(id);
+        result.add(name);
+        result.add(username);
+        result.add(isGroup);
+        result.add(lastMessageID);
+        if (iconID != null || iconHash != null) result.add(iconID);
+        if (iconHash != null) result.add(iconHash);
+        return result;
+    }
+}
