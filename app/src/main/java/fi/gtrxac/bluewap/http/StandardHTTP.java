@@ -1,68 +1,39 @@
 package fi.gtrxac.bluewap.http;
 
-import fi.gtrxac.bluewap.*;
 import java.io.*;
-import java.util.*;
 
 public class StandardHTTP extends HTTP {
-	public static final Exception redirectException = new Exception();
-
-	private OutputStream os;
 
 	public StandardHTTP(String method, String url) {
 		super(method, url);
 	}
 
-	private InputStream makeRequestFinal(String finalUrl) throws Exception {
-		
+	private String getMockResponse() {
+		responseCode = 200;
+		responseHeaders.put("Content-Type", "application/json");
 
-//#ifndef NO_HTTP_REDIRECT_SUPPORT
-		if (responseCode >= 300 && responseCode < 400) {
-			String redir = hc.getHeaderField("Location");
-			if (redir == null) throw new Exception("received redirect with no location");
+		if (requestHeaders.get("Authorization") == null) {
+			responseCode = 401;
+			return "{\"message\": \"401: Unauthorized\", \"code\": 0}";
+		}
+		if (url.equals("https://discord.com/api/v9/")) {
+			return "";
+		}
 
-			url = new URL(redir, new URL(url)).toString(false);
-			throw redirectException;
-		}
-//#endif
-		return result;
-	}
-
-	private InputStream makeRequestWithCloseOnError(String finalUrl) throws Exception {
-		try {
-			return makeRequestFinal(finalUrl);
-		}
-		catch (Exception e) {
-			close();
-			throw e;
-		}
+		responseCode = 404;
+		return "";
 	}
 
 	protected InputStream makeRequest() throws Exception {
-		for (int redirs = 0; redirs < 5; redirs++) {
-			try {
-				return makeRequestWithCloseOnError();
-			}
-			catch (Exception e) {
-				if (e != redirectException) throw e;
-			}
+		try {
+			Thread.sleep(1000);
 		}
-		throw new Exception("too many redirects");
+		catch (Exception e) {}
+
+		String resp = getMockResponse();
+		return new ByteArrayInputStream(resp.getBytes());
 	}
 
 	protected void closeTransport() {
-	}
-
-	public Hashtable getResponseHeaders() throws Exception {
-		checkMakeRequest();
-		
-	}
-
-	/**
-	 * Get the value of a HTTP response header sent by the server.
-	 */
-	public String getResponseHeader(String name) throws Exception {
-		checkMakeRequest();
-		
 	}
 }
