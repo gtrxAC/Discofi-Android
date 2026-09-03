@@ -33,7 +33,7 @@ public class SuperProperties {
         propsJson.put("has_client_mods", false);
         propsJson.put("client_version", "262.5 - rn");  // should match the user agent in HTTPConfig
         propsJson.put("release_channel", "alpha");
-        propsJson.put("device_vendor_id", "17503929-a4b8-4490-87bf-0222adfdadc8");  // corresponds to Samsung
+        propsJson.put("device_vendor_id", "17503929-a4b8-4490-87bf-0222adfdadc8");
         propsJson.put("design_id", 2);
         propsJson.put("browser_user_agent", "");
         propsJson.put("browser_version", "");

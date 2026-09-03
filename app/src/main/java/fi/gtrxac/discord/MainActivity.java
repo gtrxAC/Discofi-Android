@@ -151,11 +151,12 @@ public class MainActivity extends TabActivity {
         }
 
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(c, android.R.layout.simple_list_item_1, guildItems);
+                new IconArrayAdapter(c, guildItems, R.mipmap.ic_launcher);
 
         guildList.setAdapter(adapter);
 
         if (loadingDialog != null) loadingDialog.dismiss();
+        Settings.save(c);
     }
 
     public void dmChannelsCallback(Context c, Vector<DMChannel> dmChannels) {
@@ -166,11 +167,12 @@ public class MainActivity extends TabActivity {
         }
 
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(c, android.R.layout.simple_list_item_1, dmChannelItems);
+                new IconArrayAdapter(c, dmChannelItems, R.mipmap.ic_launcher);
 
         dmChannelList.setAdapter(adapter);
 
         if (loadingDialog != null) loadingDialog.dismiss();
+        Settings.save(c);
         dmChannelsLoaded = true;
     }
 
