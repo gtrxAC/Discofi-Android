@@ -1,4 +1,4 @@
-package fi.gtrxac.discord;
+package fi.gtrxac.discord.model;
 
 import cc.nnproject.json.*;
 
@@ -76,6 +76,11 @@ public class DMChannel {
         lastMessageID = saveData.getLong(4, 0);
         iconID = saveData.getString(5, null);
         iconHash = saveData.getString(6, null);
+    }
+
+    public String getIconUrl(String cdnUrl) {
+        if (iconHash == null || iconID == null || cdnUrl == null) return null;
+        return cdnUrl + (isGroup ? "/channel-icons/" : "/avatars/") + iconID + "/" + iconHash + ".png?size=64";
     }
 
     public JSONArray toJSON() {

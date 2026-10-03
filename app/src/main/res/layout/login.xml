@@ -16,7 +16,9 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Email"
-        android:inputType="textWebEmailAddress" />
+        android:inputType="textWebEmailAddress"
+        android:maxLines="1"
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/passwordField"
@@ -24,7 +26,10 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Password"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:password="true"
+        android:maxLines="1"
+        android:singleLine="true" />
 
     <Button
         android:id="@+id/loginButton"
@@ -44,7 +49,10 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Token"
-        android:inputType="textVisiblePassword" />
+        android:inputType="textPassword"
+        android:password="true"
+        android:maxLines="1"
+        android:singleLine="true" />
 
     <Button
         android:id="@+id/tokenLoginButton"

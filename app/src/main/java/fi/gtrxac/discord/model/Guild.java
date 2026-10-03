@@ -1,4 +1,4 @@
-package fi.gtrxac.discord;
+package fi.gtrxac.discord.model;
 
 import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONObject;
@@ -18,9 +18,9 @@ public class Guild {
         if (data.has("name")) {
             name = data.getString("name");
         }
-        else if (data.has("properties")) {
-            name = data.getObject("properties").getString("name");
-        }
+        // else if (data.has("properties")) {
+        //     name = data.getObject("properties").getString("name");
+        // }
         else {
             name = "(unknown)";
         }
@@ -32,6 +32,11 @@ public class Guild {
         id = saveData.getString(0);
         name = saveData.getString(1);
         iconHash = saveData.getString(2, null);
+    }
+
+    public String getIconUrl(String cdnUrl) {
+        if (iconHash == null || cdnUrl == null) return null;
+        return cdnUrl + "/icons/" + id + "/" + iconHash + ".png?size=64";
     }
 
     public JSONArray toJSON() {

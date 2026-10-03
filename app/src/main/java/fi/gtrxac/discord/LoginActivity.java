@@ -1,6 +1,7 @@
 package fi.gtrxac.discord;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+
+import cc.nnproject.json.JSON;
+import cc.nnproject.json.JSONObject;
+import fi.gtrxac.bluewap.http.HTTP;
 
 /**
  * Created by gtrx on 29.8.2026.
@@ -86,19 +91,50 @@ public class LoginActivity extends Activity {
                     return;
                 }
 
-                /*if (token.length() < 66 || token.length() > 76 || !token.matches(TOKEN_REGEX)) {
-                    tokenField.setError("Invalid token. The token should be a string of about 70 characters.");
-                    return;
-                }
-                */
-
                 tokenField.setError(null);
 
-                finishLogin(v.getContext(), token.replace("\"", "").trim());
+                final String cleanToken = token.replace("\"", "").trim();
+                final ProgressDialog dialog =
+                        ProgressDialog.show(LoginActivity.this, "", "Logging in...", true);
+
+                new Thread() {
+                    @Override
+                    public void run() {
+                        // Validate the token by fetching the user profile
+                        App.pendingAccount.token = cleanToken;
+
+                        try {
+                            App.pendingAccount.fetchUserProfile();
+                        }
+                        catch (final Exception e) {
+                            App.pendingAccount.token = null;
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    dialog.dismiss();
+                                    if (isFinishing()) return;
+                                    showLoginError(e);
+                                }
+                            });
+                            return;
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                dialog.dismiss();
+                                if (isFinishing()) return;
+                                finishLogin(LoginActivity.this, cleanToken);
+                                finish();
+                            }
+                        });
+                    }
+                }.start();
             }
         });
     }
 
+    /**
+     * Password login: fingerprint -> /auth/login -> (optionally) TOTP.
+     */
     private void initiateLogin() {
         final Context c = this;
 
@@ -107,25 +143,116 @@ public class LoginActivity extends Activity {
         new Thread() {
             @Override
             public void run() {
-
                 try {
-                    Thread.sleep(5000);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    Account acc = App.pendingAccount;
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dialog.dismiss();
+                    // 1. Get a login fingerprint from the experiments endpoint
+                    HTTP expRequest = acc.createApiRequest(
+                            "GET", "/experiments?with_guild_experiments=true");
+                    int expCode = expRequest.getResponseCode();
+                    String expText = expRequest.getResponseString();
+
+                    if (expCode < 200 || expCode >= 300) {
+                        throw new Exception(acc.getApiErrorMessage(expCode, expText));
                     }
-                });
 
-                finishLogin(c, "Mzk4ODc4NzI3OTM4ODk5OTc3.FAKEFAKE." + App.pendingAccount.password);
-                finish();
+                    String fingerprint = JSON.getObject(expText).getString("fingerprint", null);
+
+                    // 2. Submit email + password
+                    JSONObject loginBody = new JSONObject();
+                    loginBody.put("login", acc.email);
+                    loginBody.put("password", acc.password);
+                    loginBody.put("undiscovered_time_to_live", 180);
+                    loginBody.put("login_source", "LoginSource.EMAIL_PW");
+                    if (fingerprint != null) {
+                        loginBody.put("login_fingerprint", fingerprint);
+                    }
+
+                    HTTP loginRequest = acc.createApiRequest("POST", "/auth/login");
+                    if (fingerprint != null) {
+                        loginRequest.setHeader("X-Fingerprint", fingerprint);
+                    }
+                    loginRequest.setData(loginBody.build());
+
+                    int loginCode = loginRequest.getResponseCode();
+                    String loginText = loginRequest.getResponseString();
+
+                    if (loginCode < 200 || loginCode >= 300) {
+                        throw new Exception(acc.getApiErrorMessage(loginCode, loginText));
+                    }
+
+                    JSONObject loginResponse = JSON.getObject(loginText);
+
+                    if (loginResponse.getBoolean("mfa", false)) {
+                        // 3a. Multi-factor authentication required -> TOTP screen
+                        App.pendingTicket = loginResponse.getString("ticket");
+                        App.pendingFingerprint = fingerprint;
+
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                dialog.dismiss();
+                                if (isFinishing()) return;
+                                startActivity(new Intent(c, MfaActivity.class));
+                            }
+                        });
+                    } else {
+                        // 3b. No MFA -> token returned directly
+                        final String token = loginResponse.getString("token");
+                        completeLogin(c, dialog, token);
+                    }
+                }
+                catch (final Exception e) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            dialog.dismiss();
+                            if (isFinishing()) return;
+                            showLoginError(e);
+                        }
+                    });
+                }
             }
         }.start();
+    }
+
+    /**
+     * Fetch the user profile for the given token and finish the login.
+     * Runs on a background thread.
+     */
+    static void completeLogin(final Context c, final ProgressDialog dialog, final String token) {
+        App.pendingAccount.token = token;
+
+        try {
+            App.pendingAccount.fetchUserProfile();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        runOnUiThreadStatic(c, new Runnable() {
+            public void run() {
+                if (dialog != null) dialog.dismiss();
+                finishLogin(c, token);
+                if (c instanceof Activity) {
+                    ((Activity) c).finish();
+                }
+            }
+        });
+    }
+
+    private static void runOnUiThreadStatic(final Context c, final Runnable r) {
+        if (c instanceof Activity) {
+            ((Activity) c).runOnUiThread(r);
+        } else {
+            r.run();
+        }
+    }
+
+    private void showLoginError(Exception e) {
+        new AlertDialog.Builder(this)
+                .setTitle("Login failed")
+                .setMessage(e.getMessage())
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     public static void finishLogin(Context c, String token) {
@@ -135,7 +262,9 @@ public class LoginActivity extends Activity {
         App.pendingAccount = null;
         Settings.save(c);
 
+        // Clear the connection setup / login / MFA screens from the back stack
         Intent intent = new Intent(c, AccountListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         c.startActivity(intent);
     }
 

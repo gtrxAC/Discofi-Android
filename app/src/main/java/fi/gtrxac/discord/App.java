@@ -6,4 +6,8 @@ package fi.gtrxac.discord;
 
 public class App {
     public static Account pendingAccount;
+
+    // State for the password login flow (fingerprint -> ticket -> TOTP)
+    public static String pendingTicket;
+    public static String pendingFingerprint;
 }

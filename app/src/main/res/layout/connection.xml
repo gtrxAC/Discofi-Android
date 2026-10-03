@@ -6,8 +6,6 @@
     android:scrollbarAlwaysDrawHorizontalTrack="false"
     android:scrollbarAlwaysDrawVerticalTrack="false">
 
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -99,7 +97,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textAutoComplete|textPersonName" />
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:singleLine="true" />
 
             <TextView
                 android:id="@+id/textView12"
@@ -113,7 +113,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textAutoComplete|textPersonName" />
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:singleLine="true" />
 
             <TextView
                 android:id="@+id/textView11"
@@ -127,7 +129,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textAutoComplete|textPersonName" />
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:singleLine="true" />
 
         </LinearLayout>
 

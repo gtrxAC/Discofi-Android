@@ -88,7 +88,7 @@ public abstract class HTTP {
 	public HTTP setData(String data) {
 		return setData(Util.stringToBytes(data));
 	}
-	
+
 	/**
 	 * Get the resulting URL that was requested, which may have changed in the case of a redirect.
 	 */
@@ -150,7 +150,7 @@ public abstract class HTTP {
 		String charset = Util.getCharsetFromContentType(getResponseHeader("Content-Type"));
 		return Util.bytesToString(getResponseBytes(), charset);
 	}
-	
+
 	/**
 	 * Close all streams related to this request.
 	 */

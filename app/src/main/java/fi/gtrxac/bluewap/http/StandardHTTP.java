@@ -1,77 +1,89 @@
 package fi.gtrxac.bluewap.http;
 
 import java.io.*;
-
-import util.Base64;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Enumeration;
 
 public class StandardHTTP extends HTTP {
+	private HttpURLConnection conn;
 
 	public StandardHTTP(String method, String url) {
 		super(method, url);
 	}
 
-	private String getMockResponse() {
-		responseCode = 200;
-		responseHeaders.put("Content-Type", "application/json");
+	protected InputStream makeRequest() throws Exception {
+		String currentUrl = url;
+		String currentMethod = method;
 
-        if (requestHeaders.get("Authorization") == null) {
-            responseCode = 401;
-            return "{\"message\": \"401: Unauthorized\", \"code\": 0}";
-        }
-        if (requestHeaders.get("X-Super-Properties") == null) {
-            responseCode = 400;
-            return "{\"message\": \"Super properties missing\", \"code\": 0}";
-        }
+		for (int redirects = 0; redirects < 5; redirects++) {
+			URL parsed = new URL(currentUrl);
+			conn = (HttpURLConnection) parsed.openConnection();
+			conn.setInstanceFollowRedirects(false);
+			conn.setRequestMethod(currentMethod);
 
-        try {
-            Base64.decodeFast(requestHeaders.get("X-Super-Properties"));
-        }
-        catch (Exception e) {
-            responseCode = 400;
-            return "{\"message\": \"Super properties invalid: '" + e.toString() + "'\", \"code\": 0}";
-        }
+			for (Enumeration e = requestHeaders.keys(); e.hasMoreElements();) {
+				String key = (String) e.nextElement();
+				String value = (String) requestHeaders.get(key);
+				conn.setRequestProperty(key, value);
+			}
 
-		if (url.equals("https://discord.com/api/v9/users/@me")) {
-			return "";  // Add your API mock here
-		}
-		if (url.equals("https://discord.com/api/v9/users/@me/guilds")) {
-			return "";  // Add your API mock here
-		}
-		if (url.startsWith("https://discord.com/api/v9/guilds/") && url.endsWith("/channels")) {
-			return "";  // Add your API mock here
-        }
-        if (url.equals("https://discord.com/api/v9/users/@me/channels")) {
-			return "";  // Add your API mock here
-        }
-		if (url.equals("https://discord.com/api/v9/experiments?with_guild_experiments=true")) {
-			return "{\"fingerprint\":\"FINGERPRINT\",\"assignments\":[]}";
-		}
-		if (url.equals("https://discord.com/api/v9/auth/login")) {
-            if (!"FINGERPRINT".equals(requestHeaders.get("X-Fingerprint"))) {
-                responseCode = 401;
-                return "{\"message\": \"Invalid fingerprint: '" + requestHeaders.get("X-Fingerprint") + "'\", \"code\": 0}";
-            }
+			if (data != null) {
+				conn.setDoOutput(true);
+				conn.setFixedLengthStreamingMode(data.length);
+				OutputStream os = conn.getOutputStream();
+				os.write(data);
+				os.close();
+			}
 
-			return "{\"user_id\":\"398878727938899977\",\"mfa\":true,\"sms\":true,\"ticket\":\"TICKET\",\"backup\":true,\"totp\":true,\"webauthn\":null,\"login_instance_id\":\"LOGIN_INSTANCE_ID\"}";
-		}
-		if (url.equals("https://discord.com/api/v9/auth/mfa/totp")) {
-			return "{\"token\":\"TOKEN\",\"user_settings\":{\"locale\":\"en-GB\",\"theme\":\"midnight\"}}";
+			responseCode = conn.getResponseCode();
+			readResponseHeaders();
+
+			if (responseCode >= 300 && responseCode < 400) {
+				String location = (String) responseHeaders.get("location");
+				conn.disconnect();
+				if (location == null) break;
+
+				currentUrl = new URL(parsed, location).toString();
+				continue;
+			}
+			break;
 		}
 
-		responseCode = 404;
-		return "{\"message\": \"Unknown route '" + url + "'\", \"code\": 0}";
+		url = currentUrl;
+		method = currentMethod;
+
+		if (responseCode >= 400) {
+			InputStream err = conn.getErrorStream();
+			if (err == null) {
+				try {
+					err = conn.getInputStream();
+				}
+				catch (IOException e) {
+					err = new ByteArrayInputStream(new byte[0]);
+				}
+			}
+			if (err == null) err = new ByteArrayInputStream(new byte[0]);
+			return err;
+		}
+		return conn.getInputStream();
 	}
 
-	protected InputStream makeRequest() throws Exception {
-		try {
-			Thread.sleep(1000);
+	private void readResponseHeaders() {
+		responseHeaders.clear();
+		for (int i = 0; ; i++) {
+			String key = conn.getHeaderFieldKey(i);
+			String value = conn.getHeaderField(i);
+			if (key == null && value == null) break;
+			if (key == null) continue;
+			responseHeaders.put(key.toLowerCase(), value);
 		}
-		catch (Exception e) {}
-
-		String resp = getMockResponse();
-		return new ByteArrayInputStream(resp.getBytes());
 	}
 
 	protected void closeTransport() {
+		if (conn != null) {
+			conn.disconnect();
+			conn = null;
+		}
 	}
 }

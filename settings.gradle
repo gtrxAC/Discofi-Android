@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='Discord'
+rootProject.name='Microcord'
