@@ -125,7 +125,12 @@ public class Account {
                 "https://media.discordapp.net",
                 "http://media.discordapp.net",
                 "https://cdn.discordapp.com",
-                "http://cdn.discordapp.com"
+                "http://cdn.discordapp.com",
+                // FIXME: used by embeds, doesn't actually work with cdn proxy
+                "https://images-ext-1.discordapp.net",
+                "http://images-ext-1.discordapp.net",
+                "https://images-ext-2.discordapp.net",
+                "http://images-ext-2.discordapp.net",
             };
             for (int i = 0; i < hosts.length; i++) {
                 if (url.startsWith(hosts[i])) return cdnUrl + url.substring(hosts[i].length());
@@ -261,7 +266,6 @@ public class Account {
 
     /**
      * Parse fetched channel list into sorted categories and channels.
-     * Ported from the J2ME client's HTTPThread.parseGuildChannels.
      */
     private Vector parseGuildChannels(JSONArray channelsJson) {
         int numChannels = channelsJson.size();

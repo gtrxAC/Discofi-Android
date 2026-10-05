@@ -77,8 +77,9 @@ public class LoginActivity extends Activity {
     }
 
     private void initTokenLoginComponents() {
-        tokenField = (EditText) findViewById(R.id.tokenField);
+        final Context c = this;
 
+        tokenField = (EditText) findViewById(R.id.tokenField);
         Button tokenLoginButton = (Button) findViewById(R.id.tokenLoginButton);
 
         tokenLoginButton.setOnClickListener(new OnClickListener() {
@@ -118,14 +119,7 @@ public class LoginActivity extends Activity {
                             return;
                         }
 
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                dialog.dismiss();
-                                if (isFinishing()) return;
-                                finishLogin(LoginActivity.this, cleanToken);
-                                finish();
-                            }
-                        });
+                        completeLogin(c, dialog, cleanToken);
                     }
                 }.start();
             }
@@ -176,6 +170,8 @@ public class LoginActivity extends Activity {
 
                     int loginCode = loginRequest.getResponseCode();
                     String loginText = loginRequest.getResponseString();
+
+                    System.err.println(loginText);
 
                     if (loginCode < 200 || loginCode >= 300) {
                         throw new Exception(acc.getApiErrorMessage(loginCode, loginText));

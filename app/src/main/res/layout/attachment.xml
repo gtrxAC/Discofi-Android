@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/attachment"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/embed_background"
+    android:orientation="vertical"
+    android:paddingBottom="2dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    android:paddingTop="2dp">
+
+    <TextView
+        android:id="@+id/attachment_filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="File name"
+        android:textAppearance="?android:attr/textAppearance"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/attachment_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 byte"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</LinearLayout>

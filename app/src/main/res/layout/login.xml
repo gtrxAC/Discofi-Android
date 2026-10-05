@@ -8,7 +8,7 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="To log in with email and password, you must enable multi-factor authentication (authenticator app) and connect to a Wi-Fi network that you have previously used Discord on." />
+        android:text="Password login is currently very experimental and may be unsafe and more prone to account restrictions, use it at your own risk. An alt account is strongly recommended." />
 
     <EditText
         android:id="@+id/emailField"
@@ -41,7 +41,7 @@
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Token login is unsafe and only intended for advanced users." />
+        android:text="Token login is safer and recommended but only intended for advanced users." />
 
     <EditText
         android:id="@+id/tokenField"

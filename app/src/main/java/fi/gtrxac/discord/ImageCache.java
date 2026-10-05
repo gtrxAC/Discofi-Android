@@ -31,6 +31,7 @@ public class ImageCache {
     public static void load(final ImageView view, final String url) {
         if (url == null) {
             view.setTag(null);
+            view.setImageDrawable(null);
             return;
         }
 
@@ -42,6 +43,7 @@ public class ImageCache {
         }
 
         view.setTag(url);
+        view.setImageDrawable(null);
 
         new Thread() {
             @Override

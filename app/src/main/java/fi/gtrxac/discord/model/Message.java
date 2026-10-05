@@ -35,10 +35,10 @@ public class Message {
     public User replyAuthor;
     public String replyContent;
 
-    // image attachment URLs to render under the message content
-    public Vector imageAttachments;
-    // non-image attachment filenames, appended to the content as text lines
-    public String attachmentText;
+    // attachments (images, videos and other files) shown under the content
+    public Vector attachments;
+    // embeds (link previews and other rich content) shown under the attachments
+    public Vector embeds;
 
     public boolean showAuthor;
 
@@ -112,18 +112,26 @@ public class Message {
                 JSONArray attachArray = data.getArray("attachments");
 
                 for (int i = 0; i < attachArray.size(); i++) {
-                    JSONObject attach = attachArray.getObject(i);
-                    String filename = attach.getString("filename", "attachment");
-                    String attachUrl = attach.getString("url", attach.getString("proxy_url", null));
-                    String contentType = attach.getString("content_type", null);
-                    if (attach.getInt("width", 0) > 0 || contentType.startsWith("image/")) {
-                        if (imageAttachments == null) imageAttachments = new Vector();
-                        imageAttachments.addElement(attachUrl);
-                    } else {
-                        if (attachmentText == null) attachmentText = "";
-                        else attachmentText += "\n";
-                        attachmentText += "(attachment: " + filename + ")";
+                    try {
+                        Attachment attachment = new Attachment(attachArray.getObject(i));
+                        if (attachments == null) attachments = new Vector();
+                        attachments.addElement(attachment);
                     }
+                    catch (Exception e) {}
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                JSONArray embedArray = data.getArray("embeds");
+
+                for (int i = 0; i < embedArray.size(); i++) {
+                    try {
+                        Embed embed = new Embed(embedArray.getObject(i));
+                        if (embeds == null) embeds = new Vector();
+                        embeds.addElement(embed);
+                    }
+                    catch (Exception e) {}
                 }
             }
             catch (Exception e) {}
@@ -138,14 +146,9 @@ public class Message {
             catch (Exception e) {}
         }
 
-        if (attachmentText != null) {
-            if (content.length() > 0) content += "\n";
-            content += attachmentText;
-        }
-
         timestamp = formatTimestamp();
 
-        if (content.length() == 0 && imageAttachments == null && !isStatus) {
+        if (content.length() == 0 && attachments == null && embeds == null && !isStatus) {
             isStatus = true;
             content = "(unsupported message)";
         }
@@ -189,28 +192,21 @@ public class Message {
      * @return true if author should be shown, false if messages are "merged"
      */
     public boolean shouldShowAuthor(Message above, long clusterStart) {
-        if (above == null || clusterStart == 0) return true;
-
         // Different authors -> true
-        if (above.author.id.equals(author.id)) {
-            // This message or above message is a status message -> true
-            if (isStatus || above.isStatus) return true;
+        if (!above.author.id.equals(author.id)) return true;
 
-            // One of the messages is a reply (but not both) -> true
-            if ((above.replyAuthor == null) != (replyAuthor == null)) return true;
+        // This message is a reply -> true
+        if (replyAuthor != null) return true;
 
-            // Message was sent more than 7 minutes after the first message of
-            // the cluster -> true
-            long thisMsgTime = id >> 22;
-            long firstMsgTime = clusterStart >> 22;
-            if (thisMsgTime - firstMsgTime > 7 * 60 * 1000) return true;
+        // This message only consists of an attachment/embed -> true
+        if ((attachments != null || embeds != null) && content.length() == 0) return true;
 
-            // Neither message is a reply -> merged
-            if (above.replyAuthor == null && replyAuthor == null) return false;
+        // This message or above message is a status message -> true
+        if (isStatus || above.isStatus) return true;
 
-            // Different reply targets -> true
-            return !above.replyAuthor.id.equals(replyAuthor.id);
-        }
-        return true;
+        // Finally, check if message was sent more than 7 minutes after the first message of the cluster
+        long thisMsgTime = id >> 22;
+        long firstMsgTime = clusterStart >> 22;
+        return (thisMsgTime - firstMsgTime > 7*60*1000);
     }
 }

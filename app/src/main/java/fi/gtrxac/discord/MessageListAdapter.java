@@ -2,11 +2,16 @@ package fi.gtrxac.discord;
 
 import fi.gtrxac.discord.model.*;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
+import android.text.util.Linkify;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +19,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 /**
  * Renders message rows for the chat screen.
@@ -26,6 +33,7 @@ public class MessageListAdapter extends BaseAdapter {
     private final Account account;
     private final LayoutInflater inflater;
     private final int maxAttachmentHeight;
+    private final int maxAttachmentWidth;
 
     public MessageListAdapter(Context context, Vector messages, Account account) {
         this.context = context;
@@ -33,6 +41,7 @@ public class MessageListAdapter extends BaseAdapter {
         this.account = account;
         this.inflater = LayoutInflater.from(context);
         this.maxAttachmentHeight = context.getResources().getDisplayMetrics().heightPixels;
+        this.maxAttachmentWidth = context.getResources().getDisplayMetrics().widthPixels;
     }
 
     public int getCount() {
@@ -87,7 +96,7 @@ public class MessageListAdapter extends BaseAdapter {
                 holder.avatar.getLayoutParams().height = dp(48);
                 holder.author.setText(message.author.name);
                 holder.timestamp.setText(message.timestamp);
-                ImageCache.load(holder.avatar, message.author.getAvatarUrl(account.getCdnUrl()));
+                loadAvatar(holder.avatar, message.author.getAvatarUrl(account.getCdnUrl()));
             } else {
                 holder.metadata.setVisibility(View.GONE);
                 holder.avatar.getLayoutParams().height = 0;
@@ -96,7 +105,7 @@ public class MessageListAdapter extends BaseAdapter {
             // Reply preview
             if (message.replyAuthor != null) {
                 holder.reply.setVisibility(View.VISIBLE);
-                ImageCache.load(holder.replyAvatar, message.replyAuthor.getAvatarUrl(account.getCdnUrl()));
+                loadAvatar(holder.replyAvatar, message.replyAuthor.getAvatarUrl(account.getCdnUrl()));
                 holder.replyAuthor.setText(message.replyAuthor.name);
                 holder.replyContent.setText(message.replyContent);
             } else {
@@ -106,34 +115,242 @@ public class MessageListAdapter extends BaseAdapter {
             if (message.content.length() > 0) {
                 holder.content.setVisibility(View.VISIBLE);
                 holder.content.setText(message.content);
+                Linkify.addLinks(holder.content, Pattern.compile("\\bhttps?://[^\\s<>]+", Pattern.CASE_INSENSITIVE), null);
             } else {
                 holder.content.setVisibility(View.GONE);
             }
 
-            // Image attachments: reused rows may still hold images from an older
-            // message, so always reset the container first.
-            holder.attachments.removeAllViews();
-
-            if (message.imageAttachments != null) {
-                for (int i = 0; i < message.imageAttachments.size(); i++) {
-                    String url = account.getCdnAssetUrl(
-                            (String) message.imageAttachments.elementAt(i));
-
-                    ImageView image = new ImageView(context);
-                    image.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                    image.setAdjustViewBounds(true);
-                    image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    image.setMaxHeight(maxAttachmentHeight);
-                    image.setPadding(0, dp(4), 0, 0);
-                    holder.attachments.addView(image);
-
-                    ImageCache.load(image, url);
-                }
-            }
+            bindAttachments(holder.attachments, message);
         }
 
         return convertView;
+    }
+
+    /**
+     * Fill the attachment container: image/video previews first, then the
+     * file rows, then embeds. Reused rows may still hold views from an older
+     * message, so the container is always reset first.
+     */
+    private void bindAttachments(LinearLayout container, Message message) {
+        container.removeAllViews();
+
+        if (message.attachments != null) {
+            for (int i = 0; i < message.attachments.size(); i++) {
+                addAttachment(container, (Attachment) message.attachments.elementAt(i));
+            }
+        }
+
+        if (message.embeds != null) {
+            for (int i = 0; i < message.embeds.size(); i++) {
+                addEmbed(container, (Embed) message.embeds.elementAt(i));
+            }
+        }
+    }
+
+    private void addAttachment(LinearLayout container, final Attachment attachment) {
+        if (attachment.previewable) {
+            // TODO: properly handle videos
+            ImageView image = new ImageView(context);
+            image.setBackgroundResource(R.color.embed_background);
+            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            image.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    openInBrowser(account.getCdnAssetUrl(attachment.proxyUrl));
+                }
+            });
+
+            int[] dims = getAttachmentSize(attachment);
+            LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(dims[0], dims[1]);
+            imageParams.topMargin = dp(4);
+
+            image.setLayoutParams(imageParams);
+            container.addView(image);
+
+            ImageCache.load(image, account.getCdnAssetUrl(attachment.getPreviewUrl(maxAttachmentWidth)));
+        } else {
+            View view = inflater.inflate(R.layout.attachment, container, false);
+            TextView name = (TextView) view.findViewById(R.id.attachment_filename);
+            TextView size = (TextView) view.findViewById(R.id.attachment_size);
+
+            name.setText(attachment.filename);
+            name.setTextColor(name.getLinkTextColors());
+            size.setText(Attachment.formatSize(attachment.size));
+            view.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    openInBrowser(account.getCdnAssetUrl(attachment.proxyUrl));
+                }
+            });
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.topMargin = dp(4);
+            container.addView(view, params);
+        }
+    }
+
+    private int[] getAttachmentSize(Attachment attachment) {
+        float density = context.getResources().getDisplayMetrics().density;
+
+        // Width of the message content column: 4+4dp root padding, the 48dp
+        // avatar and the 8dp column margin.
+        int columnWidth = maxAttachmentWidth - dp(64);
+        if (columnWidth <= 0) columnWidth = maxAttachmentWidth;
+
+        // Small images are shown at their natural size instead of being
+        // stretched across the whole column.
+        int width = (int) (attachment.width * density + 0.5f);
+        if (width > columnWidth) width = columnWidth;
+
+        int height = (int) (width * attachment.height / attachment.width);
+        if (height > maxAttachmentHeight) {
+            // Taller than the screen: shrink the width too, so the box keeps
+            // matching the aspect ratio and the image fills it exactly.
+            height = maxAttachmentHeight;
+            width = (int) (height * attachment.width / attachment.height);
+        }
+
+        return new int[] { width, height };
+    }
+
+    private void addEmbed(LinearLayout container, final Embed embed) {
+        View view = inflater.inflate(R.layout.embed, container, false);
+        View bar = view.findViewById(R.id.embed_color);
+        TextView title = (TextView) view.findViewById(R.id.embed_title);
+        TextView description = (TextView) view.findViewById(R.id.embed_content);
+        TextView siteName = (TextView) view.findViewById(R.id.embed_site_name);
+        ImageView image = (ImageView) view.findViewById(R.id.embed_image);
+        ImageView video = (ImageView) view.findViewById(R.id.embed_video);
+        ImageView icon = (ImageView) view.findViewById(R.id.embed_icon);
+
+        View author = view.findViewById(R.id.embed_author);
+        TextView authorName = (TextView) view.findViewById(R.id.embed_author_name);
+        ImageView authorIcon = (ImageView) view.findViewById(R.id.embed_author_icon);
+
+        View footer = view.findViewById(R.id.embed_footer);
+        TextView footerContent = (TextView) view.findViewById(R.id.embed_footer_content);
+        ImageView footerIcon = (ImageView) view.findViewById(R.id.embed_footer_icon);
+
+        if (embed.color != 0) {
+            bar.setBackgroundColor(embed.color | 0xFF000000);
+        } else {
+            bar.setVisibility(View.GONE);
+        }
+
+        if (embed.title != null) {
+            title.setText(embed.title);
+        } else {
+            title.setVisibility(View.GONE);
+        }
+
+        if (embed.url != null) {
+            title.setTextColor(title.getLinkTextColors());
+            title.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    openInBrowser(embed.url);
+                }
+            });
+        }
+
+        if (embed.description != null) {
+            description.setText(embed.description);
+        } else {
+            description.setVisibility(View.GONE);
+        }
+
+        if (embed.provider != null) {
+            siteName.setText(embed.provider.name);
+            siteName.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    openInBrowser(embed.provider.url);
+                }
+            });
+        } else {
+            siteName.setVisibility(View.GONE);
+        }
+
+        if (embed.image != null) {
+            int[] dims = getAttachmentSize(embed.image);
+            image.setLayoutParams(new LinearLayout.LayoutParams(dims[0], dims[1]));
+            ImageCache.load(image, account.getCdnAssetUrl(embed.image.getPreviewUrl(maxAttachmentWidth)));
+            System.err.println(account.getCdnAssetUrl(embed.image.getPreviewUrl(maxAttachmentWidth)));
+        } else {
+            image.setVisibility(View.GONE);
+        }
+
+        if (embed.video != null) {
+            int[] dims = getAttachmentSize(embed.video);
+            video.setLayoutParams(new LinearLayout.LayoutParams(dims[0], dims[1]));
+            ImageCache.load(video, account.getCdnAssetUrl(embed.video.getPreviewUrl(maxAttachmentWidth)));
+        } else {
+            video.setVisibility(View.GONE);
+        }
+
+        if (embed.thumbnail != null) {
+            ImageCache.load(icon, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(dp(48))));
+            System.err.println(account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(48)));
+        } else {
+            icon.setVisibility(View.GONE);
+        }
+
+        if (embed.author != null) {
+            authorName.setText(embed.author.name);
+            authorName.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    openInBrowser(embed.author.url);
+                }
+            });
+            if (embed.author.proxyIconUrl != null) {
+                ImageCache.load(authorIcon, account.getCdnAssetUrl(embed.author.proxyIconUrl));
+            } else {
+                authorIcon.setVisibility(View.GONE);
+            }
+        } else {
+            author.setVisibility(View.GONE);
+        }
+
+        if (embed.footer != null) {
+            footerContent.setText(embed.footer.text);
+            if (embed.footer.proxyIconUrl != null) {
+                ImageCache.load(footerIcon, account.getCdnAssetUrl(embed.footer.proxyIconUrl));
+            } else {
+                footerIcon.setVisibility(View.GONE);
+            }
+        } else {
+            footer.setVisibility(View.GONE);
+        }
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.topMargin = dp(4);
+        container.addView(view, params);
+    }
+
+    /**
+     * Load an avatar, falling back to the default icon for users without a
+     * custom one (ImageCache.load(null) would just clear the view).
+     */
+    private void loadAvatar(ImageView view, String url) {
+        if (url == null) {
+            view.setTag(null);
+            view.setImageResource(R.mipmap.ic_launcher);
+        } else {
+            ImageCache.load(view, url);
+        }
+    }
+
+    private void openInBrowser(String url) {
+        if (url == null) return;
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        }
+        catch (ActivityNotFoundException e) {
+            Toast.makeText(context, "No app can open this link",
+                    Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e) {
+            Toast.makeText(context, "Failed to open link: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     private int dp(int value) {

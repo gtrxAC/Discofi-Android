@@ -32,7 +32,13 @@ public class IconArrayAdapter extends ArrayAdapter<String> {
         TextView text = (TextView) convertView.findViewById(R.id.itemText);
 
         text.setText(item);
-        ImageCache.load(image, url);
+
+        if (url == null) {
+            image.setTag(null);
+            image.setImageResource(R.mipmap.ic_launcher);
+        } else {
+            ImageCache.load(image, url);
+        }
 
         return convertView;
     }

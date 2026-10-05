@@ -41,6 +41,6 @@ public class Channel {
      * Whether clicking this channel can open a chat screen.
      */
     public boolean isMessageable() {
-        return type == TYPE_GUILD_TEXT || type == TYPE_GUILD_NEWS;
+        return type == TYPE_GUILD_TEXT || type == TYPE_GUILD_NEWS || type == TYPE_GUILD_VOICE;
     }
 }

@@ -7,6 +7,8 @@ import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -29,6 +31,9 @@ public class MainActivity extends TabActivity {
 
     private Vector<Guild> guilds = new Vector<>();
     private Vector<DMChannel> dmChannels = new Vector<>();
+
+    private static final int MENU_REFRESH = 0;
+    private static final int MENU_LOG_OUT = 1;
 
     public void onCreate(Bundle savedInstanceState) {
 		final Context context = this;
@@ -114,7 +119,7 @@ public class MainActivity extends TabActivity {
             new Thread() {
                 @Override
                 public void run() {
-                    fetchGuilds(context, acc);
+                    fetchGuilds(context, acc, false);
                 }
             }.start();
         }
@@ -135,15 +140,15 @@ public class MainActivity extends TabActivity {
             new Thread() {
                 @Override
                 public void run() {
-                    fetchDmChannels(context, acc);
+                    fetchDmChannels(context, acc, false);
                 }
             }.start();
         }
     }
 
-	private void fetchGuilds(final Context context, Account acc) {
+    private void fetchGuilds(final Context context, final Account acc, final boolean refresh) {
         try {
-            final Vector<Guild> guilds = acc.getGuilds(false);
+            final Vector<Guild> guilds = acc.getGuilds(refresh);
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -162,9 +167,9 @@ public class MainActivity extends TabActivity {
         }
     }
 
-    private void fetchDmChannels(final Context context, Account acc) {
+    private void fetchDmChannels(final Context context, final Account acc, final boolean refresh) {
         try {
-            final Vector<DMChannel> dmChannels = acc.getDmChannels(false);
+            final Vector<DMChannel> dmChannels = acc.getDmChannels(refresh);
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -234,10 +239,49 @@ public class MainActivity extends TabActivity {
         dmChannelsLoaded = true;
     }
 
-	private void goToLoginScreen() {
+    private void goToLoginScreen() {
         Intent intent = new Intent(this, AccountListActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_REFRESH, 0, "Refresh");
+        menu.add(0, MENU_LOG_OUT, 1, "Log out");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_REFRESH:
+                refreshCurrentTab();
+                return true;
+            case MENU_LOG_OUT:
+                goToLoginScreen();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void refreshCurrentTab() {
+        final Account acc = Accounts.getActive();
+        if (acc == null) {
+            goToLoginScreen();
+            return;
+        }
+        final Context context = this;
+        showProgress(true);
+
+        new Thread() {
+            @Override
+            public void run() {
+                fetchGuilds(context, acc, true);
+                fetchDmChannels(context, acc, true);
+            }
+        }.start();
     }
 
     private void showProgress(final boolean show) {
