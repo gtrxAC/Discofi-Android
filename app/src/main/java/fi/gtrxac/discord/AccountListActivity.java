@@ -1,18 +1,26 @@
 package fi.gtrxac.discord;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+
+import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.tinytls.TinyTLS;
 
 /**
  * Created by gtrx on 29.8.2026.
@@ -94,6 +102,7 @@ public class AccountListActivity extends Activity {
 
     private static final int EDIT_ID = 0;
     private static final int DELETE_ID = 1;
+    private static final int MENU_TEST_TLS = 2;
 
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
@@ -114,6 +123,70 @@ public class AccountListActivity extends Activity {
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_TEST_TLS, 0, "Test TLS");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_TEST_TLS:
+                testTLS();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void testTLS() {
+        final StringBuffer log = new StringBuffer();
+        Toast.makeText(this, "Testing TLS...", Toast.LENGTH_SHORT).show();
+
+        new Thread() {
+            @Override
+            public void run() {
+                TinyTLS tls = new TinyTLS(log);
+
+                try {
+                    tls.connect("discord.com", 8443);
+
+                    InputStream is = tls.openInputStream();
+                    OutputStream os = tls.openOutputStream();
+
+                    byte[] req = Util.stringToBytes(
+                            "GET / HTTP/1.1\r\n"
+                            + "Host: discord.com\r\n"
+                            + "User-Agent: TinyTLS/1.0\r\n"
+                            + "Connection: close\r\n"
+                            + "\r\n");
+
+                    os.write(req);
+
+                    log.append(Util.bytesToString(Util.readBytes(is)));
+                }
+                catch (Exception e) {
+                    log.append("TLS FAILED: " + e);
+                    e.printStackTrace();
+                }
+                finally {
+                    tls.close();
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(AccountListActivity.this)
+                                .setTitle("TLS test")
+                                .setMessage(log.toString())
+                                .setPositiveButton("Close", null)
+                                .show();
+                    }
+                });
+            }
+        }.start();
     }
 
 }

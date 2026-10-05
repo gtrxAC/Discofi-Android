@@ -83,7 +83,7 @@ public class ChatActivity extends Activity {
                 if (!initialLoadDone || loadingOlder || sending) return;
 
                 // Near the top -> fetch the previous page of history
-                if (firstVisibleItem <= 2 && messages.size() >= MESSAGE_LOAD_COUNT) {
+                if (firstVisibleItem == 0 && messages.size() >= MESSAGE_LOAD_COUNT) {
                     loadOlderMessages();
                 }
             }
