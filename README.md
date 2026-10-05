@@ -11,11 +11,9 @@ Microcord-Android is a new Discord client for legacy Android devices, based on [
 * Password and token login
 * Sending messages
 * Message timestamps
-* Viewing replies, attachments (images and videos with previews, files with a filename/size row) and embeds
-* Opening attachments in the browser
+* Viewing replies or attachments
 
 ### Planned for first release
-* Sending attachments
 * Sending replies
 * Message editing/deleting
 * Token file import
