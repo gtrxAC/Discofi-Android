@@ -31,6 +31,13 @@
         android:maxLines="1"
         android:singleLine="true" />
 
+    <TextView
+        android:id="@+id/existingPasswordText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Leave blank to use the existing password"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/loginButton"
         android:layout_width="match_parent"

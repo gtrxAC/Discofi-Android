@@ -2,9 +2,6 @@ package fi.gtrxac.discord.model;
 
 import cc.nnproject.json.JSONObject;
 
-/**
- * Minimal Discord user model.
- */
 public class User {
     public String id;
     public String username;

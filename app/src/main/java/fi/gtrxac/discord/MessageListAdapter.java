@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.format.DateFormat;
 import android.text.style.StyleSpan;
 import android.text.util.Linkify;
 import android.util.TypedValue;
@@ -21,6 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -159,7 +164,7 @@ public class MessageListAdapter extends BaseAdapter {
                 }
             });
 
-            int[] dims = getAttachmentSize(attachment);
+            int[] dims = getAttachmentSize(attachment, false);
             LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(dims[0], dims[1]);
             imageParams.topMargin = dp(4);
 
@@ -188,12 +193,14 @@ public class MessageListAdapter extends BaseAdapter {
         }
     }
 
-    private int[] getAttachmentSize(Attachment attachment) {
+    private int[] getAttachmentSize(Attachment attachment, boolean isEmbed) {
         float density = context.getResources().getDisplayMetrics().density;
 
         // Width of the message content column: 4+4dp root padding, the 48dp
         // avatar and the 8dp column margin.
         int columnWidth = maxAttachmentWidth - dp(64);
+        // Embed: 4dp bar and 4dp column margin
+        if (isEmbed) columnWidth -= dp(12);
         if (columnWidth <= 0) columnWidth = maxAttachmentWidth;
 
         // Small images are shown at their natural size instead of being
@@ -218,6 +225,9 @@ public class MessageListAdapter extends BaseAdapter {
         TextView title = (TextView) view.findViewById(R.id.embed_title);
         TextView description = (TextView) view.findViewById(R.id.embed_content);
         TextView siteName = (TextView) view.findViewById(R.id.embed_site_name);
+
+        LinearLayout fields = (LinearLayout) view.findViewById(R.id.embed_fields);
+
         ImageView image = (ImageView) view.findViewById(R.id.embed_image);
         ImageView video = (ImageView) view.findViewById(R.id.embed_video);
         ImageView icon = (ImageView) view.findViewById(R.id.embed_icon);
@@ -230,11 +240,7 @@ public class MessageListAdapter extends BaseAdapter {
         TextView footerContent = (TextView) view.findViewById(R.id.embed_footer_content);
         ImageView footerIcon = (ImageView) view.findViewById(R.id.embed_footer_icon);
 
-        if (embed.color != 0) {
-            bar.setBackgroundColor(embed.color | 0xFF000000);
-        } else {
-            bar.setVisibility(View.GONE);
-        }
+        bar.setBackgroundColor(embed.color | 0xFF000000);
 
         if (embed.title != null) {
             title.setText(embed.title);
@@ -268,26 +274,74 @@ public class MessageListAdapter extends BaseAdapter {
             siteName.setVisibility(View.GONE);
         }
 
+        if (embed.fields != null) {
+            for (int i = 0; i < embed.fields.size(); i++) {
+                Embed.Field field = embed.fields.elementAt(i);
+                if (field == null) continue;
+
+                LinearLayout column = new LinearLayout(context);
+                column.setOrientation(LinearLayout.VERTICAL);
+
+                if (field.name != null) {
+                    TextView name = new TextView(context);
+                    name.setText(field.name);
+                    name.setTextColor(context.getResources().getColor(android.R.color.primary_text_dark));
+                    name.setTypeface(null, Typeface.BOLD);
+                    column.addView(name);
+                }
+                if (field.value != null) {
+                    TextView value = new TextView(context);
+                    value.setText(field.value);
+                    value.setTextColor(context.getResources().getColor(android.R.color.primary_text_dark));
+                    column.addView(value);
+                }
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.topMargin = dp(4);
+                fields.addView(column, params);
+            }
+        } else {
+            fields.setVisibility(View.GONE);
+        }
+
         if (embed.image != null) {
-            int[] dims = getAttachmentSize(embed.image);
-            image.setLayoutParams(new LinearLayout.LayoutParams(dims[0], dims[1]));
+            int[] dims = getAttachmentSize(embed.image, true);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
+            if (embed.title != null || embed.description != null) params.topMargin = dp(4);
+            image.setLayoutParams(params);
             ImageCache.load(image, account.getCdnAssetUrl(embed.image.getPreviewUrl(maxAttachmentWidth)));
-            System.err.println(account.getCdnAssetUrl(embed.image.getPreviewUrl(maxAttachmentWidth)));
         } else {
             image.setVisibility(View.GONE);
         }
 
-        if (embed.video != null) {
-            int[] dims = getAttachmentSize(embed.video);
-            video.setLayoutParams(new LinearLayout.LayoutParams(dims[0], dims[1]));
-            ImageCache.load(video, account.getCdnAssetUrl(embed.video.getPreviewUrl(maxAttachmentWidth)));
+        if (embed.video != null && embed.thumbnail != null) {
+            int[] dims = getAttachmentSize(embed.thumbnail, true);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
+            if (embed.title != null || embed.description != null) params.topMargin = dp(4);
+            video.setLayoutParams(params);
+            ImageCache.load(video, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
+            video.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    openInBrowser(embed.video.url);
+                }
+            });
         } else {
             video.setVisibility(View.GONE);
         }
 
-        if (embed.thumbnail != null) {
-            ImageCache.load(icon, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(dp(48))));
-            System.err.println(account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(48)));
+        if (embed.video == null && embed.thumbnail != null) {
+            if (embed.type == Embed.Type.ARTICLE) {
+                int[] dims = getAttachmentSize(embed.thumbnail, true);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
+                if (embed.title != null || embed.description != null) params.topMargin = dp(4);
+                image.setLayoutParams(params);
+                ImageCache.load(image, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
+                image.setVisibility(View.VISIBLE);
+                icon.setVisibility(View.GONE);
+            } else {
+                ImageCache.load(icon, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(dp(48))));
+            }
         } else {
             icon.setVisibility(View.GONE);
         }
@@ -301,6 +355,8 @@ public class MessageListAdapter extends BaseAdapter {
             });
             if (embed.author.proxyIconUrl != null) {
                 ImageCache.load(authorIcon, account.getCdnAssetUrl(embed.author.proxyIconUrl));
+            } else if (embed.author.iconUrl != null) {
+                ImageCache.load(authorIcon, embed.author.iconUrl);
             } else {
                 authorIcon.setVisibility(View.GONE);
             }
@@ -308,10 +364,24 @@ public class MessageListAdapter extends BaseAdapter {
             author.setVisibility(View.GONE);
         }
 
-        if (embed.footer != null) {
-            footerContent.setText(embed.footer.text);
+        String footerText = embed.footer != null ? embed.footer.text : null;
+        if (embed.timestamp != null) {
+            String timestamp = formatEmbedTimestamp(embed.timestamp);
+            if (footerText != null && footerText.length() > 0) {
+                footerText += " \u00b7 ";
+            } else {
+                footerText = "";
+            }
+            footerText += timestamp;
+        }
+
+        if (footerText != null) {
+            footer.setVisibility(View.VISIBLE);
+            footerContent.setText(footerText);
             if (embed.footer.proxyIconUrl != null) {
                 ImageCache.load(footerIcon, account.getCdnAssetUrl(embed.footer.proxyIconUrl));
+            } else if (embed.footer.iconUrl != null) {
+                ImageCache.load(footerIcon, embed.footer.iconUrl);
             } else {
                 footerIcon.setVisibility(View.GONE);
             }
@@ -323,6 +393,55 @@ public class MessageListAdapter extends BaseAdapter {
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.topMargin = dp(4);
         container.addView(view, params);
+    }
+
+    private String formatEmbedTimestamp(String timestamp) {
+        Date date = parseEmbedTimestamp(timestamp);
+        if (date == null) return timestamp;
+
+        return DateFormat.getDateFormat(context).format(date)
+                + " " + DateFormat.getTimeFormat(context).format(date);
+    }
+
+    private Date parseEmbedTimestamp(String timestamp) {
+        String value = timestamp.trim();
+        int timeSeparator = value.indexOf('T');
+        if (timeSeparator < 0) return null;
+
+        if (value.endsWith("Z")) {
+            value = value.substring(0, value.length() - 1) + "+0000";
+        } else {
+            int zoneStart = Math.max(value.lastIndexOf('+'), value.lastIndexOf('-'));
+            if (zoneStart > timeSeparator && value.length() - zoneStart == 6
+                    && value.charAt(zoneStart + 3) == ':') {
+                value = value.substring(0, zoneStart + 3)
+                        + value.substring(zoneStart + 4);
+            }
+        }
+
+        int zoneStart = Math.max(value.lastIndexOf('+'), value.lastIndexOf('-'));
+        if (zoneStart <= timeSeparator) zoneStart = value.length();
+
+        int fractionStart = value.indexOf('.', timeSeparator);
+        boolean hasFraction = fractionStart >= 0 && fractionStart < zoneStart;
+        if (hasFraction) {
+            String fraction = value.substring(fractionStart + 1, zoneStart);
+            if (fraction.length() == 0) return null;
+            for (int i = 0; i < fraction.length(); i++) {
+                if (fraction.charAt(i) < '0' || fraction.charAt(i) > '9') return null;
+            }
+            String milliseconds = (fraction + "000").substring(0, 3);
+            value = value.substring(0, fractionStart + 1) + milliseconds
+                    + value.substring(zoneStart);
+        }
+
+        SimpleDateFormat parser = new SimpleDateFormat(
+                hasFraction ? "yyyy-MM-dd'T'HH:mm:ss.SSSZ" : "yyyy-MM-dd'T'HH:mm:ssZ",
+                Locale.US);
+        parser.setLenient(false);
+        ParsePosition position = new ParsePosition(0);
+        Date date = parser.parse(value, position);
+        return date != null && position.getIndex() == value.length() ? date : null;
     }
 
     /**

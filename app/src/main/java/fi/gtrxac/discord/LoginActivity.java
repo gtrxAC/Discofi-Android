@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import cc.nnproject.json.JSON;
 import cc.nnproject.json.JSONObject;
@@ -40,6 +41,16 @@ public class LoginActivity extends Activity {
         emailField = (EditText) findViewById(R.id.emailField);
         passwordField = (EditText) findViewById(R.id.passwordField);
 
+        if (App.pendingAccount != null) {
+            if (App.pendingAccount.email != null) {
+                emailField.setText(App.pendingAccount.email);
+            }
+            if (App.pendingAccount.password != null) {
+                TextView existingPasswordText = (TextView) findViewById(R.id.existingPasswordText);
+                existingPasswordText.setVisibility(View.VISIBLE);
+            }
+        }
+
         Button loginButton = (Button) findViewById(R.id.loginButton);
 
         loginButton.setOnClickListener(new OnClickListener() {
@@ -59,6 +70,11 @@ public class LoginActivity extends Activity {
                 else if (!email.contains("@")) {
                     emailField.setError("Invalid email address");
                     hasError = true;
+                }
+
+                // Reuse the password saved with the account if being edited
+                if (password.length() == 0 && App.pendingAccount != null) {
+                    password = App.pendingAccount.password;
                 }
 
                 if (password.length() == 0) {
@@ -81,6 +97,10 @@ public class LoginActivity extends Activity {
 
         tokenField = (EditText) findViewById(R.id.tokenField);
         Button tokenLoginButton = (Button) findViewById(R.id.tokenLoginButton);
+
+        if (App.pendingAccount != null) {
+            tokenField.setText(App.pendingAccount.token);
+        }
 
         tokenLoginButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -254,7 +274,10 @@ public class LoginActivity extends Activity {
     public static void finishLogin(Context c, String token) {
         App.pendingAccount.token = token;
 
-        Accounts.list.addElement(App.pendingAccount);
+        // Add the account if it doesn't already exist.
+        if (!Accounts.list.contains(App.pendingAccount)) {
+            Accounts.list.addElement(App.pendingAccount);
+        }
         App.pendingAccount = null;
         Settings.save(c);
 

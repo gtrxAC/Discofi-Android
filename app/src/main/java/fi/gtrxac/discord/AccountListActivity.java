@@ -3,6 +3,7 @@ package fi.gtrxac.discord;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -102,7 +103,8 @@ public class AccountListActivity extends Activity {
 
     private static final int EDIT_ID = 0;
     private static final int DELETE_ID = 1;
-    private static final int MENU_TEST_TLS = 2;
+
+    private static final int MENU_TEST_TLS = 0;
 
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
@@ -113,16 +115,35 @@ public class AccountListActivity extends Activity {
 
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
         switch (item.getItemId()) {
             case EDIT_ID:
-                //editNote(info.id);
+                App.pendingAccount = Accounts.list.elementAt(info.position);
+                startActivity(new Intent(this, ConnectionModeActivity.class));
                 return true;
             case DELETE_ID:
-                //deleteNote(info.id);
+                promptDelete(info.position);
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    private void promptDelete(final int position) {
+        final Account acc = Accounts.list.elementAt(position);
+        new AlertDialog.Builder(this)
+                .setTitle("Delete account")
+                .setMessage("Are you sure you want to delete the account '" +
+                        acc.getDisplayTitle() + "' from the list?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Accounts.list.removeElement(acc);
+                        Settings.save(AccountListActivity.this);
+                        updateAccountList();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

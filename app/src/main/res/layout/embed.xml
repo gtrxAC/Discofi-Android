@@ -10,7 +10,6 @@
         android:id="@+id/embed_color"
         android:layout_width="4dp"
         android:layout_height="wrap_content"
-        android:layout_marginRight="2dp"
         android:background="#000" />
 
     <LinearLayout
@@ -72,7 +71,7 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/msg_fields"></LinearLayout>
+            android:id="@+id/embed_fields"></LinearLayout>
 
         <ImageView
             android:id="@+id/embed_image"

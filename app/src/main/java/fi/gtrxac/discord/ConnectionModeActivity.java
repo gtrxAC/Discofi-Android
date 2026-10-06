@@ -23,7 +23,11 @@ public class ConnectionModeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connection);
 
-        App.pendingAccount = new Account();
+        // The pending account is set by the caller: a new one when adding an
+        // account, an existing one when editing it.
+        if (App.pendingAccount == null) {
+            App.pendingAccount = new Account();
+        }
 
         // Proxy connection URLs hidden by default, show them when selecting proxy mode
         proxySettings = findViewById(R.id.proxySettings);
@@ -47,6 +51,8 @@ public class ConnectionModeActivity extends Activity {
                 App.pendingAccount.useGateway = isChecked;
             }
         });
+
+        fillConnectionFields();
 
         Button continueButton = (Button) findViewById(R.id.continueButton);
 
@@ -88,5 +94,21 @@ public class ConnectionModeActivity extends Activity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void fillConnectionFields() {
+        Account acc = App.pendingAccount;
+
+        if (acc.useProxy) {
+            RadioGroup connectionGroup = (RadioGroup) findViewById(R.id.modeSelection);
+            connectionGroup.check(R.id.proxyOption);
+
+            ((EditText) findViewById(R.id.apiUrlField)).setText(acc.apiUrl);
+            ((EditText) findViewById(R.id.gatewayUrlField)).setText(acc.gatewayUrl);
+            ((EditText) findViewById(R.id.cdnUrlField)).setText(acc.cdnUrl);
+        }
+
+        CheckBox gatewayCheckBox = (CheckBox) findViewById(R.id.gatewayCheckBox);
+        gatewayCheckBox.setChecked(acc.useGateway);
     }
 }

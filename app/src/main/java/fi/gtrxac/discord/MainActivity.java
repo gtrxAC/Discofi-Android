@@ -25,12 +25,19 @@ import java.util.Vector;
 import cc.nnproject.json.JSONArray;
 
 public class MainActivity extends TabActivity {
+    private static final int TAB_GUILDS = 0;
+    private static final int TAB_DMS = 1;
+    private static final int TAB_INBOX = 2;
+
     private ListView guildList;
     private ListView dmChannelList;
+    private ListView inboxList;
     private boolean dmChannelsLoaded = false;
+    private boolean inboxLoaded = false;
 
     private Vector<Guild> guilds = new Vector<>();
     private Vector<DMChannel> dmChannels = new Vector<>();
+    private Vector<Message> inbox = new Vector<>();
 
     private static final int MENU_REFRESH = 0;
     private static final int MENU_LOG_OUT = 1;
@@ -65,17 +72,25 @@ public class MainActivity extends TabActivity {
         dmsTab.setContent(R.id.dmsTab);
         tabHost.addTab(dmsTab);
 
+        TabHost.TabSpec inboxTab = tabHost.newTabSpec("inboxTab");
+        inboxTab.setIndicator("Inbox");
+        inboxTab.setContent(R.id.inboxTab);
+        tabHost.addTab(inboxTab);
+
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
-                if (!dmChannelsLoaded) {
+                if ("dmsTab".equals(tabId) && !dmChannelsLoaded) {
                     loadDmChannels(context, acc);
+                } else if ("inboxTab".equals(tabId) && !inboxLoaded) {
+                    loadInbox(context, acc);
                 }
             }
         });
 
         guildList = (ListView) findViewById(R.id.guildList);
         dmChannelList = (ListView) findViewById(R.id.dmList);
+        inboxList = (ListView) findViewById(R.id.inboxList);
 
         guildList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -146,6 +161,27 @@ public class MainActivity extends TabActivity {
         }
     }
 
+    private void loadInbox(final Context context, final Account acc) {
+        if (acc.inboxAvailable()) {
+            try {
+                inboxCallback(context, acc.getInbox(false));
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            showProgress(true);
+
+            new Thread() {
+                @Override
+                public void run() {
+                    fetchInbox(context, acc, false);
+                }
+            }.start();
+        }
+    }
+
     private void fetchGuilds(final Context context, final Account acc, final boolean refresh) {
         try {
             final Vector<Guild> guilds = acc.getGuilds(refresh);
@@ -183,6 +219,27 @@ public class MainActivity extends TabActivity {
                 @Override
                 public void run() {
                     fetchFailed("Failed to load conversations", e);
+                }
+            });
+        }
+    }
+
+    private void fetchInbox(final Context context, final Account acc, final boolean refresh) {
+        try {
+            final Vector<Message> inbox = acc.getInbox(refresh);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    inboxCallback(context, inbox);
+                }
+            });
+        }
+        catch (final Exception e) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    fetchFailed("Failed to load inbox", e);
                 }
             });
         }
@@ -239,6 +296,24 @@ public class MainActivity extends TabActivity {
         dmChannelsLoaded = true;
     }
 
+    public void inboxCallback(Context c, Vector<Message> inbox) {
+        this.inbox = inbox;
+
+        if (inbox.size() == 0) {
+            TextView inboxEmptyText = (TextView) findViewById(R.id.inboxEmptyText);
+            inboxEmptyText.setVisibility(View.VISIBLE);
+        } else {
+            for (int i = 0; i < inbox.size(); i++) {
+                Message m = inbox.elementAt(i);
+                m.showAuthor = true;
+            }
+            inboxList.setAdapter(new MessageListAdapter(c, inbox, Accounts.getActive()));
+        }
+
+        showProgress(false);
+        inboxLoaded = true;
+    }
+
     private void goToLoginScreen() {
         Intent intent = new Intent(this, AccountListActivity.class);
         startActivity(intent);
@@ -278,8 +353,17 @@ public class MainActivity extends TabActivity {
         new Thread() {
             @Override
             public void run() {
-                fetchGuilds(context, acc, true);
-                fetchDmChannels(context, acc, true);
+                switch (getTabHost().getCurrentTab()) {
+                    case TAB_GUILDS:
+                        fetchGuilds(context, acc, true);
+                        break;
+                    case TAB_DMS:
+                        fetchDmChannels(context, acc, true);
+                        break;
+                    case TAB_INBOX:
+                        fetchInbox(context, acc, true);
+                        break;
+                }
             }
         }.start();
     }

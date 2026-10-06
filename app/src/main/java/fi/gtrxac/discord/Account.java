@@ -21,7 +21,7 @@ public class Account {
     public String userId;
 
     public boolean useProxy;
-    public boolean useGateway;
+    public boolean useGateway = true;
     public String apiUrl;
     public String gatewayUrl;
     public String cdnUrl;
@@ -31,10 +31,12 @@ public class Account {
 
     private Vector<Guild> guilds;
     private Vector<DMChannel> dmChannels;
+    private Vector<Message> inbox;
 
     public Account() {
         guilds = new Vector<>();
         dmChannels = new Vector<>();
+        inbox = new Vector<>();
     }
 
     public Account(JSONArray data) {
@@ -46,6 +48,8 @@ public class Account {
         apiUrl = data.getString(4, "");
         gatewayUrl = data.getString(5, "");
         cdnUrl = data.getString(6, "");
+        email = data.getString(9, "");
+        password = data.getString(10, "");
 
         JSONArray guildsJson = data.getArray(7, new JSONArray());
 
@@ -90,6 +94,9 @@ public class Account {
 
         result.add(dmChannelsJson);
 
+        result.add(email);
+        result.add(password);
+
         return result;
     }
 
@@ -126,11 +133,6 @@ public class Account {
                 "http://media.discordapp.net",
                 "https://cdn.discordapp.com",
                 "http://cdn.discordapp.com",
-                // FIXME: used by embeds, doesn't actually work with cdn proxy
-                "https://images-ext-1.discordapp.net",
-                "http://images-ext-1.discordapp.net",
-                "https://images-ext-2.discordapp.net",
-                "http://images-ext-2.discordapp.net",
             };
             for (int i = 0; i < hosts.length; i++) {
                 if (url.startsWith(hosts[i])) return cdnUrl + url.substring(hosts[i].length());
@@ -165,6 +167,10 @@ public class Account {
 
     public boolean dmChannelsAvailable() {
         return dmChannels.size() != 0;
+    }
+
+    public boolean inboxAvailable() {
+        return inbox.size() != 0;
     }
 
     private JSONArray fetchGuildsOrDms(String route) throws Exception {
@@ -253,6 +259,23 @@ public class Account {
             }
             dmChannels.add(unsorted.remove(highestIndex));
         }
+    }
+
+    /**
+     * Get the user's mentions (inbox). Returns a Vector of Messages.
+     */
+    public Vector<Message> getInbox(boolean refresh) throws Exception {
+        if (!refresh && inboxAvailable()) return inbox;
+
+        JSONArray inboxJson = (JSONArray) fetchJSON("/users/@me/mentions");
+        inbox.clear();
+
+        for (int i = 0; i < inboxJson.size(); i++) {
+            JSONObject mentionJson = inboxJson.getObject(i);
+            inbox.add(new Message(mentionJson));
+        }
+
+        return inbox;
     }
 
     /**
@@ -362,8 +385,9 @@ public class Account {
      */
     public Vector getMessages(String channelId, String before, String after, int limit) throws Exception {
         StringBuffer url = new StringBuffer("/channels/").append(channelId)
-                .append("/messages?droidcord=1&limit=").append(limit);
+                .append("/messages?limit=").append(limit);
 
+        if (useProxy) url.append("&droidcord=1");
         if (before != null) {
             url.append("&before=").append(before);
         } else if (after != null) {

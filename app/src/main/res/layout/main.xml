@@ -46,6 +46,32 @@
                     android:layout_height="match_parent" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/inboxTab"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/inboxEmptyText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:text="No mentions yet."
+                    android:visibility="gone" />
+
+                <ListView
+                    android:id="@+id/inboxList"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="4dp" />
+            </LinearLayout>
+
         </FrameLayout>
     </LinearLayout>
 
