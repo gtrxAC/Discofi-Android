@@ -2,6 +2,7 @@ package fi.gtrxac.discord;
 
 import fi.gtrxac.discord.model.*;
 
+import java.util.Hashtable;
 import java.util.Vector;
 
 import cc.nnproject.json.AbstractJSON;
@@ -29,11 +30,13 @@ public class Account {
     public String email;
     public String password;
 
+    private Vector<Guild> guildsUnsorted;
     private Vector<Guild> guilds;
     private Vector<DMChannel> dmChannels;
     private Vector<Message> inbox;
 
     public Account() {
+        guildsUnsorted = new Vector<>();
         guilds = new Vector<>();
         dmChannels = new Vector<>();
         inbox = new Vector<>();
@@ -100,15 +103,13 @@ public class Account {
         return result;
     }
 
-    public String getDisplayTitle() {
+    public String getDisplayTitle() throws DiscordException {
         if (username != null) return username;
         return getUserID();
     }
 
-    public String getUserID() {
-        String tokenIDPart = token.split("\\.")[0];
-        byte[] decodeBytes = Base64.decodeFast(tokenIDPart);
-        return new String(decodeBytes);
+    public String getUserID() throws DiscordException {
+        return DiscordUtil.getUserIDFromToken(token);
     }
 
     public String getApiUrl() {
@@ -173,106 +174,174 @@ public class Account {
         return inbox.size() != 0;
     }
 
-    private JSONArray fetchGuildsOrDms(String route) throws Exception {
-        return (JSONArray) fetchJSON(route);
-    }
-
     /**
      * Perform an authenticated GET request and parse the response as JSON.
      */
-    public AbstractJSON fetchJSON(String route) throws Exception {
-        HTTP h = createApiRequest("GET", route);
-        int responseCode = h.getResponseCode();
-        String responseText = h.getResponseString();
+    public AbstractJSON fetchJSON(String route, Hashtable<String, String> headers) throws DiscordException {
+        int responseCode;
+        String responseText;
 
-        if (responseCode < 200 || responseCode >= 300) {
-            throw new Exception(getApiErrorMessage(responseCode, responseText));
+        try {
+            HTTP h = createApiRequest("GET", route);
+            if (headers != null) h.setHeader(headers);
+            responseCode = h.getResponseCode();
+            responseText = h.getResponseString();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new DiscordException(e);
         }
 
-        return JSON.get(responseText);
+        return handleJSONResponse(responseCode, responseText);
+    }
+
+    public AbstractJSON fetchJSON(String route) throws DiscordException {
+        return fetchJSON(route, null);
     }
 
     /**
      * Perform an authenticated POST request with a JSON body and parse the response as JSON.
      */
-    public AbstractJSON postJSON(String route, JSONObject body) throws Exception {
-        HTTP h = createApiRequest("POST", route);
-        h.setData(body.build());
-        int responseCode = h.getResponseCode();
-        String responseText = h.getResponseString();
+    public AbstractJSON postJSON(String route, JSONObject body, Hashtable<String, String> headers) throws DiscordException {
+        int responseCode;
+        String responseText;
 
+        try {
+            HTTP h = createApiRequest("POST", route);
+            if (headers != null) h.setHeader(headers);
+            h.setData(body.build());
+            responseCode = h.getResponseCode();
+            responseText = h.getResponseString();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new DiscordException(e);
+        }
+
+        return handleJSONResponse(responseCode, responseText);
+    }
+
+    public AbstractJSON postJSON(String route, JSONObject body) throws DiscordException {
+        return postJSON(route, body, null);
+    }
+
+    private AbstractJSON handleJSONResponse(int responseCode, String responseText) throws DiscordException {
         if (responseCode < 200 || responseCode >= 300) {
-            throw new Exception(getApiErrorMessage(responseCode, responseText));
+            throw new DiscordException(getApiErrorMessage(responseCode, responseText));
         }
 
         return JSON.get(responseText);
     }
 
-    public Vector<Guild> getGuilds(boolean refresh) throws Exception {
+    /**
+     * Get user's guild (server) list. Returns vector of Guilds.
+     * As the list is sorted by user-defined order, this makes up to two HTTP requests; the second one is for the user's settings.
+     */
+    public Vector getGuilds(boolean refresh) throws DiscordException {
         if (!refresh && guildsAvailable()) return guilds;
 
-        JSONArray guildsJson = fetchGuildsOrDms("/users/@me/guilds");
+        if (refresh || guildsUnsorted.size() == 0) {
+            JSONArray guildsJson = (JSONArray) fetchJSON("/users/@me/guilds");
+            guildsUnsorted.setSize(0);
 
-        guilds.clear();
-
-        for (int i = 0; i < guildsJson.size(); i++) {
-            JSONObject guildJson = guildsJson.getObject(i);
-            guilds.add(new Guild(guildJson));
+            for (int i = 0; i < guildsJson.size(); i++) {
+                JSONObject guildJson = guildsJson.getObject(i);
+                guildsUnsorted.addElement(new Guild(guildJson));
+            }
         }
+
+        // fetch user's guild folders which we can use to sort guilds by
+        // user-defined order like in official clients
+        JSONObject userSettings = (JSONObject) fetchJSON("/users/@me/settings");
+        JSONArray guildFolders = userSettings.getArray("guild_folders");
+
+        guilds.setSize(0);
+
+        for (int i = 0; i < guildFolders.size(); i++) {
+            JSONArray guildIds = guildFolders.getObject(i).getArray("guild_ids");
+
+            for (int j = 0; j < guildIds.size(); j++) {
+                String guildId = guildIds.getString(j);
+
+                for (int k = 0; k < guildsUnsorted.size(); k++) {
+                    Guild guild = (Guild) guildsUnsorted.elementAt(k);
+
+                    if (guild.id.equals(guildId)) {
+                        guilds.addElement(guild);
+                        guildsUnsorted.removeElementAt(k);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If the user doesn't have guild folders, some or all of the guilds may have been
+        // missed by the above sort, so add them at the end of the list
+        for (int i = 0; i < guildsUnsorted.size(); i++) {
+            guilds.addElement(guildsUnsorted.elementAt(i));
+        }
+        guildsUnsorted.setSize(0);
 
         return guilds;
     }
 
-    public Vector<DMChannel> getDmChannels(boolean refresh) throws Exception {
+    public Vector getDmChannels(boolean refresh) throws DiscordException {
         if (!refresh && dmChannelsAvailable()) return dmChannels;
 
-        JSONArray dmsJson = fetchGuildsOrDms("/users/@me/channels");
-        Vector<DMChannel> unsorted = new Vector<>();
+        JSONArray dmChannelsJson = (JSONArray) fetchJSON("/users/@me/channels");
+        Vector dmChannelsUnsorted = new Vector();
 
-        for (int i = 0; i < dmsJson.size(); i++) {
-            JSONObject dmJson = dmsJson.getObject(i);
-            int type = dmJson.getInt("type", 1);
-            if (type != 1 && type != 3) continue;
-            unsorted.add(new DMChannel(dmJson));
+        for (int i = 0; i < dmChannelsJson.size(); i++) {
+            JSONObject dmChannelJson = dmChannelsJson.getObject(i);
+            dmChannelsUnsorted.addElement(new DMChannel(dmChannelJson));
         }
 
-        dmChannels.clear();
-        sortDMChannels(unsorted);
-
+        dmChannels.setSize(0);
+        sortDMChannels(dmChannelsUnsorted);
         return dmChannels;
     }
 
-    /**
-     * Sort DMs by recency, like official clients do (highest last message ID first).
-     */
-    private void sortDMChannels(Vector<DMChannel> unsorted) {
-        while (unsorted.size() > 0) {
-            long highestID = -1;
+    private void sortDMChannels(Vector dmChannelsUnsorted) {
+        // Get the 20 latest DMs (add into another vector sorted by highest to lowest last message ID)
+        int count = Math.min(20, dmChannelsUnsorted.size());
+
+        for (int i = 0; i < count; i++) {
+            long highestID = 0;
             int highestIndex = 0;
 
-            for (int i = 0; i < unsorted.size(); i++) {
-                DMChannel ch = unsorted.elementAt(i);
-                if (ch.lastMessageID > highestID) {
-                    highestID = ch.lastMessageID;
-                    highestIndex = i;
+            for (int u = 0; u < dmChannelsUnsorted.size(); u++) {
+                DMChannel ch = (DMChannel) dmChannelsUnsorted.elementAt(u);
+
+                if (ch.lastMessageID <= highestID) continue;
+
+                // Don't repeat ones that we've already added
+                boolean alreadyHave = false;
+
+                for (int l = 0; l < dmChannels.size(); l++) {
+                    DMChannel compare = (DMChannel) dmChannels.elementAt(l);
+
+                    if (compare.lastMessageID == ch.lastMessageID) {
+                        alreadyHave = true;
+                        break;
+                    }
                 }
+                if (alreadyHave) continue;
+
+                highestID = ch.lastMessageID;
+                highestIndex = u;
             }
-            dmChannels.add(unsorted.remove(highestIndex));
+            dmChannels.addElement((DMChannel) dmChannelsUnsorted.elementAt(highestIndex));
         }
     }
 
-    /**
-     * Get the user's mentions (inbox). Returns a Vector of Messages.
-     */
-    public Vector<Message> getInbox(boolean refresh) throws Exception {
+    public Vector getInbox(boolean refresh) throws DiscordException {
         if (!refresh && inboxAvailable()) return inbox;
 
         JSONArray inboxJson = (JSONArray) fetchJSON("/users/@me/mentions");
-        inbox.clear();
 
         for (int i = 0; i < inboxJson.size(); i++) {
             JSONObject mentionJson = inboxJson.getObject(i);
-            inbox.add(new Message(mentionJson));
+            inbox.addElement(new Message(mentionJson));
         }
 
         return inbox;
@@ -282,7 +351,7 @@ public class Account {
      * Get a guild's channels grouped into sorted categories.
      * Returns a Vector of ChannelCategory.
      */
-    public Vector getGuildChannels(String guildId) throws Exception {
+    public Vector getGuildChannels(String guildId) throws DiscordException {
         JSONArray channelsJson = (JSONArray) fetchJSON("/guilds/" + guildId + "/channels");
         return parseGuildChannels(channelsJson);
     }
@@ -383,7 +452,7 @@ public class Account {
      * Fetch messages from a channel. The returned Vector is ordered oldest
      * first, regardless of the order the API returned them in.
      */
-    public Vector getMessages(String channelId, String before, String after, int limit) throws Exception {
+    public Vector getMessages(String channelId, String before, String after, int limit) throws DiscordException {
         StringBuffer url = new StringBuffer("/channels/").append(channelId)
                 .append("/messages?limit=").append(limit);
 
@@ -409,7 +478,7 @@ public class Account {
     /**
      * Send a message to a channel. Returns the created message.
      */
-    public Message sendMessage(String channelId, String content) throws Exception {
+    public Message sendMessage(String channelId, String content) throws DiscordException {
         JSONObject body = new JSONObject();
         body.put("content", content);
         body.put("flags", 0);
@@ -423,7 +492,7 @@ public class Account {
     /**
      * Fetch the logged in user's profile and cache the username on this account.
      */
-    public void fetchUserProfile() throws Exception {
+    public void fetchUserProfile() throws DiscordException {
         JSONObject me = (JSONObject) fetchJSON("/users/@me");
 
         userId = me.getString("id", null);

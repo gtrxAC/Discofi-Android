@@ -16,6 +16,11 @@ import cc.nnproject.json.JSONArray;
 public class Settings {
     private static final String PREFS_NAME = "s";
 
+    /**
+     * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each device)
+     */
+    public static String deviceVendorID = DiscordUtil.generateRandomUUID();
+
     public static void load(Context c) {
         SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, 0);
 
@@ -36,6 +41,8 @@ public class Settings {
             int activeAccount = settings.getInt("activeAccount", -1);
             Accounts.setActive(activeAccount);
         }
+
+        deviceVendorID = settings.getString("deviceVendorID", DiscordUtil.generateRandomUUID());
     }
 
     public static void save(Context c) {
@@ -51,6 +58,7 @@ public class Settings {
         }
 
         editor.putInt("activeAccount", Accounts.getActiveIndex());
+        editor.putString("deviceVendorID", deviceVendorID);
 
         editor.commit();
     }

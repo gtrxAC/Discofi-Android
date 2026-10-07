@@ -91,7 +91,14 @@ public class AccountListActivity extends Activity {
 
             for (int i = 0; i < Accounts.list.size(); i++) {
                 Account acc = Accounts.list.elementAt(i);
-                items.add(acc.getDisplayTitle());
+
+                try {
+                    items.add(acc.getDisplayTitle());
+                }
+                catch (DiscordException e) {
+                    e.printStackTrace();
+                    items.add("(unknown)");
+                }
             }
 
             ArrayAdapter<String> adapter =
@@ -131,10 +138,20 @@ public class AccountListActivity extends Activity {
 
     private void promptDelete(final int position) {
         final Account acc = Accounts.list.elementAt(position);
+
+        String name;
+        try {
+            name = acc.getDisplayTitle();
+        }
+        catch (DiscordException e) {
+            e.printStackTrace();
+            name = "(unknown)";
+        }
+
         new AlertDialog.Builder(this)
                 .setTitle("Delete account")
                 .setMessage("Are you sure you want to delete the account '" +
-                        acc.getDisplayTitle() + "' from the list?")
+                        name + "' from the list?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Accounts.list.removeElement(acc);

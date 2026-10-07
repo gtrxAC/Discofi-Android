@@ -1,7 +1,6 @@
 package fi.gtrxac.discord;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import cc.nnproject.json.JSON;
+import java.util.Hashtable;
+
 import cc.nnproject.json.JSONObject;
-import fi.gtrxac.bluewap.http.HTTP;
 
 /**
  * Created by gtrx on 29.8.2026.
@@ -127,13 +126,13 @@ public class LoginActivity extends Activity {
                         try {
                             App.pendingAccount.fetchUserProfile();
                         }
-                        catch (final Exception e) {
+                        catch (final DiscordException e) {
                             App.pendingAccount.token = null;
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     dialog.dismiss();
                                     if (isFinishing()) return;
-                                    showLoginError(e);
+                                    e.show(c);
                                 }
                             });
                             return;
@@ -161,43 +160,27 @@ public class LoginActivity extends Activity {
                     Account acc = App.pendingAccount;
 
                     // 1. Get a login fingerprint from the experiments endpoint
-                    HTTP expRequest = acc.createApiRequest(
-                            "GET", "/experiments?with_guild_experiments=true");
-                    int expCode = expRequest.getResponseCode();
-                    String expText = expRequest.getResponseString();
-
-                    if (expCode < 200 || expCode >= 300) {
-                        throw new Exception(acc.getApiErrorMessage(expCode, expText));
-                    }
-
-                    String fingerprint = JSON.getObject(expText).getString("fingerprint", null);
+                    JSONObject experiments =
+                            (JSONObject) acc.fetchJSON("/experiments?with_guild_experiments=true");
+                    String fingerprint = experiments.getString("fingerprint", null);
 
                     // 2. Submit email + password
                     JSONObject loginBody = new JSONObject();
                     loginBody.put("login", acc.email);
                     loginBody.put("password", acc.password);
                     loginBody.put("undiscovered_time_to_live", 180);
-                    loginBody.put("login_source", "LoginSource.EMAIL_PW");
                     if (fingerprint != null) {
                         loginBody.put("login_fingerprint", fingerprint);
                     }
 
-                    HTTP loginRequest = acc.createApiRequest("POST", "/auth/login");
+                    Hashtable<String, String> headers = new Hashtable<String, String>();
                     if (fingerprint != null) {
-                        loginRequest.setHeader("X-Fingerprint", fingerprint);
-                    }
-                    loginRequest.setData(loginBody.build());
-
-                    int loginCode = loginRequest.getResponseCode();
-                    String loginText = loginRequest.getResponseString();
-
-                    System.err.println(loginText);
-
-                    if (loginCode < 200 || loginCode >= 300) {
-                        throw new Exception(acc.getApiErrorMessage(loginCode, loginText));
+                        headers.put("X-Fingerprint", fingerprint);
                     }
 
-                    JSONObject loginResponse = JSON.getObject(loginText);
+                    JSONObject loginResponse = (JSONObject) acc.postJSON("/auth/login", loginBody, headers);
+
+                    System.err.println(loginResponse);
 
                     if (loginResponse.getBoolean("mfa", false)) {
                         // 3a. Multi-factor authentication required -> TOTP screen
@@ -217,12 +200,12 @@ public class LoginActivity extends Activity {
                         completeLogin(c, dialog, token);
                     }
                 }
-                catch (final Exception e) {
+                catch (final DiscordException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             dialog.dismiss();
                             if (isFinishing()) return;
-                            showLoginError(e);
+                            e.show(c);
                         }
                     });
                 }
@@ -240,7 +223,7 @@ public class LoginActivity extends Activity {
         try {
             App.pendingAccount.fetchUserProfile();
         }
-        catch (Exception e) {
+        catch (DiscordException e) {
             e.printStackTrace();
         }
 
@@ -261,14 +244,6 @@ public class LoginActivity extends Activity {
         } else {
             r.run();
         }
-    }
-
-    private void showLoginError(Exception e) {
-        new AlertDialog.Builder(this)
-                .setTitle("Login failed")
-                .setMessage(e.getMessage())
-                .setPositiveButton("OK", null)
-                .show();
     }
 
     public static void finishLogin(Context c, String token) {

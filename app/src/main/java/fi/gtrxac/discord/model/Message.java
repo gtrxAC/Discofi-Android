@@ -7,6 +7,8 @@ import java.util.Vector;
 import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONObject;
 
+import fi.gtrxac.discord.DiscordUtil;
+
 public class Message {
     public static final int TYPE_ADDED = 1; // user added another user to group DM
     public static final int TYPE_REMOVED = 2; // user left (or was removed) from group DM
@@ -146,41 +148,12 @@ public class Message {
             catch (Exception e) {}
         }
 
-        timestamp = formatTimestamp();
+        timestamp = DiscordUtil.formatTimestamp(id, false);
 
         if (content.length() == 0 && attachments == null && embeds == null && !isStatus) {
             isStatus = true;
             content = "(unsupported message)";
         }
-    }
-
-    private String formatTimestamp() {
-        Date messageDate = new Date((id >> 22) + SNOWFLAKE_EPOCH);
-        String messageDay = messageDate.toString().substring(0, 10);
-        String currentDay = new Date().toString().substring(0, 10);
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(messageDate);
-        StringBuffer time = new StringBuffer();
-
-        if (currentDay.equals(messageDay)) {
-            int hour = cal.get(Calendar.HOUR_OF_DAY);
-            int minute = cal.get(Calendar.MINUTE);
-
-            time.append(hour);
-            time.append(":");
-            if (minute < 10) time.append("0");
-            time.append(minute);
-        } else {
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-            if (day < 10) time.append("0");
-            time.append(day);
-            time.append("/");
-            int month = cal.get(Calendar.MONTH) + 1;
-            if (month < 10) time.append("0");
-            time.append(month);
-        }
-        return time.toString();
     }
 
     /**

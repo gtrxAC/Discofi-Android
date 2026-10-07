@@ -57,7 +57,12 @@ public class MainActivity extends TabActivity {
             return;
         }
 
-        setTitle(acc.getDisplayTitle());
+        try {
+            setTitle(acc.getDisplayTitle());
+        }
+        catch (DiscordException e) {
+            e.printStackTrace();
+        }
 
         TabHost tabHost = getTabHost();
         tabHost.setup();
@@ -124,8 +129,8 @@ public class MainActivity extends TabActivity {
             try {
                 guildsCallback(context, acc.getGuilds(false));
             }
-            catch (Exception e) {
-                e.printStackTrace();
+            catch (DiscordException e) {
+                e.show(context);
             }
         }
         else {
@@ -145,8 +150,8 @@ public class MainActivity extends TabActivity {
             try {
                 dmChannelsCallback(context, acc.getDmChannels(false));
             }
-            catch (Exception e) {
-                e.printStackTrace();
+            catch (DiscordException e) {
+                e.show(context);
             }
         }
         else {
@@ -166,8 +171,8 @@ public class MainActivity extends TabActivity {
             try {
                 inboxCallback(context, acc.getInbox(false));
             }
-            catch (Exception e) {
-                e.printStackTrace();
+            catch (DiscordException e) {
+                e.show(context);
             }
         }
         else {
@@ -193,11 +198,12 @@ public class MainActivity extends TabActivity {
                 }
             });
         }
-        catch (final Exception e) {
+        catch (final DiscordException e) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    fetchFailed("Failed to load servers", e);
+                    showProgress(false);
+                    e.show(context);
                 }
             });
         }
@@ -214,11 +220,12 @@ public class MainActivity extends TabActivity {
                 }
             });
         }
-        catch (final Exception e) {
+        catch (final DiscordException e) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    fetchFailed("Failed to load conversations", e);
+                    showProgress(false);
+                    e.show(context);
                 }
             });
         }
@@ -235,24 +242,15 @@ public class MainActivity extends TabActivity {
                 }
             });
         }
-        catch (final Exception e) {
+        catch (final DiscordException e) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    fetchFailed("Failed to load inbox", e);
+                    showProgress(false);
+                    e.show(context);
                 }
             });
         }
-    }
-
-    private void fetchFailed(String title, Exception e) {
-        showProgress(false);
-
-        new android.app.AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(e.getMessage())
-                .setPositiveButton("OK", null)
-                .show();
     }
 
     public void guildsCallback(Context c, Vector<Guild> guilds) {

@@ -64,6 +64,11 @@ public abstract class HTTP {
 		return this;
 	}
 
+	public HTTP setHeader(Hashtable<String, String> headers) {
+		if (headers != null) requestHeaders.putAll(headers);
+		return this;
+	}
+
 	/**
 	 * Set the data that will be sent to the server with this request.
 	 */

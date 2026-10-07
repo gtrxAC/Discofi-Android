@@ -4,6 +4,7 @@ import fi.gtrxac.discord.model.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
@@ -123,7 +124,7 @@ public class ChatActivity extends Activity {
                         }
                     });
                 }
-                catch (final Exception e) {
+                catch (final DiscordException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (isFinishing()) return;
@@ -136,10 +137,10 @@ public class ChatActivity extends Activity {
         }.start();
     }
 
-    private void showInitialLoadError(final Exception e) {
+    private void showInitialLoadError(final DiscordException e) {
         new AlertDialog.Builder(this)
-                .setTitle("Failed to load messages")
-                .setMessage(e.getMessage())
+                .setTitle(e.getTitle())
+                .setMessage(e.getDisplayMessage())
                 .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         loadInitialMessages();
@@ -189,14 +190,14 @@ public class ChatActivity extends Activity {
                         }
                     });
                 }
-                catch (final Exception e) {
+                catch (final DiscordException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             loadingOlder = false;
                             if (isFinishing()) return;
                             showProgress(false);
                             Toast.makeText(ChatActivity.this,
-                                    "Failed to load older messages: " + e.getMessage(),
+                                    "Failed to load older messages: " + e.message,
                                     Toast.LENGTH_LONG).show();
                         }
                     });
@@ -208,6 +209,7 @@ public class ChatActivity extends Activity {
     private void sendMessage() {
         if (sending) return;
 
+        final Context c = this;
         final String text = composer.getText().toString().trim();
         if (text.length() == 0) return;
 
@@ -238,7 +240,7 @@ public class ChatActivity extends Activity {
                         }
                     });
                 }
-                catch (final Exception e) {
+                catch (final DiscordException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             sending = false;
@@ -247,11 +249,7 @@ public class ChatActivity extends Activity {
                             if (isFinishing()) return;
                             showProgress(false);
 
-                            new AlertDialog.Builder(ChatActivity.this)
-                                    .setTitle("Failed to send message")
-                                    .setMessage(e.getMessage())
-                                    .setPositiveButton("OK", null)
-                                    .show();
+                            e.show(c);
                         }
                     });
                 }

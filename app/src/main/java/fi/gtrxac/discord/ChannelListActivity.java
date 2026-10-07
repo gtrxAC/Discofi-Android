@@ -3,7 +3,9 @@ package fi.gtrxac.discord;
 import fi.gtrxac.discord.model.*;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -89,7 +91,7 @@ public class ChannelListActivity extends Activity {
                         }
                     });
                 }
-                catch (final Exception e) {
+                catch (final DiscordException e) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -130,12 +132,12 @@ public class ChannelListActivity extends Activity {
         ((ChannelListAdapter) channelList.getAdapter()).notifyDataSetChanged();
     }
 
-    private void showError(Exception e) {
-        new android.app.AlertDialog.Builder(this)
-                .setTitle("Failed to load channels")
-                .setMessage(e.getMessage())
-                .setPositiveButton("Retry", new android.content.DialogInterface.OnClickListener() {
-                    public void onClick(android.content.DialogInterface dialog, int which) {
+    private void showError(final DiscordException e) {
+        new AlertDialog.Builder(this)
+                .setTitle(e.getTitle())
+                .setMessage(e.getDisplayMessage())
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
                         loadChannels(guildId);
                     }
                 })
