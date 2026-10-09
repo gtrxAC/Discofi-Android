@@ -478,7 +478,7 @@ public class Account {
     /**
      * Send a message to a channel. Returns the created message.
      */
-    public Message sendMessage(String channelId, String content, String recipientMessageId, boolean mention) throws DiscordException {
+    public Message sendMessage(String channelId, String content, Message recipientMessage, boolean mention) throws DiscordException {
         JSONObject body = new JSONObject();
         body.put("content", content);
         body.put("flags", 0);
@@ -486,10 +486,10 @@ public class Account {
         body.put("tts", false);
 
         // Reply
-        if (recipientMessageId != null) {
+        if (recipientMessage != null) {
             JSONObject ref = new JSONObject();
 
-            ref.put("message_id", recipientMessageId);
+            ref.put("message_id", Long.toString(recipientMessage.id));
             body.put("message_reference", ref);
 
             if (!mention) {

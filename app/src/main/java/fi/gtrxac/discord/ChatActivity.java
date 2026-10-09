@@ -287,7 +287,7 @@ public class ChatActivity extends Activity {
             @Override
             public void run() {
                 try {
-                    final Message created = account.sendMessage(channelId, text, Long.toString(activeReply.id), pingToggle.isChecked());
+                    final Message created = account.sendMessage(channelId, text, activeReply, pingToggle.isChecked());
 
                     runOnUiThread(new Runnable() {
                         public void run() {
