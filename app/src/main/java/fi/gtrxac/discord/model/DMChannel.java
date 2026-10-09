@@ -6,9 +6,7 @@ import cc.nnproject.json.*;
  * Created by gtrx on 3.9.2026.
  */
 
-public class DMChannel {
-    public String id;
-    public String name;
+public class DMChannel extends Channel {
     public String username;
     public boolean isGroup;
     public long lastMessageID;
@@ -16,7 +14,7 @@ public class DMChannel {
     public String iconHash;
 
     public DMChannel(JSONObject data) {
-        id = data.getString("id");
+        super(data);
         isGroup = data.getInt("type") == 3;
 
         String msgIdStr = data.getString("last_message_id");
@@ -26,46 +24,52 @@ public class DMChannel {
             lastMessageID = Long.parseLong(id);
         }
 
-        if (isGroup) {
-            name = data.getString("name", null);
-            if (name == null) {
-                JSONArray recipients = data.getArray("recipients");
-                StringBuffer nameBuf = new StringBuffer();
+        if (isGroup) populateGroupInfo(data);
+        else populateRecipientInfo(data);
+    }
 
-                int i = 0;
-                while (i < recipients.size()) {
-                    JSONObject recipient = recipients.getObject(i);
-                    String name = recipient.getString("global_name", null);
-                    if (name == null) {
-                        name = recipient.getString("username");
-                    }
-                    nameBuf.append(name);
-                    i++;
-                    if (i >= 3 || i >= recipients.size()) break;
-                    nameBuf.append(", ");
-                }
-                name = nameBuf.toString();
-            }
+    private boolean nameHasHashtag() {
+        return false;
+    }
 
-            iconID = id;
-            iconHash = data.getString("icon", null);
-        } else {
-            try {
-                JSONObject recipient = data.getArray("recipients").getObject(0);
+    public boolean isMessageable() {
+        return true;
+    }
 
-                name = recipient.getString("global_name", null);
+    private void populateGroupInfo(JSONObject data) {
+        // No group name -> list the names of up to 3 participants
+        if (name == null) {
+            JSONArray recipients = data.getArray("recipients");
+            StringBuffer nameBuf = new StringBuffer();
+
+            int i = 0;
+            while (i < recipients.size()) {
+                JSONObject recipient = recipients.getObject(i);
+                String name = recipient.getString("global_name", null);
                 if (name == null) {
                     name = recipient.getString("username");
-                } else {
-                    username = recipient.getString("username", null);
                 }
-
-                iconID = recipient.getString("id");
-                iconHash = recipient.getString("avatar");
+                nameBuf.append(name);
+                i++;
+                if (i >= 3 || i >= recipients.size()) break;
+                nameBuf.append(", ");
             }
-            catch (Exception e) {}
+            name = nameBuf.toString();
         }
-        if (name == null) name = "(unknown)";
+    }
+
+    private void populateRecipientInfo(JSONObject data) {
+        try {
+            JSONObject recipient = data.getArray("recipients").getObject(0);
+
+            name = recipient.getString("global_name", null);
+            if (name == null) {
+                name = recipient.getString("username");
+            } else {
+                username = recipient.getString("username", null);
+            }
+        }
+        catch (Exception e) {}
     }
 
     public DMChannel(JSONArray saveData) {

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<fi.gtrxac.discord.MessageRowLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:paddingBottom="2dp"
     android:paddingLeft="4dp"
-    android:paddingRight="4dp">
+    android:paddingRight="4dp"
+    android:paddingTop="2dp">
     <LinearLayout
         android:id="@+id/msg_reply"
         android:layout_width="wrap_content"
@@ -91,7 +93,7 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
             </LinearLayout>
 
-            <TextView
+            <fi.gtrxac.discord.LinkTextView
                 android:id="@+id/msg_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -126,4 +128,4 @@
             android:textAppearance="?android:attr/textAppearanceSmall"/>
     </LinearLayout>
 
-</LinearLayout>
+</fi.gtrxac.discord.MessageRowLayout>

@@ -67,19 +67,14 @@ public class DiscordUtil {
 
     public static final long DISCORD_EPOCH = 1420070400000L;
 
-    public static String formatTimestamp(String id, boolean use12hTime) {
-        long timestamp = (Long.parseLong(id) >> 22) + DISCORD_EPOCH;
-        return formatTimestamp(timestamp, use12hTime);
-    }
-
-    public static String formatTimestamp(long timestamp, boolean use12hTime) {
+    public static String formatTimestamp(long id, boolean use12hTime) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         int todayDay = cal.get(Calendar.DAY_OF_MONTH);
         int todayMonth = cal.get(Calendar.MONTH);
         int todayYear = cal.get(Calendar.YEAR);
 
-        cal.setTime(new Date(timestamp));
+        cal.setTime(new Date((id >> 22) + DISCORD_EPOCH));
         int stampDay = cal.get(Calendar.DAY_OF_MONTH);
         int stampMonth = cal.get(Calendar.MONTH);
         int stampYear = cal.get(Calendar.YEAR);

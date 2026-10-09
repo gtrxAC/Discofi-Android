@@ -58,11 +58,11 @@ public class MfaActivity extends Activity {
                     JSONObject body = new JSONObject();
                     body.put("code", code);
                     body.put("ticket", App.pendingTicket);
-                    if (App.pendingFingerprint != null) {
-                        body.put("login_fingerprint", App.pendingFingerprint);
-                    }
+                    body.put("login_source", (Object) null);
+                    body.put("gift_code_sku_id", (Object) null);
+                    body.put("login_instance_id", App.pendingLoginInstanceID);
 
-                    Hashtable<String, String> headers = new Hashtable<String, String>();
+                    Hashtable<String, String> headers = new Hashtable<>();
                     if (App.pendingFingerprint != null) {
                         headers.put("X-Fingerprint", App.pendingFingerprint);
                     }

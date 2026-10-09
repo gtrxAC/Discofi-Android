@@ -168,23 +168,21 @@ public class LoginActivity extends Activity {
                     JSONObject loginBody = new JSONObject();
                     loginBody.put("login", acc.email);
                     loginBody.put("password", acc.password);
-                    loginBody.put("undiscovered_time_to_live", 180);
-                    if (fingerprint != null) {
-                        loginBody.put("login_fingerprint", fingerprint);
-                    }
+                    loginBody.put("undelete", false);
+                    loginBody.put("login_source", (Object) null);
+                    loginBody.put("gift_code_sku_id", (Object) null);
 
-                    Hashtable<String, String> headers = new Hashtable<String, String>();
+                    Hashtable<String, String> headers = new Hashtable<>();
                     if (fingerprint != null) {
                         headers.put("X-Fingerprint", fingerprint);
                     }
 
                     JSONObject loginResponse = (JSONObject) acc.postJSON("/auth/login", loginBody, headers);
 
-                    System.err.println(loginResponse);
-
                     if (loginResponse.getBoolean("mfa", false)) {
                         // 3a. Multi-factor authentication required -> TOTP screen
                         App.pendingTicket = loginResponse.getString("ticket");
+                        App.pendingLoginInstanceID = loginResponse.getString("login_instance_id");
                         App.pendingFingerprint = fingerprint;
 
                         runOnUiThread(new Runnable() {

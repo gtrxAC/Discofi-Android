@@ -22,8 +22,6 @@ public class Message {
     public static final int TYPE_BOOSTED_LEVEL_2 = 10;
     public static final int TYPE_BOOSTED_LEVEL_3 = 11;
 
-    public static final long SNOWFLAKE_EPOCH = 1420070400000L;
-
     public long id;
     public String channelId;
     public User author;

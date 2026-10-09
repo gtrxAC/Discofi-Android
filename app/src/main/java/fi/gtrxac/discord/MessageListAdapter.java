@@ -61,14 +61,6 @@ public class MessageListAdapter extends BaseAdapter {
         return ((Message) messages.elementAt(position)).id;
     }
 
-    public int getViewTypeCount() {
-        return 1;
-    }
-
-    public boolean isEnabled(int position) {
-        return false;
-    }
-
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
@@ -121,6 +113,7 @@ public class MessageListAdapter extends BaseAdapter {
                 holder.content.setVisibility(View.VISIBLE);
                 holder.content.setText(message.content);
                 Linkify.addLinks(holder.content, Pattern.compile("\\bhttps?://[^\\s<>]+", Pattern.CASE_INSENSITIVE), null);
+                holder.content.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
             } else {
                 holder.content.setVisibility(View.GONE);
             }

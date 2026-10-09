@@ -9,11 +9,43 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
         android:divider="@android:color/transparent"
-        android:dividerHeight="4dp"
+        android:dividerHeight="0dp"
         android:stackFromBottom="true" />
+
+    <LinearLayout
+        android:id="@+id/reply_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="46dp"
+        android:background="@android:drawable/bottom_bar"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/reply_to"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reply to"
+            android:textAppearance="?android:attr/textAppearance" />
+
+        <ToggleButton
+            android:id="@+id/ping_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="@ Off"
+            android:textOn="@ On"
+            style="?android:attr/buttonStyleSmall" />
+
+        <ImageButton
+            android:id="@+id/cancel_reply"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_btn_close_panel"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,8 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Message"
-            android:imeOptions="actionSend|flagNoEnterAction"
-            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
+            android:inputType="textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
             android:maxLength="2000"
             android:maxLines="4"
             android:nextFocusRight="@+id/msg_send" />

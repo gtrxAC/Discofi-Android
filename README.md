@@ -12,9 +12,9 @@ Microcord-Android is a new Discord client for legacy Android devices, based on [
 * Sending messages
 * Message timestamps
 * Viewing replies or attachments
+* Sending replies
 
 ### Planned for first release
-* Sending replies
 * Message editing/deleting
 * Token file import
 * HTTP connection over BlueWAP

@@ -7,14 +7,21 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.ClipboardManager;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.Vector;
 
@@ -31,12 +38,20 @@ public class ChatActivity extends Activity {
     private Vector messages;
     private MessageListAdapter adapter;
     private ListView messageList;
+
+    private View replyPanel;
+    private TextView replyTo;
+    private ToggleButton pingToggle;
+    private ImageButton cancelReply;
+
     private EditText composer;
     private Button sendButton;
 
     private boolean initialLoadDone;
     private boolean loadingOlder;
     private boolean sending;
+    private Message activeReply;
+    private boolean mention;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +70,17 @@ public class ChatActivity extends Activity {
         if (channelName != null) setTitle(channelName);
 
         messages = new Vector();
-
         messageList = (ListView) findViewById(R.id.messageList);
+
+        replyPanel = (View) findViewById(R.id.reply_panel);
+        replyTo = (TextView) findViewById(R.id.reply_to);
+        pingToggle = (ToggleButton) findViewById(R.id.ping_toggle);
+        cancelReply = (ImageButton) findViewById(R.id.cancel_reply);
+
         composer = (EditText) findViewById(R.id.messageComposer);
         sendButton = (Button) findViewById(R.id.sendButton);
+
+        registerForContextMenu(messageList);
 
         adapter = new MessageListAdapter(this, messages, account);
         messageList.setAdapter(adapter);
@@ -69,10 +91,16 @@ public class ChatActivity extends Activity {
             }
         });
 
-        composer.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        /*composer.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, android.view.KeyEvent event) {
                 sendMessage();
                 return true;
+            }
+        });*/
+
+        cancelReply.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                replyPanel.setVisibility(View.GONE);
             }
         });
 
@@ -91,6 +119,42 @@ public class ChatActivity extends Activity {
         });
 
         loadInitialMessages();
+    }
+
+    private static final int EDIT_ID = 0;
+    private static final int REPLY_ID = 1;
+    private static final int FORWARD_ID = 2;
+    private static final int COPY_TEXT_ID = 3;
+    private static final int DELETE_ID = 4;
+
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, EDIT_ID, 0, "Edit");
+        menu.add(0, REPLY_ID, 0, "Reply");
+        menu.add(0, FORWARD_ID, 0, "Forward");
+        menu.add(0, COPY_TEXT_ID, 0, "Copy Text");
+        menu.add(0, DELETE_ID, 0,  "Delete");
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Message message = (Message) messageList.getItemAtPosition(info.position);
+
+        switch (item.getItemId()) {
+            case REPLY_ID:
+                activeReply = message;
+                replyPanel.setVisibility(View.VISIBLE);
+                replyTo.setText("Replying to " + message.author.name);
+                return true;
+            case COPY_TEXT_ID:
+                ClipboardManager clipboard = (ClipboardManager) ChatActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboard.setText(message.content);
+                Toast.makeText(ChatActivity.this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     private void loadInitialMessages() {
@@ -216,13 +280,14 @@ public class ChatActivity extends Activity {
         sending = true;
         composer.setEnabled(false);
         sendButton.setEnabled(false);
+        replyPanel.setVisibility(View.GONE);
         showProgress(true);
 
         new Thread() {
             @Override
             public void run() {
                 try {
-                    final Message created = account.sendMessage(channelId, text);
+                    final Message created = account.sendMessage(channelId, text, Long.toString(activeReply.id), pingToggle.isChecked());
 
                     runOnUiThread(new Runnable() {
                         public void run() {
