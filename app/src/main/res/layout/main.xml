@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:gravity="center"
-                    android:text="No mentions yet."
+                    android:text="@string/inbox_empty"
                     android:visibility="gone" />
 
                 <ListView

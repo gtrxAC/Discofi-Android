@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="No accounts defined. Select 'Add account' to log in."
+        android:text="@string/no_accounts"
         android:textAlignment="center" />
 
     <ListView
@@ -21,6 +21,6 @@
         android:id="@+id/addAccountButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add account" />
+        android:text="@string/add_account" />
 
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -39,9 +40,6 @@ public class MainActivity extends TabActivity {
     private Vector<DMChannel> dmChannels = new Vector<>();
     private Vector<Message> inbox = new Vector<>();
 
-    private static final int MENU_REFRESH = 0;
-    private static final int MENU_LOG_OUT = 1;
-
     public void onCreate(Bundle savedInstanceState) {
 		final Context context = this;
 		super.onCreate(savedInstanceState);
@@ -68,17 +66,17 @@ public class MainActivity extends TabActivity {
         tabHost.setup();
 
         TabHost.TabSpec guildsTab = tabHost.newTabSpec("guildsTab");
-        guildsTab.setIndicator("Servers");
+        guildsTab.setIndicator(getResources().getString(R.string.guilds));
         guildsTab.setContent(R.id.guildsTab);
         tabHost.addTab(guildsTab);
 
         TabHost.TabSpec dmsTab = tabHost.newTabSpec("dmsTab");
-        dmsTab.setIndicator("Direct Messages");
+        dmsTab.setIndicator(getResources().getString(R.string.dms));
         dmsTab.setContent(R.id.dmsTab);
         tabHost.addTab(dmsTab);
 
         TabHost.TabSpec inboxTab = tabHost.newTabSpec("inboxTab");
-        inboxTab.setIndicator("Inbox");
+        inboxTab.setIndicator(getResources().getString(R.string.inbox));
         inboxTab.setContent(R.id.inboxTab);
         tabHost.addTab(inboxTab);
 
@@ -116,7 +114,7 @@ public class MainActivity extends TabActivity {
 
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("channelId", dm.id);
-                intent.putExtra("channelName", dm.name);
+                intent.putExtra("channelName", (!dm.isGroup ? "@" : "") + dm.name);
                 startActivity(intent);
             }
         });
@@ -320,18 +318,18 @@ public class MainActivity extends TabActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_REFRESH, 0, "Refresh");
-        menu.add(0, MENU_LOG_OUT, 1, "Log out");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case MENU_REFRESH:
+            case R.id.mainRefresh:
                 refreshCurrentTab();
                 return true;
-            case MENU_LOG_OUT:
+            case R.id.mainLogout:
                 goToLoginScreen();
                 return true;
             default:

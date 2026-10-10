@@ -30,15 +30,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginLeft="3dp"
-            android:text="Reply to"
+            android:text="@string/reply_to"
             android:textAppearance="?android:attr/textAppearance" />
 
         <ToggleButton
             android:id="@+id/ping_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOff="@ Off"
-            android:textOn="@ On"
+            android:textOff="@string/ping_off"
+            android:textOn="@string/ping_on"
             style="?android:attr/buttonStyleSmall" />
 
         <ImageButton
@@ -61,7 +61,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Message"
+            android:hint="@string/msg_composer_hint"
             android:inputType="textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
             android:maxLength="2000"
             android:maxLines="4"
@@ -71,7 +71,7 @@
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send" />
+            android:text="@string/action_send" />
     </LinearLayout>
 
 </LinearLayout>

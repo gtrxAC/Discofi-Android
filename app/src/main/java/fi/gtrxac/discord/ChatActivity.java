@@ -8,8 +8,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.ClipboardManager;
+import android.text.Html;
 import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -51,7 +53,6 @@ public class ChatActivity extends Activity {
     private boolean loadingOlder;
     private boolean sending;
     private Message activeReply;
-    private boolean mention;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,10 +66,6 @@ public class ChatActivity extends Activity {
             return;
         }
 
-        channelId = getIntent().getStringExtra("channelId");
-        String channelName = getIntent().getStringExtra("channelName");
-        if (channelName != null) setTitle(channelName);
-
         messages = new Vector();
         messageList = (ListView) findViewById(R.id.messageList);
 
@@ -81,6 +78,13 @@ public class ChatActivity extends Activity {
         sendButton = (Button) findViewById(R.id.sendButton);
 
         registerForContextMenu(messageList);
+
+        channelId = getIntent().getStringExtra("channelId");
+        String channelName = getIntent().getStringExtra("channelName");
+        if (channelName != null) {
+            setTitle(channelName);
+            composer.setHint(getResources().getString(R.string.msg_composer_hint, channelName));
+        }
 
         adapter = new MessageListAdapter(this, messages, account);
         messageList.setAdapter(adapter);
@@ -121,20 +125,11 @@ public class ChatActivity extends Activity {
         loadInitialMessages();
     }
 
-    private static final int EDIT_ID = 0;
-    private static final int REPLY_ID = 1;
-    private static final int FORWARD_ID = 2;
-    private static final int COPY_TEXT_ID = 3;
-    private static final int DELETE_ID = 4;
-
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, EDIT_ID, 0, "Edit");
-        menu.add(0, REPLY_ID, 0, "Reply");
-        menu.add(0, FORWARD_ID, 0, "Forward");
-        menu.add(0, COPY_TEXT_ID, 0, "Copy Text");
-        menu.add(0, DELETE_ID, 0,  "Delete");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.message, menu);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
@@ -142,12 +137,12 @@ public class ChatActivity extends Activity {
         Message message = (Message) messageList.getItemAtPosition(info.position);
 
         switch (item.getItemId()) {
-            case REPLY_ID:
+            case R.id.messageReply:
                 activeReply = message;
                 replyPanel.setVisibility(View.VISIBLE);
-                replyTo.setText("Replying to " + message.author.name);
+                replyTo.setText(Html.fromHtml(getResources().getString(R.string.reply_to, message.author.name)));
                 return true;
-            case COPY_TEXT_ID:
+            case R.id.messageDelete:
                 ClipboardManager clipboard = (ClipboardManager) ChatActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboard.setText(message.content);
                 Toast.makeText(ChatActivity.this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
@@ -205,12 +200,12 @@ public class ChatActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setTitle(e.getTitle())
                 .setMessage(e.getDisplayMessage())
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.action_retry, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         loadInitialMessages();
                     }
                 })
-                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.action_close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
                     }

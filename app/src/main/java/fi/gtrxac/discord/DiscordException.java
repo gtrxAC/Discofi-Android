@@ -68,7 +68,7 @@ public class DiscordException extends Exception {
         new AlertDialog.Builder(context)
             .setTitle(getTitle())
             .setMessage(getDisplayMessage())
-            .setPositiveButton("OK", null)
+            .setPositiveButton(android.R.string.ok, null)
             .show();
     }
 

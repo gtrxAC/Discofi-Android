@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -108,27 +109,24 @@ public class AccountListActivity extends Activity {
         }
     }
 
-    private static final int EDIT_ID = 0;
-    private static final int DELETE_ID = 1;
-
     private static final int MENU_TEST_TLS = 0;
 
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, EDIT_ID, 0, "Edit");
-        menu.add(0, DELETE_ID, 0,  "Delete");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.account_list, menu);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         switch (item.getItemId()) {
-            case EDIT_ID:
+            case R.id.accountEdit:
                 App.pendingAccount = Accounts.list.elementAt(info.position);
                 startActivity(new Intent(this, ConnectionModeActivity.class));
                 return true;
-            case DELETE_ID:
+            case R.id.accountDelete:
                 promptDelete(info.position);
                 return true;
             default:
@@ -149,17 +147,16 @@ public class AccountListActivity extends Activity {
         }
 
         new AlertDialog.Builder(this)
-                .setTitle("Delete account")
-                .setMessage("Are you sure you want to delete the account '" +
-                        name + "' from the list?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.delete_account)
+                .setMessage(getResources().getString(R.string.delete_warning, name))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Accounts.list.removeElement(acc);
                         Settings.save(AccountListActivity.this);
                         updateAccountList();
                     }
                 })
-                .setNegativeButton("No", null)
+                .setNegativeButton(android.R.string.no, null)
                 .show();
     }
 

@@ -7,20 +7,20 @@
         android:id="@+id/mfaInfoText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enter the 6-digit code from your authenticator app (e.g. Google Authenticator)." />
+        android:text="@string/enter_code" />
 
     <EditText
         android:id="@+id/totpField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Authentication code"
+        android:hint="@string/auth_code"
         android:inputType="number" />
 
     <Button
         android:id="@+id/mfaContinueButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Continue" />
+        android:text="@string/action_continue" />
 
 </LinearLayout>

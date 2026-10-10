@@ -136,12 +136,12 @@ public class ChannelListActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setTitle(e.getTitle())
                 .setMessage(e.getDisplayMessage())
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.action_continue, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         loadChannels(guildId);
                     }
                 })
-                .setNegativeButton("Close", null)
+                .setNegativeButton(R.string.action_close, null)
                 .show();
     }
 

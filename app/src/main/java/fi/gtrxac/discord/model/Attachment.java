@@ -79,8 +79,9 @@ public class Attachment {
     }
 
     public static String formatSize(int bytes) {
-        if (bytes >= 1000000) return (bytes / 1000000) + " MB";
-        if (bytes >= 1000) return (bytes / 1000) + " KB";
-        return bytes + " B";
+        if (bytes >= 1073741824) return (bytes / 1073741824) + " GiB";
+        if (bytes >= 1048576) return (bytes / 1048576) + " MiB";
+        if (bytes >= 1024) return (bytes / 1024) + " KiB";
+        return bytes + " bytes";
     }
 }
