@@ -279,7 +279,7 @@ public class MainActivity extends TabActivity {
 
         for (int i = 0; i < dmChannels.size(); i++) {
             DMChannel dm = dmChannels.elementAt(i);
-            dmChannelItems.add(dm.name);
+            dmChannelItems.add((!dm.isGroup ? "@" : "") + dm.name);
             dmChannelIcons.add(dm.getIconUrl(Accounts.getActive().getCdnUrl()));
         }
 

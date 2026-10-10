@@ -261,12 +261,12 @@ public class Account {
             JSONArray guildIds = guildFolders.getObject(i).getArray("guild_ids");
 
             for (int j = 0; j < guildIds.size(); j++) {
-                String guildId = guildIds.getString(j);
+                long guildId = Long.parseLong(guildIds.getString(j));
 
                 for (int k = 0; k < guildsUnsorted.size(); k++) {
                     Guild guild = (Guild) guildsUnsorted.elementAt(k);
 
-                    if (guild.id.equals(guildId)) {
+                    if (guild.id == guildId) {
                         guilds.addElement(guild);
                         guildsUnsorted.removeElementAt(k);
                         break;
@@ -302,10 +302,7 @@ public class Account {
     }
 
     private void sortDMChannels(Vector dmChannelsUnsorted) {
-        // Get the 20 latest DMs (add into another vector sorted by highest to lowest last message ID)
-        int count = Math.min(20, dmChannelsUnsorted.size());
-
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < dmChannelsUnsorted.size(); i++) {
             long highestID = 0;
             int highestIndex = 0;
 
@@ -428,7 +425,7 @@ public class Account {
     private void groupChannelsIntoCategories(Vector channels, Vector categories) {
         for (int i = 0; i < channels.size(); i++) {
             JSONObject channelJson = (JSONObject) channels.elementAt(i);
-            String parentID = channelJson.getString("parent_id", null);
+            long parentID = Long.parseLong(channelJson.getString("parent_id", null));
 
             // Fallback to default (topmost) category
             ChannelCategory parentCategory = (ChannelCategory) categories.elementAt(0);
@@ -437,7 +434,7 @@ public class Account {
             for (int j = 1; j < categories.size(); j++) {
                 ChannelCategory category = (ChannelCategory) categories.elementAt(j);
 
-                if (category.id != null && category.id.equals(parentID)) {
+                if (category.id == parentID) {
                     parentCategory = category;
                     break;
                 }
@@ -452,14 +449,14 @@ public class Account {
      * Fetch messages from a channel. The returned Vector is ordered oldest
      * first, regardless of the order the API returned them in.
      */
-    public Vector getMessages(String channelId, String before, String after, int limit) throws DiscordException {
+    public Vector getMessages(long channelId, long before, long after, int limit) throws DiscordException {
         StringBuffer url = new StringBuffer("/channels/").append(channelId)
                 .append("/messages?limit=").append(limit);
 
         if (useProxy) url.append("&droidcord=1");
-        if (before != null) {
+        if (before != 0) {
             url.append("&before=").append(before);
-        } else if (after != null) {
+        } else if (after != 0) {
             url.append("&after=").append(after);
         }
 
@@ -478,7 +475,7 @@ public class Account {
     /**
      * Send a message to a channel. Returns the created message.
      */
-    public Message sendMessage(String channelId, String content, Message recipientMessage, boolean mention) throws DiscordException {
+    public Message sendMessage(long channelId, String content, Message recipientMessage, boolean mention) throws DiscordException {
         JSONObject body = new JSONObject();
         body.put("content", content);
         body.put("flags", 0);
@@ -499,7 +496,7 @@ public class Account {
             }
         }
 
-        JSONObject created = (JSONObject) postJSON("/channels/" + channelId + "/messages", body);
+        JSONObject created = (JSONObject) postJSON("/channels/" + Long.toString(channelId) + "/messages", body);
         return new Message(created);
     }
 

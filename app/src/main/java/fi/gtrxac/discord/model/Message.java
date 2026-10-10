@@ -164,7 +164,7 @@ public class Message {
      */
     public boolean shouldShowAuthor(Message above, long clusterStart) {
         // Different authors -> true
-        if (!above.author.id.equals(author.id)) return true;
+        if (above.author.id != author.id) return true;
 
         // This message is a reply -> true
         if (replyAuthor != null) return true;

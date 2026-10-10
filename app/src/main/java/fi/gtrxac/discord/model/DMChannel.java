@@ -10,7 +10,7 @@ public class DMChannel extends Channel {
     public String username;
     public boolean isGroup;
     public long lastMessageID;
-    public String iconID;  // for groups, group ID. for users, recipient ID (not DM channel ID)
+    public long iconID;  // for groups, group ID. for users, recipient ID (not DM channel ID)
     public String iconHash;
 
     public DMChannel(JSONObject data) {
@@ -21,14 +21,14 @@ public class DMChannel extends Channel {
         if (msgIdStr != null) {
             lastMessageID = Long.parseLong(msgIdStr);
         } else {
-            lastMessageID = Long.parseLong(id);
+            lastMessageID = id;
         }
 
         if (isGroup) populateGroupInfo(data);
         else populateRecipientInfo(data);
     }
 
-    private boolean nameHasHashtag() {
+    protected boolean nameHasHashtag() {
         return false;
     }
 
@@ -56,6 +56,8 @@ public class DMChannel extends Channel {
             }
             name = nameBuf.toString();
         }
+        iconID = id;
+        iconHash = data.getString("icon", null);
     }
 
     private void populateRecipientInfo(JSONObject data) {
@@ -68,23 +70,25 @@ public class DMChannel extends Channel {
             } else {
                 username = recipient.getString("username", null);
             }
+            iconID = Long.parseLong(recipient.getString("id"));
+            iconHash = recipient.getString("avatar", null);
         }
         catch (Exception e) {}
     }
 
     public DMChannel(JSONArray saveData) {
-        id = saveData.getString(0);
+        id = saveData.getLong(0);
         name = saveData.getString(1);
         username = saveData.getString(2, null);
         isGroup = saveData.getBoolean(3, false);
         lastMessageID = saveData.getLong(4, 0);
-        iconID = saveData.getString(5, null);
+        iconID = saveData.getLong(5, 0);
         iconHash = saveData.getString(6, null);
     }
 
     public String getIconUrl(String cdnUrl) {
-        if (iconHash == null || iconID == null || cdnUrl == null) return null;
-        return cdnUrl + (isGroup ? "/channel-icons/" : "/avatars/") + iconID + "/" + iconHash + ".png?size=64";
+        if (iconHash == null || iconID == 0 || cdnUrl == null) return null;
+        return cdnUrl + (isGroup ? "/channel-icons/" : "/avatars/") + Long.toString(iconID) + "/" + iconHash + ".png?size=64";
     }
 
     public JSONArray toJSON() {
@@ -94,7 +98,7 @@ public class DMChannel extends Channel {
         result.add(username);
         result.add(isGroup);
         result.add(lastMessageID);
-        if (iconID != null || iconHash != null) result.add(iconID);
+        if (iconID != 0 || iconHash != null) result.add(iconID);
         if (iconHash != null) result.add(iconHash);
         return result;
     }

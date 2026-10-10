@@ -8,12 +8,12 @@ import cc.nnproject.json.JSONObject;
  */
 
 public class Guild {
-    public String id;
+    public long id;
     public String name;
     public String iconHash;
 
     public Guild(JSONObject data) {
-        id = data.getString("id");
+        id = Long.parseLong(data.getString("id"));
 
         if (data.has("name")) {
             name = data.getString("name");
@@ -29,14 +29,14 @@ public class Guild {
     }
 
     public Guild(JSONArray saveData) {
-        id = saveData.getString(0);
+        id = saveData.getLong(0);
         name = saveData.getString(1);
         iconHash = saveData.getString(2, null);
     }
 
     public String getIconUrl(String cdnUrl) {
         if (iconHash == null || cdnUrl == null) return null;
-        return cdnUrl + "/icons/" + id + "/" + iconHash + ".png?size=64";
+        return cdnUrl + "/icons/" + Long.toString(id) + "/" + iconHash + ".png?size=64";
     }
 
     public JSONArray toJSON() {

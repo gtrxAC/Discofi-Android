@@ -1,17 +1,19 @@
 package fi.gtrxac.bluewap.http;
 
+import android.os.Build;
+
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
 
 import javax.microedition.io.HttpConnection;
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLException;
 
 import tech.alicesworld.ModernConnector.ModernConnector;
 
 public class StandardHTTP extends HTTP {
-	private HttpURLConnection conn;
+	private HttpsURLConnection conn;
 	private HttpConnection modernConn;
 
 	public StandardHTTP(String method, String url) {
@@ -23,7 +25,7 @@ public class StandardHTTP extends HTTP {
 			return makePlatformRequest();
 		}
 		catch (Exception e) {
-			// fallback to modernconnector for older android versions
+			// Fallback to Modernconnector for older Android versions
 			closeTransport();
 			return makeModernConnectorRequest();
 		}
@@ -35,7 +37,12 @@ public class StandardHTTP extends HTTP {
 
 		for (int redirects = 0; redirects < 5; redirects++) {
 			URL parsed = new URL(currentUrl);
-			conn = (HttpURLConnection) parsed.openConnection();
+			conn = (HttpsURLConnection) parsed.openConnection();
+			// Enable TLS 1.2 on Android 4.1-4.4
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
+			    Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+				conn.setSSLSocketFactory(new TLSSocketFactory());
+			}
 			conn.setInstanceFollowRedirects(false);
 			conn.setRequestMethod(currentMethod);
 

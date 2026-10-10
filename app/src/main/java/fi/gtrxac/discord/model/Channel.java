@@ -13,7 +13,7 @@ public class Channel {
     public static final int TYPE_GUILD_FORUM = 15;
     public static final int TYPE_GUILD_MEDIA = 16;
 
-    public String id;
+    public long id;
     public String name;
     public int type;
     public String parentId;
@@ -22,7 +22,7 @@ public class Channel {
     public Channel() {}
 
     public Channel(JSONObject data) {
-        id = data.getString("id");
+        id = Long.parseLong(data.getString("id"));
         type = data.getInt("type", 0);
         name = data.getString("name", null);
         parentId = data.getString("parent_id", null);
@@ -32,7 +32,7 @@ public class Channel {
         if (name == null) name = "(unknown)";
     }
 
-    private boolean nameHasHashtag() {
+    protected boolean nameHasHashtag() {
         // Voice channels are displayed without a hashtag
         return type != TYPE_GUILD_VOICE;
     }

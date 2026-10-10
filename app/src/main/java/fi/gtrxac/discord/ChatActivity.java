@@ -35,7 +35,7 @@ public class ChatActivity extends Activity {
     public static final int MESSAGE_LOAD_COUNT = 25;
 
     private Account account;
-    private String channelId;
+    private long channelId;
 
     private Vector messages;
     private MessageListAdapter adapter;
@@ -79,7 +79,7 @@ public class ChatActivity extends Activity {
 
         registerForContextMenu(messageList);
 
-        channelId = getIntent().getStringExtra("channelId");
+        channelId = getIntent().getLongExtra("channelId", 0);
         String channelName = getIntent().getStringExtra("channelName");
         if (channelName != null) {
             setTitle(channelName);
@@ -162,7 +162,7 @@ public class ChatActivity extends Activity {
             public void run() {
                 try {
                     final Vector result =
-                            account.getMessages(channelId, null, null, MESSAGE_LOAD_COUNT);
+                            account.getMessages(channelId, 0, 0, MESSAGE_LOAD_COUNT);
 
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -227,7 +227,7 @@ public class ChatActivity extends Activity {
             public void run() {
                 try {
                     final Vector older = account.getMessages(
-                            channelId, Long.toString(first.id), null, MESSAGE_LOAD_COUNT);
+                            channelId, first.id, 0, MESSAGE_LOAD_COUNT);
 
                     runOnUiThread(new Runnable() {
                         public void run() {
