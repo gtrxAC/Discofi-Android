@@ -25,7 +25,7 @@ import java.util.Vector;
  */
 public class ChannelListActivity extends Activity {
     private Account account;
-    private String guildId;
+    private long guildId;
     private Vector categories;
     private Vector rows;
     private ListView channelList;
@@ -42,8 +42,7 @@ public class ChannelListActivity extends Activity {
             return;
         }
 
-        String guildId = getIntent().getStringExtra("guildId");
-        this.guildId = guildId;
+        guildId = getIntent().getLongExtra("guildId", 0);
         String guildName = getIntent().getStringExtra("guildName");
         if (guildName != null) setTitle(guildName);
 
@@ -74,7 +73,7 @@ public class ChannelListActivity extends Activity {
         loadChannels(guildId);
     }
 
-    private void loadChannels(final String guildId) {
+    private void loadChannels(final long guildId) {
         showProgress(true);
 
         new Thread() {

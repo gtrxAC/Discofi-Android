@@ -19,7 +19,7 @@ import util.Base64;
 public class Account {
     public String token;
     public String username;
-    public String userId;
+    public long userId;
 
     public boolean useProxy;
     public boolean useGateway = true;
@@ -105,10 +105,10 @@ public class Account {
 
     public String getDisplayTitle() throws DiscordException {
         if (username != null) return username;
-        return getUserID();
+        return Long.toString(getUserID());
     }
 
-    public String getUserID() throws DiscordException {
+    public long getUserID() throws DiscordException {
         return DiscordUtil.getUserIDFromToken(token);
     }
 
@@ -348,8 +348,8 @@ public class Account {
      * Get a guild's channels grouped into sorted categories.
      * Returns a Vector of ChannelCategory.
      */
-    public Vector getGuildChannels(String guildId) throws DiscordException {
-        JSONArray channelsJson = (JSONArray) fetchJSON("/guilds/" + guildId + "/channels");
+    public Vector getGuildChannels(long guildId) throws DiscordException {
+        JSONArray channelsJson = (JSONArray) fetchJSON("/guilds/" + Long.toString(guildId) + "/channels");
         return parseGuildChannels(channelsJson);
     }
 
@@ -506,7 +506,7 @@ public class Account {
     public void fetchUserProfile() throws DiscordException {
         JSONObject me = (JSONObject) fetchJSON("/users/@me");
 
-        userId = me.getString("id", null);
+        userId = Long.parseLong(me.getString("id", null));
         String globalName = me.getString("global_name", null);
         username = globalName != null ? globalName : me.getString("username", null);
     }

@@ -14,7 +14,7 @@ public class DiscordUtil {
         return result;
     }
 
-    public static String getUserIDFromToken(String token) throws DiscordException {
+    public static long getUserIDFromToken(String token) throws DiscordException {
         // StringBuffer id = new StringBuffer();
         int b64idLength = token.indexOf('.');
 
@@ -30,7 +30,7 @@ public class DiscordUtil {
         String id = new String(idBytes);
 
         try {
-            return Long.toString(Long.parseLong(id));
+            return Long.parseLong(id);
         }
         catch (Exception e) {
             throw new DiscordException(
