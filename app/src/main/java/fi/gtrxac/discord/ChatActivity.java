@@ -142,7 +142,7 @@ public class ChatActivity extends Activity {
                 replyPanel.setVisibility(View.VISIBLE);
                 replyTo.setText(Html.fromHtml(getResources().getString(R.string.reply_to, message.author.name)));
                 return true;
-            case R.id.messageDelete:
+            case R.id.messageCopy:
                 ClipboardManager clipboard = (ClipboardManager) ChatActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboard.setText(message.content);
                 Toast.makeText(ChatActivity.this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
