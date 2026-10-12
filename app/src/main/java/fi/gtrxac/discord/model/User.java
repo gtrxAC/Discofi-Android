@@ -7,6 +7,8 @@ public class User {
     public String username;
     public String name;
     public String iconHash;
+    public boolean bot;
+    public boolean system;
 
     public User() {}
 
@@ -17,6 +19,8 @@ public class User {
         if (name == null) name = username;
         if (name == null) name = "(no name)";
         iconHash = data.getString("avatar", null);
+        bot = data.getBoolean("bot", false);
+        system = data.getBoolean("system", false);
     }
 
     public String getAvatarUrl(String cdnUrl) {

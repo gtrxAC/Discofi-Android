@@ -33,8 +33,7 @@ public class Message {
     public boolean isStatus;
 
     // reply rendering
-    public User replyAuthor;
-    public String replyContent;
+    public Message reply;
 
     // attachments (images, videos and other files) shown under the content
     public Vector attachments;
@@ -105,12 +104,7 @@ public class Message {
             }
         } else {
             try {
-                JSONObject refObj = data.getObject("referenced_message");
-                replyAuthor = new User(refObj.getObject("author"));
-                replyContent = refObj.getString("content", null);
-                if (replyContent == null || replyContent.length() == 0) {
-                    replyContent = "(no content)";
-                }
+                reply = new Message(data.getObject("referenced_message"));
             }
             catch (Exception e) {}
 
@@ -209,7 +203,7 @@ public class Message {
         if (above.author.id != author.id) return true;
 
         // This message is a reply -> true
-        if (replyAuthor != null) return true;
+        if (reply != null) return true;
 
         // This message only consists of an attachment/embed -> true
         if ((attachments != null || embeds != null) && content.length() == 0) return true;

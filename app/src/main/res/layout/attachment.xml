@@ -14,7 +14,6 @@
         android:id="@+id/attachment_filename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="File name"
         android:textAppearance="?android:attr/textAppearance"
         android:textStyle="bold" />
 
@@ -22,7 +21,6 @@
         android:id="@+id/attachment_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0 byte"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>

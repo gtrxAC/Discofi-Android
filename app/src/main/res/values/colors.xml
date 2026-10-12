@@ -5,4 +5,5 @@
     <color name="quote_color">#808080</color>
     <color name="mention_background">#4D5865F2</color>
     <color name="mention_foreground">#E0E3FF</color>
+    <color name="badge_background">#5865F2</color>
 </resources>

@@ -111,6 +111,15 @@ public class MessageListAdapter extends BaseAdapter {
                 holder.metadata.setVisibility(View.VISIBLE);
                 holder.avatar.getLayoutParams().height = dp(48);
                 holder.author.setText(message.author.name);
+                if (message.author.bot) {
+                    holder.badge.setVisibility(View.VISIBLE);
+                    holder.badge.setText(R.string.badge_bot);
+                } else if (message.author.system) {
+                    holder.badge.setVisibility(View.VISIBLE);
+                    holder.badge.setText(R.string.badge_system);
+                } else {
+                    holder.badge.setVisibility(View.GONE);
+                }
                 holder.timestamp.setText(message.timestamp);
                 loadAvatar(holder.avatar, message.author.getAvatarUrl(account.getCdnUrl()));
             } else {
@@ -119,18 +128,31 @@ public class MessageListAdapter extends BaseAdapter {
             }
 
             // Reply preview
-            if (message.replyAuthor != null) {
+            if (message.reply != null) {
                 holder.reply.setVisibility(View.VISIBLE);
-                loadAvatar(holder.replyAvatar, message.replyAuthor.getAvatarUrl(account.getCdnUrl()));
-                holder.replyAuthor.setText(message.replyAuthor.name);
-                holder.replyContent.setText(message.replyContent);
+                loadAvatar(holder.replyAvatar, message.reply.author.getAvatarUrl(account.getCdnUrl()));
+                holder.replyAuthor.setText(message.reply.author.name);
+                if (message.reply.author.bot) {
+                    holder.replyBadge.setVisibility(View.VISIBLE);
+                    holder.replyBadge.setText(R.string.badge_bot);
+                } else if (message.reply.author.system) {
+                    holder.replyBadge.setVisibility(View.VISIBLE);
+                    holder.replyBadge.setText(R.string.badge_system);
+                } else {
+                    holder.replyBadge.setVisibility(View.GONE);
+                }
+                if (message.reply.content.length() > 0) {
+                    MarkdownRenderer renderer = new MarkdownRenderer(context, message.reply);
+                    holder.replyContent.setText(renderer.render(message.reply.content));
+                } else {
+                    holder.replyContent.setVisibility(View.GONE);
+                }
             } else {
                 holder.reply.setVisibility(View.GONE);
             }
 
             if (message.content.length() > 0) {
                 holder.content.setVisibility(View.VISIBLE);
-                holder.content.setText(message.content);
                 MarkdownRenderer renderer = new MarkdownRenderer(context, message);
                 holder.content.setText(renderer.render(message.content));
                 holder.content.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
@@ -496,6 +518,7 @@ public class MessageListAdapter extends BaseAdapter {
         View msg;
         View metadata;
         TextView author;
+        TextView badge;
         TextView timestamp;
         LinkTextView content;
         ImageView avatar;
@@ -503,6 +526,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         View reply;
         TextView replyAuthor;
+        TextView replyBadge;
         TextView replyContent;
         ImageView replyAvatar;
 
@@ -514,6 +538,7 @@ public class MessageListAdapter extends BaseAdapter {
             msg = view.findViewById(R.id.message);
             metadata = view.findViewById(R.id.msg_metadata);
             author = (TextView) view.findViewById(R.id.msg_author);
+            badge = (TextView) view.findViewById(R.id.msg_badge);
             timestamp = (TextView) view.findViewById(R.id.msg_timestamp);
             content = (LinkTextView) view.findViewById(R.id.msg_content);
             avatar = (ImageView) view.findViewById(R.id.msg_avatar);
@@ -521,6 +546,7 @@ public class MessageListAdapter extends BaseAdapter {
 
             reply = view.findViewById(R.id.msg_reply);
             replyAuthor = (TextView) view.findViewById(R.id.reply_author);
+            replyBadge = (TextView) view.findViewById(R.id.reply_badge);
             replyContent = (TextView) view.findViewById(R.id.reply_content);
             replyAvatar = (ImageView) view.findViewById(R.id.reply_avatar);
 

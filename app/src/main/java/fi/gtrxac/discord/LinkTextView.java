@@ -36,9 +36,18 @@ public class LinkTextView extends TextView {
         linkHit = false;
         if (action == MotionEvent.ACTION_DOWN) {
             CharSequence text = getText();
-            setLongClickable(text instanceof Spannable
+            boolean clickable = text instanceof Spannable
                     && LocalLinkMovementMethod.INSTANCE.findLinkAt(
-                            this, (Spannable) text, event) != null);
+                            this, (Spannable) text, event) != null;
+            setLongClickable(clickable);
+            if (!clickable) {
+                return false;
+            }
+        } else if (!linkGesture) {
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                setLongClickable(false);
+            }
+            return false;
         }
 
         super.onTouchEvent(event);
