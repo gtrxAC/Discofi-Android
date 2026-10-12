@@ -236,7 +236,7 @@ public class ChatActivity extends Activity {
                             showProgress(false);
 
                             if (older.size() > 0) {
-                                for (int i = 0; i < older.size(); i++) {
+                                for (int i = older.size() - 1; i >= 0; i--) {
                                     messages.insertElementAt(older.elementAt(i), 0);
                                 }
                                 cluster();

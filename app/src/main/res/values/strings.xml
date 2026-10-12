@@ -52,5 +52,6 @@
     <string name="badge_bot">APP</string>
     <string name="badge_webhook">WEBHOOK</string>
     <string name="badge_system">SYSTEM</string>
+    <string name="edited">(edited)</string>
 
 </resources>

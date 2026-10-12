@@ -28,6 +28,8 @@ public class Message {
     public User author;
     public String content;
     public String timestamp;
+    public String timestampIso;
+    public String editedTimestampIso;
 
     // is status message? (user joined/left/boosted) - affects rendering
     public boolean isStatus;
@@ -51,6 +53,8 @@ public class Message {
         channelId = data.getString("channel_id", null);
         author = new User(data.getObject("author"));
         content = data.getString("content", "");
+        timestampIso = data.getString("timestamp");
+        editedTimestampIso = data.getString("edited_timestamp", null);
         mentionEveryone = data.getBoolean("mention_everyone", false);
 
         int t = data.getInt("type", 0);

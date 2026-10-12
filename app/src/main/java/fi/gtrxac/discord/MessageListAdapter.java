@@ -9,8 +9,10 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.format.DateFormat;
 import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
 import android.text.util.Linkify;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -154,7 +156,14 @@ public class MessageListAdapter extends BaseAdapter {
             if (message.content.length() > 0) {
                 holder.content.setVisibility(View.VISIBLE);
                 MarkdownRenderer renderer = new MarkdownRenderer(context, message);
-                holder.content.setText(renderer.render(message.content));
+                SpannableStringBuilder content = renderer.render(message.content);
+                if (message.editedTimestampIso != null) {
+                    int start = content.length();
+                    content.append(" " + context.getResources().getString(R.string.edited));
+                    int end = content.length();
+                    content.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+                holder.content.setText(content);
                 holder.content.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
             } else {
                 holder.content.setVisibility(View.GONE);
