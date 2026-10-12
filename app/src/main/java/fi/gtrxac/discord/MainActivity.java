@@ -303,7 +303,7 @@ public class MainActivity extends TabActivity {
                 Message m = inbox.elementAt(i);
                 m.showAuthor = true;
             }
-            inboxList.setAdapter(new MessageListAdapter(c, inbox, Accounts.getActive()));
+            inboxList.setAdapter(new MessageListAdapter(c, inbox, Accounts.getActive(), false));
         }
 
         showProgress(false);

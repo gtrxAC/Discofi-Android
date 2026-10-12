@@ -2,6 +2,7 @@ package fi.gtrxac.discord.model;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import cc.nnproject.json.JSONArray;
@@ -40,6 +41,10 @@ public class Message {
     // embeds (link previews and other rich content) shown under the attachments
     public Vector embeds;
 
+    // mentions to be parsed by the markdown renderer
+    public Hashtable mentions;
+    public boolean mentionEveryone;
+
     public boolean showAuthor;
 
     public Message(JSONObject data) {
@@ -47,6 +52,7 @@ public class Message {
         channelId = data.getString("channel_id", null);
         author = new User(data.getObject("author"));
         content = data.getString("content", "");
+        mentionEveryone = data.getBoolean("mention_everyone", false);
 
         int t = data.getInt("type", 0);
         if (t >= TYPE_ADDED && t <= TYPE_BOOSTED_LEVEL_3) {
@@ -141,6 +147,42 @@ public class Message {
                 if (stickers.size() >= 1) {
                     if (content.length() > 0) content += "\n";
                     content += "(sticker: " + stickers.getObject(0).getString("name", "unknown") + ")";
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                JSONArray mentionArray = data.getArray("mentions");
+                for (int i = 0; i < mentionArray.size(); i++) {
+                    try {
+                        JSONObject mention = mentionArray.getObject(i);
+
+                        String id = mention.getString("id", null);
+                        String name = null;
+
+                        try {
+                            // guild messages nest the user object and add a member part
+                            JSONObject user = mention.getObject("user");
+                            id = user.getString("id", id);
+                            name = user.getString("global_name", null);
+                            if (name == null) name = user.getString("username", null);
+                        }
+                        catch (Exception e) {}
+
+                        if (name == null) name = mention.getString("global_name", null);
+                        if (name == null) name = mention.getString("username", null);
+
+                        try {
+                            String nick = mention.getObject("member").getString("nick", null);
+                            if (nick != null) name = nick;
+                        }
+                        catch (Exception e) {}
+
+                        if (id == null || name == null) continue;
+                        if (mentions == null) mentions = new Hashtable<String, String>();
+                        mentions.put(id, name);
+                    }
+                    catch (Exception e) {}
                 }
             }
             catch (Exception e) {}

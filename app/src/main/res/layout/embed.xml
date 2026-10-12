@@ -60,7 +60,7 @@
             android:textAppearance="?android:attr/textAppearance"
             android:textStyle="bold" />
 
-        <TextView
+        <fi.gtrxac.discord.LinkTextView
             android:id="@+id/embed_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

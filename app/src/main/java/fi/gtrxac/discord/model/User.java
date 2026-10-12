@@ -21,6 +21,6 @@ public class User {
 
     public String getAvatarUrl(String cdnUrl) {
         if (iconHash == null || cdnUrl == null) return null;
-        return cdnUrl + "/avatars/" + Long.toString(id) + "/" + iconHash + ".png?size=64";
+        return cdnUrl + "/avatars/" + id + "/" + iconHash + ".png?size=64";
     }
 }

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="embed_background">#282828</color>
+    <color name="message_mentioned_background">#1AF0B132</color>
+    <color name="quote_color">#808080</color>
+    <color name="mention_background">#4D5865F2</color>
+    <color name="mention_foreground">#E0E3FF</color>
 </resources>

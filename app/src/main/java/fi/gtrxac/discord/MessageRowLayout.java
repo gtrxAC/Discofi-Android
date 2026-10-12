@@ -13,10 +13,6 @@ public class MessageRowLayout extends LinearLayout {
         super(context, attrs);
     }
 
-    public MessageRowLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
     @Override
     public boolean hasFocusable() {
         return false;

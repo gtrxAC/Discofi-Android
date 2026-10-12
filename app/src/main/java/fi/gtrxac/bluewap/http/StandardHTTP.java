@@ -8,7 +8,6 @@ import java.util.Enumeration;
 
 import javax.microedition.io.HttpConnection;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLException;
 
 import tech.alicesworld.ModernConnector.ModernConnector;
 

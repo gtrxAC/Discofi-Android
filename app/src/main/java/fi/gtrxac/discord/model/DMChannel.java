@@ -88,7 +88,7 @@ public class DMChannel extends Channel {
 
     public String getIconUrl(String cdnUrl) {
         if (iconHash == null || iconID == 0 || cdnUrl == null) return null;
-        return cdnUrl + (isGroup ? "/channel-icons/" : "/avatars/") + Long.toString(iconID) + "/" + iconHash + ".png?size=64";
+        return cdnUrl + (isGroup ? "/channel-icons/" : "/avatars/") + iconID + "/" + iconHash + ".png?size=64";
     }
 
     public JSONArray toJSON() {

@@ -36,7 +36,7 @@ public class Guild {
 
     public String getIconUrl(String cdnUrl) {
         if (iconHash == null || cdnUrl == null) return null;
-        return cdnUrl + "/icons/" + Long.toString(id) + "/" + iconHash + ".png?size=64";
+        return cdnUrl + "/icons/" + id + "/" + iconHash + ".png?size=64";
     }
 
     public JSONArray toJSON() {

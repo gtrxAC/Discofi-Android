@@ -36,14 +36,20 @@ public class MessageListAdapter extends BaseAdapter {
     private final Context context;
     private final Vector messages;
     private final Account account;
+    private final boolean enableMention;
     private final LayoutInflater inflater;
     private final int maxAttachmentHeight;
     private final int maxAttachmentWidth;
 
     public MessageListAdapter(Context context, Vector messages, Account account) {
+        this(context, messages, account, true);
+    }
+
+    public MessageListAdapter(Context context, Vector messages, Account account, boolean enableMention) {
         this.context = context;
         this.messages = messages;
         this.account = account;
+        this.enableMention = enableMention;
         this.inflater = LayoutInflater.from(context);
         this.maxAttachmentHeight = context.getResources().getDisplayMetrics().heightPixels;
         this.maxAttachmentWidth = context.getResources().getDisplayMetrics().widthPixels;
@@ -87,6 +93,19 @@ public class MessageListAdapter extends BaseAdapter {
             holder.statusText.setText(sb);
             holder.statusTimestamp.setText(message.timestamp);
         } else {
+            if (enableMention) {
+                try {
+                    if ((message.mentions != null && message.mentions.containsKey(Long.toString(account.getUserID()))) || message.mentionEveryone) {
+                        convertView.setBackgroundResource(R.color.message_mentioned_background);
+                    } else {
+                        convertView.setBackgroundResource(0);
+                    }
+                }
+                catch (Exception e) {
+                    convertView.setBackgroundResource(0);
+                }
+            }
+
             // Author row + avatar: hidden for messages merged into the cluster
             if (message.showAuthor) {
                 holder.metadata.setVisibility(View.VISIBLE);
@@ -112,7 +131,8 @@ public class MessageListAdapter extends BaseAdapter {
             if (message.content.length() > 0) {
                 holder.content.setVisibility(View.VISIBLE);
                 holder.content.setText(message.content);
-                Linkify.addLinks(holder.content, Pattern.compile("\\bhttps?://[^\\s<>]+", Pattern.CASE_INSENSITIVE), null);
+                MarkdownRenderer renderer = new MarkdownRenderer(context, message);
+                holder.content.setText(renderer.render(message.content));
                 holder.content.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
             } else {
                 holder.content.setVisibility(View.GONE);
@@ -216,7 +236,7 @@ public class MessageListAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.embed, container, false);
         View bar = view.findViewById(R.id.embed_color);
         TextView title = (TextView) view.findViewById(R.id.embed_title);
-        TextView description = (TextView) view.findViewById(R.id.embed_content);
+        LinkTextView description = (LinkTextView) view.findViewById(R.id.embed_content);
         TextView siteName = (TextView) view.findViewById(R.id.embed_site_name);
 
         LinearLayout fields = (LinearLayout) view.findViewById(R.id.embed_fields);
@@ -251,7 +271,9 @@ public class MessageListAdapter extends BaseAdapter {
         }
 
         if (embed.description != null) {
-            description.setText(embed.description);
+            MarkdownRenderer renderer = new MarkdownRenderer(context, null);
+            description.setText(renderer.render(embed.description));
+            description.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
         } else {
             description.setVisibility(View.GONE);
         }
@@ -453,7 +475,8 @@ public class MessageListAdapter extends BaseAdapter {
     private void openInBrowser(String url) {
         if (url == null) return;
         try {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
         catch (ActivityNotFoundException e) {
             Toast.makeText(context, "No app can open this link",
@@ -474,7 +497,7 @@ public class MessageListAdapter extends BaseAdapter {
         View metadata;
         TextView author;
         TextView timestamp;
-        TextView content;
+        LinkTextView content;
         ImageView avatar;
         LinearLayout attachments;
 
@@ -492,7 +515,7 @@ public class MessageListAdapter extends BaseAdapter {
             metadata = view.findViewById(R.id.msg_metadata);
             author = (TextView) view.findViewById(R.id.msg_author);
             timestamp = (TextView) view.findViewById(R.id.msg_timestamp);
-            content = (TextView) view.findViewById(R.id.msg_content);
+            content = (LinkTextView) view.findViewById(R.id.msg_content);
             avatar = (ImageView) view.findViewById(R.id.msg_avatar);
             attachments = (LinearLayout) view.findViewById(R.id.msg_attachments);
 

@@ -349,7 +349,7 @@ public class Account {
      * Returns a Vector of ChannelCategory.
      */
     public Vector getGuildChannels(long guildId) throws DiscordException {
-        JSONArray channelsJson = (JSONArray) fetchJSON("/guilds/" + Long.toString(guildId) + "/channels");
+        JSONArray channelsJson = (JSONArray) fetchJSON("/guilds/" + guildId + "/channels");
         return parseGuildChannels(channelsJson);
     }
 
@@ -425,7 +425,7 @@ public class Account {
     private void groupChannelsIntoCategories(Vector channels, Vector categories) {
         for (int i = 0; i < channels.size(); i++) {
             JSONObject channelJson = (JSONObject) channels.elementAt(i);
-            long parentID = Long.parseLong(channelJson.getString("parent_id", null));
+            String parentID = channelJson.getString("parent_id", null);
 
             // Fallback to default (topmost) category
             ChannelCategory parentCategory = (ChannelCategory) categories.elementAt(0);
@@ -434,7 +434,7 @@ public class Account {
             for (int j = 1; j < categories.size(); j++) {
                 ChannelCategory category = (ChannelCategory) categories.elementAt(j);
 
-                if (category.id == parentID) {
+                if (Long.toString(category.id).equals(parentID)) {
                     parentCategory = category;
                     break;
                 }
@@ -496,7 +496,7 @@ public class Account {
             }
         }
 
-        JSONObject created = (JSONObject) postJSON("/channels/" + Long.toString(channelId) + "/messages", body);
+        JSONObject created = (JSONObject) postJSON("/channels/" + channelId + "/messages", body);
         return new Message(created);
     }
 
