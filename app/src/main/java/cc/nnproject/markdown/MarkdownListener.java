@@ -22,7 +22,7 @@ SOFTWARE.
 package cc.nnproject.markdown;
 
 public interface MarkdownListener {
-	
+
 	/**
 	 * @param ctx Context passed by application
 	 */
@@ -31,7 +31,7 @@ public interface MarkdownListener {
 	 * @param ctx Context passed by application
 	 */
 	void endMarkdown(Object ctx);
-	
+
 	/**
 	 * @param ctx Context passed by application
 	 * @param link
@@ -41,7 +41,7 @@ public interface MarkdownListener {
 	 * @param ctx Context passed by application
 	 */
 	void endHref(Object ctx);
-	
+
 	/**
 	 * @param ctx Context passed by application
 	 * @param language Code language, may be null
@@ -51,7 +51,7 @@ public interface MarkdownListener {
 	 * @param ctx Context passed by application
 	 */
 	void endCodeBlock(Object ctx);
-	
+
 	/**
 	 * @param ctx Context passed by application
 	 */
@@ -60,7 +60,7 @@ public interface MarkdownListener {
 	 * @param ctx Context passed by application
 	 */
 	void endBlockQuote(Object ctx);
-	
+
 	/**
 	 * @param ctx Context passed by application
 	 */
@@ -97,7 +97,6 @@ public interface MarkdownListener {
 	void appendLink(Object ctx, String text, int font);
 
 	/**
-	 * Discord user mention (&lt;@id&gt;).
 	 * @param ctx Context passed by application
 	 * @param id Mentioned user ID (digits only)
 	 * @param font bitwise combination of font styles
@@ -105,7 +104,6 @@ public interface MarkdownListener {
 	void appendUserMention(Object ctx, String id, int font);
 
 	/**
-	 * Discord role mention (&lt;@&amp;id&gt;).
 	 * @param ctx Context passed by application
 	 * @param id Mentioned role ID (digits only)
 	 * @param font bitwise combination of font styles
@@ -113,7 +111,6 @@ public interface MarkdownListener {
 	void appendRoleMention(Object ctx, String id, int font);
 
 	/**
-	 * Discord channel mention (&lt;#id&gt;).
 	 * @param ctx Context passed by application
 	 * @param id Mentioned channel ID (digits only)
 	 * @param font bitwise combination of font styles
@@ -121,31 +118,36 @@ public interface MarkdownListener {
 	void appendChannelMention(Object ctx, String id, int font);
 
 	/**
-	 * Discord @everyone ping.
 	 * @param ctx Context passed by application
 	 * @param font bitwise combination of font styles
 	 */
 	void appendEveryone(Object ctx, int font);
 
 	/**
-	 * Discord @here ping.
 	 * @param ctx Context passed by application
 	 * @param font bitwise combination of font styles
 	 */
 	void appendHere(Object ctx, int font);
 
 	/**
-	 * Discord custom emoji (&lt;:name:id&gt; or &lt;a:name:id&gt;).
 	 * @param ctx Context passed by application
 	 * @param name Emoji name without colons
 	 * @param id Emoji ID (digits only)
 	 * @param animated true for &lt;a:name:id&gt;, false for &lt;:name:id&gt;
 	 * @param font bitwise combination of font styles
 	 */
-	void appendEmoji(Object ctx, String name, String id, boolean animated, int font);
+	void appendDiscordEmoji(Object ctx, String name, String id, boolean animated, int font);
 
 	/**
-	 * Discord timestamp (&lt;t:unix&gt; or &lt;t:unix:style&gt;).
+	 * @param ctx Context passed by application
+	 * @param emoji Emoji as written in the source text
+	 * @param codepoints Code points of the emoji, lowercase hex separated
+	 *                    by '-', e.g. "1f469-200d-1f4bb"
+	 * @param font bitwise combination of font styles
+	 */
+	void appendUnicodeEmoji(Object ctx, String emoji, String codepoints, int font);
+
+	/**
 	 * @param ctx Context passed by application
 	 * @param timestamp Unix timestamp in seconds (digits only)
 	 * @param style Timestamp style (t,T,d,D,f,F,R) or null if unspecified
@@ -158,7 +160,7 @@ public interface MarkdownListener {
 	 * @param font bitwise combination of font styles
 	 */
 	void appendInlineSpace(Object ctx, int font);
-	
+
 	/**
 	 * @param ctx Context passed by application
 	 * @param src Image URL

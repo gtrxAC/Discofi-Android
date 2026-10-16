@@ -20,6 +20,8 @@ android {
     }
 }
 
+apply from: 'twemoji.gradle'
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }

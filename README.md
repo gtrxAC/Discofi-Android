@@ -17,6 +17,7 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Viewing attachments
 * Embeds
 * Sending replies
+* Emojis
 
 ### Planned for first release
 * Message editing
@@ -26,7 +27,7 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Theme settings (light/dark)
 
 ### Not implemented
-* Emojis, reactions
+* Reactions
 * Gateway
 * Sending attachments
 * Text formatting (plan is to use [nnmarkdown](https://github.com/shinovon/nnmarkdown))

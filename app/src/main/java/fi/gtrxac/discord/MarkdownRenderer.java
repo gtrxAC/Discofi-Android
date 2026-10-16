@@ -6,18 +6,24 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.BulletSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.QuoteSpan;
 import android.text.style.RelativeSizeSpan;
+import android.text.style.ReplacementSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
@@ -49,21 +55,27 @@ public class MarkdownRenderer implements MarkdownListener {
     private final Context context;
     private final Resources resources;
     private final Message message;
+    private final String cdnUrl;
+    private final TextView view;
 
     private final Hashtable urls = new Hashtable();
     private final Stack<Object> links = new Stack<>();
-    private final Stack<int[]> bulletItems = new Stack<>(); // {spanStart, listIndent}; spanStart < 0 = ordered, no bullet
-    private final Stack<Integer> quoteStarts = new Stack<>(); // one entry per open quote, outermost first
+    private final Stack<int[]> bulletItems = new Stack<>();
+    private final Stack<Integer> quoteStarts = new Stack<>();
     private SpannableStringBuilder out;
     private int listIndent;
     private int codeStart = -1;
     private int subtextStart = -1;
     private int spoilerStart = -1;
+    private boolean emojiOnly;
+    private int emojiCount;
 
-    public MarkdownRenderer(Context context, Message message) {
+    public MarkdownRenderer(Context context, Message message, String cdnUrl, TextView view) {
         this.context = context.getApplicationContext();
         this.resources = context.getResources();
         this.message = message;
+        this.cdnUrl = cdnUrl;
+        this.view = view;
     }
 
     public SpannableStringBuilder render(String markdown) {
@@ -73,6 +85,7 @@ public class MarkdownRenderer implements MarkdownListener {
         Markdown.enableHtmlTags = false;
         Markdown.enableHorizontalLines = false;
         Markdown.enableImages = false;
+        Markdown.enableEmojis = true;
         if (message != null) Markdown.enableDiscordParsing = true;
         Markdown.monospaceIsBold = false;
         Markdown.breakOnNewLine = true;
@@ -83,13 +96,28 @@ public class MarkdownRenderer implements MarkdownListener {
         quoteStarts.clear();
         listIndent = 0;
         codeStart = subtextStart = spoilerStart = -1;
+        emojiOnly = true;
+        emojiCount = 0;
         out = new SpannableStringBuilder();
 
         Markdown.parse(this, out, markdown, urls);
+
+        if (emojiOnly && emojiCount != 0) {
+            for (EmojiSpan emoji : out.getSpans(0, out.length(), EmojiSpan.class)) {
+                emoji.setBig(true);
+            }
+        }
         return out;
     }
 
     // region Helpers
+
+    private static boolean hasContent(CharSequence text) {
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) > ' ') return true;
+        }
+        return false;
+    }
 
     private void applyFontSpans(int start, int end, int font) {
         if ((font & Markdown.FONT_STYLE_BOLD) != 0) {
@@ -258,6 +286,67 @@ public class MarkdownRenderer implements MarkdownListener {
                 SPAN_FLAGS | (priority << Spanned.SPAN_PRIORITY_SHIFT));
     }
 
+    private static class EmojiSpan extends ReplacementSpan {
+        private final Paint.FontMetricsInt metrics = new Paint.FontMetricsInt();
+        private final Paint bitmapPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        private final RectF rect = new RectF();
+        private final TextPaint textPaint = new TextPaint();
+        private boolean big = false;
+        private int size;
+
+        private final Bitmap bitmap;
+        private final String name;
+        private final String url;
+
+        EmojiSpan(Bitmap bitmap) {
+            this.bitmap = bitmap;
+            this.name = null;
+            this.url = null;
+        }
+
+        EmojiSpan(Context context, TextView view, String name, String url) {
+            this.bitmap = null;
+            this.name = name;
+            this.url = url;
+            EmojiCache.loadCustom(context, url, view);
+        }
+
+        void setBig(boolean big) {
+            this.big = big;
+        }
+
+        @Override
+        public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
+            size = (int) (paint.getTextSize() * (big ? 2.4f : 1.2f) + 0.5f);
+            if (fm != null) {
+                if (big) {
+                    fm.ascent = -size;
+                    fm.top = -size;
+                } else {
+                    paint.getFontMetricsInt(fm);
+                }
+            }
+            return size;
+        }
+
+        @Override
+        public void draw(Canvas canvas, CharSequence text, int start, int end, float x,
+                         int top, int y, int bottom, Paint paint) {
+            int imageTop = top + (bottom - top - size) / 2;
+            Bitmap image = bitmap != null ? bitmap : EmojiCache.getCustom(url);
+            if (image != null) {
+                rect.set(x, imageTop, x + size, imageTop + size);
+                canvas.drawBitmap(image, null, rect, bitmapPaint);
+            } else {
+                textPaint.set(paint);
+                float width = textPaint.measureText(name);
+                if (width > size) textPaint.setTextSize(textPaint.getTextSize() * size / width);
+                Paint.FontMetricsInt fm = textPaint.getFontMetricsInt();
+                canvas.drawText(name, x, imageTop + (size - fm.ascent - fm.descent) / 2f, textPaint);
+            }
+        }
+    }
+
     // endregion
 
     // region MarkdownListener
@@ -406,40 +495,67 @@ public class MarkdownRenderer implements MarkdownListener {
     }
 
     public void append(Object ctx, String text, int font) {
+        if (hasContent(text)) emojiOnly = false;
         appendStyled(text, font, links.isEmpty() ? null : links.peek());
     }
 
     public void appendLink(Object ctx, String text, int font) {
+        if (hasContent(text)) emojiOnly = false;
         // Bare URL in text: the text itself is the link
         appendStyled(text, font, links.isEmpty() ? text : links.peek());
     }
 
     public void appendUserMention(Object ctx, String id, int font) {
+        emojiOnly = false;
         appendMentionStyled("@" + message.mentions.get(id), font);
     }
 
     public void appendRoleMention(Object ctx, String id, int font) {
+        emojiOnly = false;
         appendMentionStyled("@" + id, font); // TODO: parse roles
     }
 
     public void appendChannelMention(Object ctx, String id, int font) {
+        emojiOnly = false;
         appendMentionStyled("#" + id, font); // TODO: parse channels
     }
 
     public void appendEveryone(Object ctx, int font) {
+        emojiOnly = false;
         appendMentionStyled("@everyone", font);
     }
 
     public void appendHere(Object ctx, int font) {
+        emojiOnly = false;
         appendMentionStyled("@here", font);
     }
 
-    public void appendEmoji(Object ctx, String name, String id, boolean animated, int font) {
-        Object link = links.isEmpty() ? null : links.peek();
-        appendStyled(":" + name + ":", font, link); // TODO: parse emojis
+    public void appendDiscordEmoji(Object ctx, String name, String id, boolean animated, int font) {
+        emojiCount++;
+        appendEmojiText(":" + name + ":", font,
+                new EmojiSpan(context, view, name, cdnUrl + "/emojis/" + id + ".png?size=64"));
+    }
+
+    public void appendUnicodeEmoji(Object ctx, String emoji, String codepoints, int font) {
+        emojiCount++;
+        appendEmojiText(emoji, font, new EmojiSpan(EmojiCache.get(context, codepoints)));
+    }
+
+    private void appendEmojiText(String text, int font, EmojiSpan span) {
+        int start = out.length();
+        out.append(text);
+        int end = out.length();
+        if (start == end) return;
+
+        applyFontSpans(start, end, font);
+        if (span != null) out.setSpan(span, start, end, SPAN_FLAGS);
+        if (!links.isEmpty()) {
+            applyLinkSpan(start, end, links.peek());
+        }
     }
 
     public void appendTimestamp(Object ctx, String timestamp, String style, int font) {
+        emojiOnly = false;
         String formatted = formatDiscordTimestamp(timestamp, style);
         int start = out.length();
         out.append(formatted);

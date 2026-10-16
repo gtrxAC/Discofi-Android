@@ -244,7 +244,7 @@ public class ChatActivity extends Activity {
 
                                 // Keep the previously visible rows in place
                                 messageList.setSelectionFromTop(
-                                        firstVisible + older.size(), topOffset);
+                                        firstVisible + older.size() - 1, topOffset);
                             }
                         }
                     });

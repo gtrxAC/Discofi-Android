@@ -124,17 +124,21 @@ public class Markdown {
 	 */
 	public static boolean enableLists = true;
 	/**
-	 * Enables parsing of HTML tags (e.g. &lt;b&gt;, &lt;i&gt;, &lt;a&gt;, &lt;br&gt;, &lt;img&gt;)
+	 * Enables parsing of HTML tags
 	 */
 	public static boolean enableHtmlTags = true;
 	/**
-	 * Enables parsing of horizontal lines (---, ***, ___)
+	 * Enables parsing of horizontal lines
 	 */
 	public static boolean enableHorizontalLines = true;
 	/**
-	 * Enables parsing of images (![...](...)).
+	 * Enables parsing of images
 	 */
 	public static boolean enableImages = true;
+	/**
+	 * Enables parsing of Unicode emojis
+	 */
+	public static boolean enableEmojis = true;
 	/**
 	 * Make monospace text have bold style
 	 */
@@ -391,6 +395,19 @@ public class Markdown {
 											}
 											ui.beginListItem(ctx, t[0] == 0 ? t[2] : 0);
 
+											state[MD_LENGTH]++;
+											continue;
+										}
+									}
+
+									if (enableEmojis) {
+										int end = emojiEnd(chars, i, len);
+										if (end != -1) {
+											flush(ctx, ui, sb, state);
+											ui.appendUnicodeEmoji(ctx, src.substring(i, end),
+													emojiCodepoints(chars, i, end), getFont(state));
+											i = end - 1;
+											l = chars[i];
 											state[MD_LENGTH]++;
 											continue;
 										}
@@ -1332,12 +1349,146 @@ public class Markdown {
 			}
 			String id = src.substring(r, s);
 			flush(ctx, ui, sb, state);
-			ui.appendEmoji(ctx, name, id, animated, getFont(state));
+			ui.appendDiscordEmoji(ctx, name, id, animated, getFont(state));
 			state[MD_LENGTH]++;
 			state[MD_DISCORD_EMOJI] = 0;
 			return s;
 		}
 		return -1;
+	}
+
+	/** Zero width joiner */
+	private static final int ZERO_WIDTH_JOINER = 0x200D;
+	/** Variation selector-16, requests emoji presentation */
+	private static final int VARIATION_SELECTOR_16 = 0xFE0F;
+	/** Variation selector-15, requests text presentation */
+	private static final int VARIATION_SELECTOR_15 = 0xFE0E;
+	/** Combining enclosing keycap, makes digits into emoji */
+	private static final int ENCLOSING_KEYCAP = 0x20E3;
+	private static final int REGIONAL_INDICATOR_FIRST = 0x1F1E6;
+	private static final int REGIONAL_INDICATOR_LAST = 0x1F1FF;
+	private static final int EMOJI_MODIFIER_FIRST = 0x1F3FB;
+	private static final int EMOJI_MODIFIER_LAST = 0x1F3FF;
+	private static final int EMOJI_TAG_FIRST = 0xE0020;
+	/** Tag sequences (subdivision flags) end with the cancel tag */
+	private static final int EMOJI_TAG_LAST = 0xE007F;
+
+	private static final int[] EMOJI_PICTOGRAPHICS = {
+			0xA9, 0xA9, 0xAE, 0xAE, 0x203C, 0x203C, 0x2049, 0x2049,
+			0x2122, 0x2122, 0x2139, 0x2139, 0x2194, 0x2199, 0x21A9, 0x21AA,
+			0x231A, 0x231B, 0x2328, 0x2328, 0x2388, 0x2388, 0x23CF, 0x23CF,
+			0x23E9, 0x23F3, 0x23F8, 0x23FA, 0x24C2, 0x24C2, 0x25AA, 0x25AB,
+			0x25B6, 0x25B6, 0x25C0, 0x25C0, 0x25FB, 0x25FE, 0x2600, 0x2605,
+			0x2607, 0x2612, 0x2614, 0x2685, 0x2690, 0x2705, 0x2708, 0x2712,
+			0x2714, 0x2714, 0x2716, 0x2716, 0x271D, 0x271D, 0x2721, 0x2721,
+			0x2728, 0x2728, 0x2733, 0x2734, 0x2744, 0x2744, 0x2747, 0x2747,
+			0x274C, 0x274C, 0x274E, 0x274E, 0x2753, 0x2755, 0x2757, 0x2757,
+			0x2763, 0x2767, 0x2795, 0x2797, 0x27A1, 0x27A1, 0x27B0, 0x27B0,
+			0x27BF, 0x27BF, 0x2934, 0x2935, 0x2B05, 0x2B07, 0x2B1B, 0x2B1C,
+			0x2B50, 0x2B50, 0x2B55, 0x2B55, 0x3030, 0x3030, 0x303D, 0x303D,
+			0x3297, 0x3297, 0x3299, 0x3299, 0x1F000, 0x1F0FF, 0x1F10D, 0x1F10F,
+			0x1F12F, 0x1F12F, 0x1F16C, 0x1F171, 0x1F17E, 0x1F17F, 0x1F18E, 0x1F18E,
+			0x1F191, 0x1F19A, 0x1F1AD, 0x1F1E5, 0x1F201, 0x1F20F, 0x1F21A, 0x1F21A,
+			0x1F22F, 0x1F22F, 0x1F232, 0x1F23A, 0x1F23C, 0x1F23F, 0x1F249, 0x1F3FA,
+			0x1F400, 0x1F53D, 0x1F546, 0x1F64F, 0x1F680, 0x1F6FF, 0x1F774, 0x1F77F,
+			0x1F7D5, 0x1F7FF, 0x1F80C, 0x1F80F, 0x1F848, 0x1F84F, 0x1F85A, 0x1F85F,
+			0x1F888, 0x1F88F, 0x1F8AE, 0x1F8FF, 0x1F90C, 0x1F93A, 0x1F93C, 0x1F945,
+			0x1F947, 0x1FAFF, 0x1FC00, 0x1FFFD,
+	};
+
+	private static int emojiEnd(char[] chars, int i, int len) {
+		int codePoint = codePointAt(chars, i, len);
+		// keycap: '#', '*' or a digit followed by VS16 and the enclosing keycap
+		if (codePoint == '#' || codePoint == '*' || (codePoint >= '0' && codePoint <= '9')) {
+			return i + 2 < len && chars[i + 1] == VARIATION_SELECTOR_16
+					&& chars[i + 2] == ENCLOSING_KEYCAP ? i + 3 : -1;
+		}
+		if (isRegionalIndicator(codePoint)) {
+			// a flag is exactly two regional indicators, a lone one is not an emoji
+			return isRegionalIndicator(codePointAt(chars, i + 2, len)) ? i + 4 : -1;
+		}
+		// nothing below U+00A9 outside of keycap bases can start an emoji
+		if (codePoint < 0xA9 || !isEmojiPicto(codePoint)) return -1;
+
+		int p = i;
+		for (;;) {
+			p += codePointLength(codePoint);
+			if (p < len) {
+				if (chars[p] == VARIATION_SELECTOR_15) return -1; // text presentation
+				if (chars[p] == VARIATION_SELECTOR_16) ++p;
+			}
+			int next = codePointAt(chars, p, len);
+			if (isEmojiModifier(next)) {
+				p += codePointLength(next);
+				next = codePointAt(chars, p, len);
+			}
+			if (isEmojiTag(next)) { // subdivision flags
+				while (isEmojiTag(next = codePointAt(chars, p, len))) {
+					p += codePointLength(next);
+				}
+				break;
+			}
+			if (next != ZERO_WIDTH_JOINER) break;
+			// a joiner is only part of an emoji if another emoji follows
+			int joined = codePointAt(chars, p + 1, len);
+			if (!isEmojiPicto(joined)) break;
+			++p; // skip the joiner
+			codePoint = joined;
+		}
+		return p;
+	}
+
+	private static String emojiCodepoints(char[] chars, int start, int end) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = start; i < end; ) {
+			int codePoint = codePointAt(chars, i, end);
+			if (codePoint < 0) break;
+			if (sb.length() != 0) sb.append('-');
+			sb.append(Integer.toHexString(codePoint));
+			i += codePointLength(codePoint);
+		}
+		return sb.toString();
+	}
+
+	private static boolean isEmojiPicto(int codePoint) {
+		int[] ranges = EMOJI_PICTOGRAPHICS;
+		int low = 0, high = ranges.length / 2 - 1;
+		while (low <= high) {
+			int mid = (low + high) >>> 1;
+			if (codePoint < ranges[mid * 2]) {
+				high = mid - 1;
+			} else if (codePoint > ranges[mid * 2 + 1]) {
+				low = mid + 1;
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isRegionalIndicator(int codePoint) {
+		return codePoint >= REGIONAL_INDICATOR_FIRST && codePoint <= REGIONAL_INDICATOR_LAST;
+	}
+
+	private static boolean isEmojiModifier(int codePoint) {
+		return codePoint >= EMOJI_MODIFIER_FIRST && codePoint <= EMOJI_MODIFIER_LAST;
+	}
+
+	private static boolean isEmojiTag(int codePoint) {
+		return codePoint >= EMOJI_TAG_FIRST && codePoint <= EMOJI_TAG_LAST;
+	}
+
+	private static int codePointAt(char[] chars, int i, int len) {
+		if (i >= len) return -1;
+		char c = chars[i];
+		if (Character.isHighSurrogate(c) && i + 1 < len && Character.isLowSurrogate(chars[i + 1])) {
+			return Character.toCodePoint(c, chars[i + 1]);
+		}
+		return c;
+	}
+
+	private static int codePointLength(int codePoint) {
+		return codePoint >= 0x10000 ? 2 : 1;
 	}
 
 }

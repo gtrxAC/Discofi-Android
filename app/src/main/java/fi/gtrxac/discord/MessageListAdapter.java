@@ -95,6 +95,9 @@ public class MessageListAdapter extends BaseAdapter {
             holder.statusText.setText(sb);
             holder.statusTimestamp.setText(message.timestamp);
         } else {
+            holder.msg.setVisibility(View.VISIBLE);
+            holder.status.setVisibility(View.GONE);
+
             if (enableMention) {
                 try {
                     if ((message.mentions != null && message.mentions.containsKey(Long.toString(account.getUserID()))) || message.mentionEveryone) {
@@ -113,12 +116,12 @@ public class MessageListAdapter extends BaseAdapter {
                 holder.metadata.setVisibility(View.VISIBLE);
                 holder.avatar.getLayoutParams().height = dp(48);
                 holder.author.setText(message.author.name);
-                if (message.author.bot) {
-                    holder.badge.setVisibility(View.VISIBLE);
-                    holder.badge.setText(R.string.badge_bot);
-                } else if (message.author.system) {
+                if (message.author.system) {
                     holder.badge.setVisibility(View.VISIBLE);
                     holder.badge.setText(R.string.badge_system);
+                } else if (message.author.bot) {
+                    holder.badge.setVisibility(View.VISIBLE);
+                    holder.badge.setText(R.string.badge_bot);
                 } else {
                     holder.badge.setVisibility(View.GONE);
                 }
@@ -134,17 +137,18 @@ public class MessageListAdapter extends BaseAdapter {
                 holder.reply.setVisibility(View.VISIBLE);
                 loadAvatar(holder.replyAvatar, message.reply.author.getAvatarUrl(account.getCdnUrl()));
                 holder.replyAuthor.setText(message.reply.author.name);
-                if (message.reply.author.bot) {
-                    holder.replyBadge.setVisibility(View.VISIBLE);
-                    holder.replyBadge.setText(R.string.badge_bot);
-                } else if (message.reply.author.system) {
+                if (message.reply.author.system) {
                     holder.replyBadge.setVisibility(View.VISIBLE);
                     holder.replyBadge.setText(R.string.badge_system);
+                } else if (message.reply.author.bot) {
+                    holder.replyBadge.setVisibility(View.VISIBLE);
+                    holder.replyBadge.setText(R.string.badge_bot);
                 } else {
                     holder.replyBadge.setVisibility(View.GONE);
                 }
                 if (message.reply.content.length() > 0) {
-                    MarkdownRenderer renderer = new MarkdownRenderer(context, message.reply);
+                    MarkdownRenderer renderer = new MarkdownRenderer(context, message.reply,
+                            account.getCdnUrl(), holder.replyContent);
                     holder.replyContent.setText(renderer.render(message.reply.content));
                 } else {
                     holder.replyContent.setVisibility(View.GONE);
@@ -155,7 +159,8 @@ public class MessageListAdapter extends BaseAdapter {
 
             if (message.content.length() > 0) {
                 holder.content.setVisibility(View.VISIBLE);
-                MarkdownRenderer renderer = new MarkdownRenderer(context, message);
+                MarkdownRenderer renderer = new MarkdownRenderer(context, message,
+                        account.getCdnUrl(), holder.content);
                 SpannableStringBuilder content = renderer.render(message.content);
                 if (message.editedTimestampIso != null) {
                     int start = content.length();
@@ -302,7 +307,8 @@ public class MessageListAdapter extends BaseAdapter {
         }
 
         if (embed.description != null) {
-            MarkdownRenderer renderer = new MarkdownRenderer(context, null);
+            MarkdownRenderer renderer = new MarkdownRenderer(context, null,
+                    account.getCdnUrl(), description);
             description.setText(renderer.render(embed.description));
             description.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
         } else {

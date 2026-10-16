@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/primary_text_dark"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -61,7 +61,7 @@
             android:id="@+id/embed_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/primary_text_dark" />
+            android:textColor="@android:color/white" />
 
         <LinearLayout
             android:orientation="vertical"
@@ -103,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/primary_text_dark"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
         </LinearLayout>
