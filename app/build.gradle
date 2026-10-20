@@ -11,10 +11,24 @@ android {
         versionName "1.0"
     }
 
+    signingConfigs {
+        release {
+            if (rootProject.file('keystore.properties').exists()) {
+                Properties props = new Properties()
+                props.load(new FileInputStream(rootProject.file("keystore.properties")))
+                storeFile file(props['store.file'])
+                storePassword props['store.password']
+                keyAlias props['key.alias']
+                keyPassword props['key.password']
+            }
+        }
+    }
+
     buildTypes {
         release {
             shrinkResources true
             minifyEnabled true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

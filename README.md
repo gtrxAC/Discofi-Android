@@ -33,6 +33,7 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Threads
 * Forums
 * Reactions
+* Native Holo UI on Android 4.x or higher
 * etc.
 
 ## Build variants

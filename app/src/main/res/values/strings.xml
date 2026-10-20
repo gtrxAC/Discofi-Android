@@ -25,11 +25,11 @@
     <string name="gateway_url">Gateway URL</string>
     <string name="login">Log in</string>
     <string name="logout">Log out</string>
-    <string name="password_login">Password login is currently very experimental and may be unsafe and more prone to account restrictions, use it at your own risk. An alt account is strongly recommended.</string>
+    <string name="password_login">Enabling multi-factor authentication (authenticator app) on your account is recommended to log in with your email and password.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="existing_password">Leave blank to use the existing password</string>
-    <string name="token_login">Token login is only intended for advanced users.</string>
+    <string name="token_login">Token login is only intended for advanced users and may be unsafe.</string>
     <string name="token">Token</string>
     <string name="use_token">Use token</string>
     <string name="enter_code">Enter the 6-digit code from your authenticator app (e.g. Google Authenticator).</string>
