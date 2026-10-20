@@ -25,18 +25,15 @@ public class DiscordException extends Exception {
             this.tips.addElement("use a different connection method");
             this.tips.addElement("use a different account");
         }
-        else if (message.startsWith("java.io.IOException")) {
+        else if (message.startsWith("java.io.IOException") || message.indexOf("UnknownHost") != -1 || message.indexOf("SocketException") != -1) {
             this.friendlyMessage = "Failed to load data";
             this.tips.addElement("try again");
             this.tips.addElement("check that your internet connection is working");
             this.tips.addElement("check that other online apps can connect");
             this.tips.addElement("if you're using mobile data, check that your APN settings are correct");
         }
-        else if (message.startsWith("java.lang.SecurityException: cannot open connection")) {
-            this.friendlyMessage = "Permission denied";
-            this.tips.addElement("check your device's app permission settings");
-            this.tips.addElement("use a different connection method");
-            this.tips.addElement("try on another device");
+        else {
+            this.friendlyMessage = "Error";
         }
     }
 
