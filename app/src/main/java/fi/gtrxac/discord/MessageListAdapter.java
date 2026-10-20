@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -23,6 +24,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -186,6 +193,7 @@ public class MessageListAdapter extends BaseAdapter {
      * message, so the container is always reset first.
      */
     private void bindAttachments(LinearLayout container, Message message) {
+        releaseAttachmentViews(container);
         container.removeAllViews();
 
         if (message.attachments != null) {
@@ -198,6 +206,24 @@ public class MessageListAdapter extends BaseAdapter {
             for (int i = 0; i < message.embeds.size(); i++) {
                 addEmbed(container, (Embed) message.embeds.elementAt(i));
             }
+        }
+    }
+
+    /**
+     * Stop animated previews and cancel pending loads before their views are
+     * discarded. GIF drawables would keep decoding frames even when their
+     * associated ImageView is no longer on screen.
+     */
+    private void releaseAttachmentViews(LinearLayout container) {
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            if (!(child instanceof ImageView)) continue;
+
+            Drawable drawable = ((ImageView) child).getDrawable();
+            if (drawable instanceof GlideDrawable) {
+                ((GlideDrawable) drawable).stop();
+            }
+            Glide.clear(child);
         }
     }
 
@@ -220,7 +246,10 @@ public class MessageListAdapter extends BaseAdapter {
             image.setLayoutParams(imageParams);
             container.addView(image);
 
-            ImageCache.load(image, account.getCdnAssetUrl(attachment.getPreviewUrl(maxAttachmentWidth)));
+            loadImage(image, account.getCdnAssetUrl(attachment.getPreviewUrl(maxAttachmentWidth)),
+                    attachment.animated
+                            ? account.getCdnAssetUrl(attachment.getStillPreviewUrl(maxAttachmentWidth))
+                            : null);
         } else {
             View view = inflater.inflate(R.layout.attachment, container, false);
             TextView name = (TextView) view.findViewById(R.id.attachment_filename);
@@ -362,7 +391,7 @@ public class MessageListAdapter extends BaseAdapter {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
             if (embed.title != null || embed.description != null) params.topMargin = dp(4);
             image.setLayoutParams(params);
-            ImageCache.load(image, account.getCdnAssetUrl(embed.image.getPreviewUrl(maxAttachmentWidth)));
+            loadImage(image, account.getCdnAssetUrl(embed.image.getPreviewUrl(maxAttachmentWidth)));
         } else {
             image.setVisibility(View.GONE);
         }
@@ -372,7 +401,7 @@ public class MessageListAdapter extends BaseAdapter {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
             if (embed.title != null || embed.description != null) params.topMargin = dp(4);
             video.setLayoutParams(params);
-            ImageCache.load(video, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
+            loadImage(video, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
             video.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     openInBrowser(embed.video.url);
@@ -388,11 +417,11 @@ public class MessageListAdapter extends BaseAdapter {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
                 if (embed.title != null || embed.description != null) params.topMargin = dp(4);
                 image.setLayoutParams(params);
-                ImageCache.load(image, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
+                loadImage(image, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
                 image.setVisibility(View.VISIBLE);
                 icon.setVisibility(View.GONE);
             } else {
-                ImageCache.load(icon, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(dp(48))));
+                loadImage(icon, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(dp(48))));
             }
         } else {
             icon.setVisibility(View.GONE);
@@ -406,9 +435,9 @@ public class MessageListAdapter extends BaseAdapter {
                 }
             });
             if (embed.author.proxyIconUrl != null) {
-                ImageCache.load(authorIcon, account.getCdnAssetUrl(embed.author.proxyIconUrl));
+                loadImage(authorIcon, account.getCdnAssetUrl(embed.author.proxyIconUrl));
             } else if (embed.author.iconUrl != null) {
-                ImageCache.load(authorIcon, embed.author.iconUrl);
+                loadImage(authorIcon, embed.author.iconUrl);
             } else {
                 authorIcon.setVisibility(View.GONE);
             }
@@ -431,9 +460,9 @@ public class MessageListAdapter extends BaseAdapter {
             footer.setVisibility(View.VISIBLE);
             footerContent.setText(footerText);
             if (embed.footer.proxyIconUrl != null) {
-                ImageCache.load(footerIcon, account.getCdnAssetUrl(embed.footer.proxyIconUrl));
+                loadImage(footerIcon, account.getCdnAssetUrl(embed.footer.proxyIconUrl));
             } else if (embed.footer.iconUrl != null) {
-                ImageCache.load(footerIcon, embed.footer.iconUrl);
+                loadImage(footerIcon, embed.footer.iconUrl);
             } else {
                 footerIcon.setVisibility(View.GONE);
             }
@@ -496,16 +525,48 @@ public class MessageListAdapter extends BaseAdapter {
         return date != null && position.getIndex() == value.length() ? date : null;
     }
 
+    private void loadImage(ImageView view, String url) {
+        loadImage(view, url, null);
+    }
+
+    private void loadImage(final ImageView view, final String url, final String fallbackUrl) {
+        view.setImageDrawable(null);
+        if (url == null) {
+            Glide.clear(view);
+            return;
+        }
+
+        DrawableRequestBuilder<String> request = Glide.with(context).load(url);
+        if (fallbackUrl != null) {
+            request = request.listener(new RequestListener<String, GlideDrawable>() {
+                public boolean onException(Exception e, String model, Target<GlideDrawable> target,
+                        boolean isFirstResource) {
+                    // An animated preview can fail (too big for memory, invalid
+                    // gif data); show the still frame instead.
+                    loadImage(view, fallbackUrl);
+                    return true;
+                }
+
+                public boolean onResourceReady(GlideDrawable resource, String model,
+                        Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    return false;
+                }
+            });
+        }
+
+        request.into(view);
+    }
+
     /**
      * Load an avatar, falling back to the default icon for users without a
-     * custom one (ImageCache.load(null) would just clear the view).
+     * custom one.
      */
     private void loadAvatar(ImageView view, String url) {
         if (url == null) {
-            view.setTag(null);
+            Glide.clear(view);
             view.setImageResource(R.mipmap.ic_launcher);
         } else {
-            ImageCache.load(view, url);
+            loadImage(view, url);
         }
     }
 

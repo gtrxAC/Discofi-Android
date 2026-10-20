@@ -17,6 +17,7 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Viewing attachments
 * Embeds
 * Sending replies
+* Text formatting (using [nnmarkdown](https://github.com/shinovon/nnmarkdown))
 * Emojis
 
 ### Planned for first release
@@ -26,11 +27,12 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * HTTP connection over BlueWAP
 * Theme settings (light/dark)
 
-### Not implemented
-* Reactions
+### Planned for later
 * Gateway
 * Sending attachments
-* Text formatting (plan is to use [nnmarkdown](https://github.com/shinovon/nnmarkdown))
+* Threads
+* Forums
+* Reactions
 * etc.
 
 ## Build variants

@@ -24,6 +24,8 @@ apply from: 'twemoji.gradle'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.github.bumptech.glide:glide:3.9.0-SNAPSHOT'
+    compileOnly 'com.android.support:support-v4:19.1.0'
 }
 
 // workaround for compileSdkVersion >= 21

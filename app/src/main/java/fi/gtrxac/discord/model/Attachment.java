@@ -30,6 +30,8 @@ public class Attachment {
     // images and videos can be previewed (videos as their first frame)
     public boolean previewable;
     public boolean isVideo;
+    // previewable gifs that can be played back as an animation
+    public boolean animated;
 
     public Attachment(JSONObject data) {
         this(data, false);
@@ -56,14 +58,30 @@ public class Attachment {
         // without dimensions (very rare) can still be fetched as-is.
         previewable = proxyUrl != null
                 && (width > 0 || (contentType != null && contentType.indexOf("image/") == 0));
+
+        animated = (contentType != null && contentType.indexOf("image/gif") == 0)
+                || (filename != null && filename.toLowerCase().endsWith(".gif"));
     }
 
     public String getPreviewUrl(int maxWidth) {
         if (!previewable) return null;
+        if (animated) return appendQuery(proxyUrl, "format=gif&width=" + getPreviewWidth(maxWidth));
+        return getStillPreviewUrl(maxWidth);
+    }
 
+    /**
+     * Still-frame preview URL. Also used as a fallback when an animated
+     * preview cannot be played back.
+     */
+    public String getStillPreviewUrl(int maxWidth) {
+        if (!previewable) return null;
+        return appendQuery(proxyUrl, "format=jpeg&width=" + getPreviewWidth(maxWidth));
+    }
+
+    private static int getPreviewWidth(int maxWidth) {
         int width = maxWidth > 0 ? maxWidth : 512;
         if (width > MAX_PREVIEW_WIDTH) width = MAX_PREVIEW_WIDTH;
-        return appendQuery(proxyUrl, "format=jpeg&width=" + width);
+        return width;
     }
 
     private static String appendQuery(String url, String query) {

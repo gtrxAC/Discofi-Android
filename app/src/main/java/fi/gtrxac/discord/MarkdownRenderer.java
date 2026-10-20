@@ -12,7 +12,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -33,9 +35,16 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Locale;
 import java.text.SimpleDateFormat;
 import java.util.Stack;
 
@@ -286,29 +295,94 @@ public class MarkdownRenderer implements MarkdownListener {
                 SPAN_FLAGS | (priority << Spanned.SPAN_PRIORITY_SHIFT));
     }
 
-    private static class EmojiSpan extends ReplacementSpan {
-        private final Paint.FontMetricsInt metrics = new Paint.FontMetricsInt();
+    private static class EmojiSpan extends ReplacementSpan implements Drawable.Callback {
         private final Paint bitmapPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
         private final RectF rect = new RectF();
         private final TextPaint textPaint = new TextPaint();
         private boolean big = false;
         private int size;
 
-        private final Bitmap bitmap;
-        private final String name;
-        private final String url;
+        private final String fallbackText;
+        private Bitmap bitmap;
+        private GifDrawable gif;
+        private TextView view;
+        private boolean gifStopping;
 
-        EmojiSpan(Bitmap bitmap) {
-            this.bitmap = bitmap;
-            this.name = null;
-            this.url = null;
+        static EmojiSpan unicode(Context context, TextView view, String emoji, String codepoints) {
+            EmojiSpan span = new EmojiSpan(emoji);
+            String stripped = codepoints.indexOf("-fe0f") == -1
+                    ? null
+                    : assetUrl(codepoints.replace("-fe0f", ""));
+            span.load(context, view, assetUrl(codepoints), stripped);
+            return span;
         }
 
-        EmojiSpan(Context context, TextView view, String name, String url) {
-            this.bitmap = null;
-            this.name = name;
-            this.url = url;
-            EmojiCache.loadCustom(context, url, view);
+        static EmojiSpan custom(Context context, TextView view, String name, String cdnUrl, String id, boolean animated) {
+            EmojiSpan span = new EmojiSpan(name);
+            String pngUrl = cdnUrl + "/emojis/" + id + ".png?size=64";
+            span.load(context, view,
+                    animated ? cdnUrl + "/emojis/" + id + ".gif?size=64" : pngUrl,
+                    animated ? pngUrl : null);
+            return span;
+        }
+
+        private EmojiSpan(String fallbackText) {
+            this.fallbackText = fallbackText;
+        }
+
+        private static String assetUrl(String codepoints) {
+            return "file:///android_asset/twemoji/" + codepoints + ".png";
+        }
+
+        private void load(Context context, TextView view, String url, String fallbackUrl) {
+            DiskCacheStrategy strategy = url.startsWith("file:") ? DiskCacheStrategy.NONE : DiskCacheStrategy.RESULT;
+            Glide.with(context)
+                    .load(url)
+                    .diskCacheStrategy(strategy)
+                    .into(new EmojiTarget(this, view, fallbackUrl));
+        }
+
+        void setGif(GifDrawable drawable, TextView view) {
+            this.gif = drawable;
+            this.view = view;
+            drawable.setCallback(this);
+            drawable.start();
+        }
+
+        private void stopGif() {
+            if (gifStopping || gif == null) return;
+            gifStopping = true;
+            gif.stop();
+            gifStopping = false;
+        }
+
+        public void invalidateDrawable(Drawable who) {
+            // The view may have been recycled to another message; stop to save CPU
+            if (!isIn(view)) {
+                gif.setCallback(null);
+                stopGif();
+                return;
+            }
+            // Pause until the next draw instead of decoding frames in the background
+            // (View.OnAttachStateChangeListener does not exist before API 12)
+            if (view.getWindowVisibility() != View.VISIBLE) {
+                stopGif();
+                return;
+            }
+            view.postInvalidate();
+        }
+
+        public void scheduleDrawable(Drawable who, Runnable what, long when) {
+            view.postDelayed(what, Math.max(0, when - SystemClock.uptimeMillis()));
+        }
+
+        public void unscheduleDrawable(Drawable who, Runnable what) {
+            view.removeCallbacks(what);
+        }
+
+        private boolean isIn(TextView view) {
+            CharSequence text = view.getText();
+            return text instanceof Spanned && ((Spanned) text).getSpanStart(this) != -1;
         }
 
         void setBig(boolean big) {
@@ -333,16 +407,55 @@ public class MarkdownRenderer implements MarkdownListener {
         public void draw(Canvas canvas, CharSequence text, int start, int end, float x,
                          int top, int y, int bottom, Paint paint) {
             int imageTop = top + (bottom - top - size) / 2;
-            Bitmap image = bitmap != null ? bitmap : EmojiCache.getCustom(url);
-            if (image != null) {
+            if (gif != null) {
+                // Resume animation if it was paused while the window was hidden.
+                if (!gif.isRunning() && !gifStopping && view.getWindowVisibility() == View.VISIBLE && isIn(view)) {
+                    gif.start();
+                }
+                gif.setBounds((int) x, imageTop, (int) x + size, imageTop + size);
+                gif.draw(canvas);
+            } else if (bitmap != null) {
                 rect.set(x, imageTop, x + size, imageTop + size);
-                canvas.drawBitmap(image, null, rect, bitmapPaint);
+                canvas.drawBitmap(bitmap, null, rect, bitmapPaint);
             } else {
                 textPaint.set(paint);
-                float width = textPaint.measureText(name);
+                float width = textPaint.measureText(fallbackText);
                 if (width > size) textPaint.setTextSize(textPaint.getTextSize() * size / width);
                 Paint.FontMetricsInt fm = textPaint.getFontMetricsInt();
-                canvas.drawText(name, x, imageTop + (size - fm.ascent - fm.descent) / 2f, textPaint);
+                canvas.drawText(fallbackText, x, imageTop + (size - fm.ascent - fm.descent) / 2f, textPaint);
+            }
+        }
+    }
+
+    private static class EmojiTarget extends SimpleTarget<GlideDrawable> {
+        private final EmojiSpan span;
+        private final TextView view;
+        private final String fallbackUrl;
+
+        EmojiTarget(EmojiSpan span, TextView view, String fallbackUrl) {
+            this.span = span;
+            this.view = view;
+            this.fallbackUrl = fallbackUrl;
+        }
+
+        @Override
+        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+            if (resource instanceof GifDrawable) {
+                GifDrawable gif = (GifDrawable) resource;
+                Bitmap firstFrame = gif.getFirstFrame();
+                Bitmap.Config config = firstFrame.getConfig();
+                if (config == null) config = Bitmap.Config.ARGB_8888;
+                span.setGif(new GifDrawable(gif, firstFrame.copy(config, false), gif.getFrameTransformation()), view);
+            } else if (resource instanceof GlideBitmapDrawable) {
+                span.bitmap = ((GlideBitmapDrawable) resource).getBitmap();
+            }
+            view.postInvalidate();
+        }
+
+        @Override
+        public void onLoadFailed(Exception e, Drawable errorDrawable) {
+            if (fallbackUrl != null) {
+                span.load(view.getContext(), view, fallbackUrl, null);
             }
         }
     }
@@ -533,12 +646,12 @@ public class MarkdownRenderer implements MarkdownListener {
     public void appendDiscordEmoji(Object ctx, String name, String id, boolean animated, int font) {
         emojiCount++;
         appendEmojiText(":" + name + ":", font,
-                new EmojiSpan(context, view, name, cdnUrl + "/emojis/" + id + ".png?size=64"));
+                EmojiSpan.custom(context, view, name, cdnUrl, id, animated));
     }
 
     public void appendUnicodeEmoji(Object ctx, String emoji, String codepoints, int font) {
         emojiCount++;
-        appendEmojiText(emoji, font, new EmojiSpan(EmojiCache.get(context, codepoints)));
+        appendEmojiText(emoji, font, EmojiSpan.unicode(context, view, emoji, codepoints));
     }
 
     private void appendEmojiText(String text, int font, EmojiSpan span) {

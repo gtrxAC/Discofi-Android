@@ -11,6 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true">
 
+        <meta-data
+            android:name="fi.gtrxac.discord.MicrocordGlideModule"
+            android:value="GlideModule" />
 
         <activity
             android:label="@string/app_name"

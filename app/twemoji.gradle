@@ -1,4 +1,4 @@
-def twemojiVersion = '17.1.0'
+def twemojiVersion = '17.0.3'
 def twemojiUrl = "https://github.com/jdecked/twemoji/archive/refs/tags/v${twemojiVersion}.tar.gz"
 def twemojiTarball = layout.buildDirectory.file("twemoji/twemoji-${twemojiVersion}.tar.gz")
 def twemojiSourcePattern = "twemoji-${twemojiVersion}/assets/72x72/*.png"

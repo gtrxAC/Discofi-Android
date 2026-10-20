@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class IconArrayAdapter extends ArrayAdapter<String> {
@@ -34,10 +36,11 @@ public class IconArrayAdapter extends ArrayAdapter<String> {
         text.setText(item);
 
         if (url == null) {
-            image.setTag(null);
+            Glide.clear(image);
             image.setImageResource(R.mipmap.ic_launcher);
         } else {
-            ImageCache.load(image, url);
+            image.setImageDrawable(null);
+            Glide.with(getContext()).load(url).into(image);
         }
 
         return convertView;
