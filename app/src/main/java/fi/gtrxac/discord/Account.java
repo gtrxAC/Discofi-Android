@@ -30,6 +30,9 @@ public class Account {
     public String email;
     public String password;
 
+    public GatewayThread gateway;
+    public Vector<Long> subscribedGuilds;
+
     private Vector<Guild> guildsUnsorted;
     private Vector<Guild> guilds;
     private Vector<DMChannel> dmChannels;
@@ -38,6 +41,7 @@ public class Account {
     public Account() {
         guildsUnsorted = new Vector<>();
         guilds = new Vector<>();
+        subscribedGuilds = new Vector<>();
         dmChannels = new Vector<>();
         inbox = new Vector<>();
     }
@@ -147,7 +151,8 @@ public class Account {
         if (token != null && token.length() > 0) {
             result.setHeader("Authorization", token);
         }
-        result.setHeader("X-Super-Properties", SuperProperties.get());
+        byte[] propsBytes = SuperProperties.get().build().getBytes();
+        result.setHeader("X-Super-Properties", Base64.encodeToString(propsBytes, false));
         result.setHeader("X-Discord-Locale", "en-US");
         return result;
     }
@@ -498,6 +503,31 @@ public class Account {
 
         JSONObject created = (JSONObject) postJSON("/channels/" + channelId + "/messages", body);
         return new Message(created);
+    }
+
+    public void startGateway() {
+        gateway = new GatewayThread(this);
+        gateway.start();
+    }
+
+    public boolean gatewayActive() {
+        return gateway != null && gateway.isAlive();
+    }
+
+    /**
+     * Tell the API that the user is typing in a channel. Discord clears the
+     * indicator automatically after about ten seconds.
+     */
+    public void sendTyping(long channelId) {
+        try {
+            HTTP h = createApiRequest("POST", "/channels/" + channelId + "/typing");
+            h.setData("");
+            h.getResponseCode();
+            h.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

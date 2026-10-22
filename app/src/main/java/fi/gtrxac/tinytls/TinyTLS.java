@@ -1,14 +1,9 @@
 package fi.gtrxac.tinytls;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.microedition.io.Connector;
-import javax.microedition.io.SocketConnection;
+import java.io.*;
+import javax.microedition.io.*;
 
 public final class TinyTLS {
-
     private static final int TYPE_CHANGE_CIPHER_SPEC = 20;
     private static final int TYPE_ALERT = 21;
     private static final int TYPE_HANDSHAKE = 22;
@@ -35,32 +30,16 @@ public final class TinyTLS {
     /*
      * Running TLS handshake transcript.
      */
-    private final SHA256 transcript =
-        new SHA256();
+    private final SHA256 transcript = new SHA256();
 
-    private final X25519 x25519 =
-        new X25519();
-
-    private final byte[] clientRandom =
-        new byte[32];
-
-    private final byte[] serverRandom =
-        new byte[32];
-
-    private final byte[] serverKey =
-        new byte[32];
-
-    private final byte[] clientPrivateKey =
-        new byte[32];
-
-    private final byte[] clientPublicKey =
-        new byte[32];
-
-    private final byte[] sharedSecret =
-        new byte[32];
-
-    private final byte[] masterSecret =
-        new byte[48];
+    private final X25519 x25519 = new X25519();
+    private final byte[] clientRandom = new byte[32];
+    private final byte[] serverRandom = new byte[32];
+    private final byte[] serverKey = new byte[32];
+    private final byte[] clientPrivateKey = new byte[32];
+    private final byte[] clientPublicKey = new byte[32];
+    private final byte[] sharedSecret = new byte[32];
+    private final byte[] masterSecret = new byte[48];
 
     /*
      * AES-128-GCM key block:
@@ -72,8 +51,7 @@ public final class TinyTLS {
      *
      * Total = 40.
      */
-    private final byte[] keyBlock =
-        new byte[40];
+    private final byte[] keyBlock = new byte[40];
 
     private final GCM clientGCM = new GCM();
     private final GCM serverGCM = new GCM();
@@ -84,16 +62,14 @@ public final class TinyTLS {
     private long clientSequence;
     private long serverSequence;
 
-    private final byte[] receiveBuffer =
-        new byte[16408];
+    private final byte[] receiveBuffer = new byte[16408];
 
     private boolean eof;
 
     /*
      * Small scratch buffer for streaming skips/hashing.
      */
-    private final byte[] scratch =
-        new byte[128];
+    private final byte[] scratch = new byte[128];
 
     /*
      * State of the current incoming TLS record.
@@ -104,10 +80,7 @@ public final class TinyTLS {
         this.log = log;
     }
 
-    public void connect(
-            String host,
-            int port) throws IOException {
-
+    public void connect(String host, int port) throws IOException {
         eof = false;
         pendingOff = 0;
         pendingLen = 0;
@@ -116,17 +89,11 @@ public final class TinyTLS {
         // and the connection might close if we spend too long not responding
         generateClientPrivateKey();
 
-        String url =
-            "socket://" + host + ":" + port;
+        String url = "socket://" + host + ":" + port;
 
         log("Connecting");
 
-        socket =
-            (SocketConnection)
-            Connector.open(
-                url,
-                Connector.READ_WRITE
-            );
+        socket = (SocketConnection) Connector.open(url, Connector.READ_WRITE);
 
         in = socket.openInputStream();
         out = socket.openOutputStream();
@@ -152,26 +119,9 @@ public final class TinyTLS {
     }
 
     public void close() {
-        try {
-            if (in != null) {
-                in.close();
-            }
-        } catch (Exception e) {
-        }
-
-        try {
-            if (out != null) {
-                out.close();
-            }
-        } catch (Exception e) {
-        }
-
-        try {
-            if (socket != null) {
-                socket.close();
-            }
-        } catch (Exception e) {
-        }
+        try { in.close(); } catch (Exception e) {}
+        try { out.close(); } catch (Exception e) {}
+        try { socket.close(); } catch (Exception e) {}
     }
 
     private void log(String s) {
@@ -221,7 +171,7 @@ public final class TinyTLS {
         buf[p++] = 3;
         buf[p++] = 3;
 
-        TLSUtil.temporaryRandom(
+        TLSUtil.random(
             clientRandom,
             0,
             32
@@ -869,7 +819,7 @@ public final class TinyTLS {
 
     private void generateClientPrivateKey() {
 
-        TLSUtil.temporaryRandom(
+        TLSUtil.random(
             clientPrivateKey,
             0,
             32
@@ -1727,7 +1677,7 @@ public final class TinyTLS {
             + description
         );
     }
-    
+
     private TLSInputStream tlsInput;
     private TLSOutputStream tlsOutput;
     private int pendingOff;
@@ -1852,7 +1802,7 @@ public final class TinyTLS {
             /*
             * Already have decrypted application data
             * left over from a previous TLS record.
-            * 
+            *
             * Always return pending plaintext before EOF.
             *
             * This matters if we ever have buffered
@@ -1953,7 +1903,7 @@ public final class TinyTLS {
         }
     }
 
-    public void write(
+    public synchronized void write(
             byte[] data,
             int off,
             int len) throws IOException {
@@ -1984,7 +1934,7 @@ public final class TinyTLS {
         }
     }
 
-    public void write(String s)
+    public synchronized void write(String s)
             throws IOException {
 
         byte[] b = TLSUtil.ascii(s);

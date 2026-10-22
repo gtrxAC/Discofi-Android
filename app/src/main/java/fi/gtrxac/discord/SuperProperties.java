@@ -26,7 +26,7 @@ public class SuperProperties {
         return heartbeatSessionID;
     }
 
-    public static String get() {
+    public static JSONObject get() {
         JSONObject propsJson = new JSONObject();
 
         propsJson.put("os", "Android");
@@ -47,7 +47,6 @@ public class SuperProperties {
         propsJson.put("launch_signature", Long.toString(System.currentTimeMillis() * 1000000));
         propsJson.put("client_heartbeat_session_id", getHeartbeatSessionID());
 
-        byte[] propsBytes = propsJson.build().getBytes();
-        return Base64.encodeToString(propsBytes, false);
+        return propsJson;
     }
 }

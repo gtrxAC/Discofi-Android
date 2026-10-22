@@ -7,8 +7,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.ClipboardManager;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,15 +30,19 @@ import android.widget.ToggleButton;
 
 import java.util.Vector;
 
+import cc.nnproject.json.JSONArray;
+import cc.nnproject.json.JSONObject;
+
 /**
  * Message view for a channel or DM: reading (with pagination), clustering,
  * and sending.
  */
-public class ChatActivity extends Activity {
+public class ChatActivity extends Activity implements GatewayListener {
     public static final int MESSAGE_LOAD_COUNT = 25;
 
     private Account account;
     private long channelId;
+    private String channelName;
 
     private Vector messages;
     private MessageListAdapter adapter;
@@ -49,9 +56,15 @@ public class ChatActivity extends Activity {
     private EditText composer;
     private Button sendButton;
 
+    private TextView typingIndicator;
+    private final Vector typingUsers = new Vector();
+    private final Handler typingHandler = new Handler();
+
     private boolean initialLoadDone;
     private boolean loadingOlder;
     private boolean sending;
+    private boolean atBottom = true;
+    private long lastTypingSent;
     private Message activeReply;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -76,11 +89,12 @@ public class ChatActivity extends Activity {
 
         composer = (EditText) findViewById(R.id.messageComposer);
         sendButton = (Button) findViewById(R.id.sendButton);
+        typingIndicator = (TextView) findViewById(R.id.typingIndicator);
 
         registerForContextMenu(messageList);
 
         channelId = getIntent().getLongExtra("channelId", 0);
-        String channelName = getIntent().getStringExtra("channelName");
+        channelName = getIntent().getStringExtra("channelName");
         if (channelName != null) {
             setTitle(channelName);
             composer.setHint(getResources().getString(R.string.msg_composer_hint, channelName));
@@ -92,6 +106,22 @@ public class ChatActivity extends Activity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 sendMessage();
+            }
+        });
+
+        composer.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) return;
+
+                long now = System.currentTimeMillis();
+                if (now - lastTypingSent < 10000) return;
+
+                lastTypingSent = now;
+                account.sendTyping(channelId);
             }
         });
 
@@ -113,6 +143,9 @@ public class ChatActivity extends Activity {
 
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
                                  int totalItemCount) {
+                atBottom = totalItemCount == 0
+                        || firstVisibleItem + visibleItemCount >= totalItemCount;
+
                 if (!initialLoadDone || loadingOlder || sending) return;
 
                 // Near the top -> fetch the previous page of history
@@ -123,6 +156,190 @@ public class ChatActivity extends Activity {
         });
 
         loadInitialMessages();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GatewayThread.addListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        GatewayThread.removeListener(this);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        GatewayThread.removeListener(this);
+        typingHandler.removeCallbacksAndMessages(null);
+        super.onDestroy();
+    }
+
+    public void onGatewayConnected() {
+    }
+
+    public void onGatewayDisconnected(final String reason) {
+    }
+
+    public void onGatewayReady(JSONObject data) {
+    }
+
+    public void onMessageCreate(JSONObject data) {
+        final Message message = new Message(data);
+        if (Long.parseLong(message.channelId) != channelId) return;
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (isFinishing()) return;
+
+                // The REST response may already have added our own message.
+                for (int i = 0; i < messages.size(); i++) {
+                    if (((Message) messages.elementAt(i)).id == message.id) return;
+                }
+
+                boolean scrollToBottom = atBottom || messages.size() == 0;
+                messages.addElement(message);
+                cluster();
+                adapter.notifyDataSetChanged();
+
+                if (scrollToBottom) {
+                    messageList.setSelection(messages.size() - 1);
+                }
+
+                removeTypingUser(message.author.name);
+            }
+        });
+    }
+
+    public void onMessageUpdate(JSONObject data) {
+        if (Long.parseLong(data.getString("channel_id", null)) != channelId) return;
+        final long messageId = Long.parseLong(data.getString("id"));
+
+        final String newContent = data.getString("content", null);
+        final String editedTimestamp = data.getString("edited_timestamp", null);
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (isFinishing()) return;
+
+                for (int i = 0; i < messages.size(); i++) {
+                    Message message = (Message) messages.elementAt(i);
+                    if (message.id != messageId) continue;
+
+                    if (newContent != null) {
+                        message.content = newContent;
+                        if (editedTimestamp != null) {
+                            message.editedTimestampIso = editedTimestamp;
+                        } else if (message.editedTimestampIso == null) {
+                            message.editedTimestampIso = "";
+                        }
+                    }
+
+                    cluster();
+                    adapter.notifyDataSetChanged();
+                    return;
+                }
+            }
+        });
+    }
+
+    public void onMessageDelete(JSONObject data) {
+        if (Long.parseLong(data.getString("channel_id", null)) != channelId) return;
+        final long messageId = Long.parseLong(data.getString("id"));
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (isFinishing()) return;
+
+                for (int i = 0; i < messages.size(); i++) {
+                    if (((Message) messages.elementAt(i)).id != messageId) continue;
+
+                    messages.removeElementAt(i);
+                    cluster();
+                    adapter.notifyDataSetChanged();
+                    return;
+                }
+            }
+        });
+    }
+
+    public void onTypingStart(JSONObject data) {
+        if (Long.parseLong(data.getString("channel_id", null)) != channelId) return;
+
+        String name = null;
+
+        try {
+            JSONObject user = data.getObject("member").getObject("user");
+            name = user.getString("global_name", null);
+            if (name == null) name = user.getString("username", null);
+        }
+        catch (Exception e) {}
+
+        if (name == null) name = channelName;
+        if (name == null || name.length() == 0) return;
+
+        final String typingName = name;
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (isFinishing()) return;
+                addTypingUser(typingName);
+            }
+        });
+    }
+
+    public void onGuildMembersChunk(JSONObject data) {
+    }
+
+    public void onPresenceUpdate(JSONObject data) {
+    }
+
+    public void onReadStates(JSONArray entries) {
+    }
+
+    private void addTypingUser(final String name) {
+        if (name == null || name.length() == 0) return;
+
+        if (!typingUsers.contains(name)) {
+            typingUsers.addElement(name);
+        }
+        updateTypingIndicator();
+
+        typingHandler.postDelayed(new Runnable() {
+            public void run() {
+                typingUsers.removeElement(name);
+                updateTypingIndicator();
+            }
+        }, 10000);
+    }
+
+    private void removeTypingUser(String name) {
+        if (typingUsers.removeElement(name)) {
+            updateTypingIndicator();
+        }
+    }
+
+    private void updateTypingIndicator() {
+        if (typingIndicator == null) return;
+
+        if (typingUsers.size() == 0) {
+            typingIndicator.setVisibility(View.GONE);
+            return;
+        }
+
+        String text;
+        if (typingUsers.size() == 1) {
+            text = getString(R.string.typing_single, typingUsers.elementAt(0));
+        } else if (typingUsers.size() == 2) {
+            text = getString(R.string.typing_two,
+                    typingUsers.elementAt(0), typingUsers.elementAt(1));
+        } else {
+            text = getString(R.string.typing_multiple);
+        }
+
+        typingIndicator.setText(text);
+        typingIndicator.setVisibility(View.VISIBLE);
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v,
@@ -292,7 +509,16 @@ public class ChatActivity extends Activity {
                             if (isFinishing()) return;
                             showProgress(false);
 
-                            messages.add(created);
+                            boolean exists = false;
+                            for (int i = 0; i < messages.size(); i++) {
+                                if (((Message) messages.elementAt(i)).id == created.id) {
+                                    exists = true;
+                                    break;
+                                }
+                            }
+                            if (!exists) {
+                                messages.add(created);
+                            }
                             cluster();
                             adapter.notifyDataSetChanged();
                             messageList.setSelection(messages.size() - 1);

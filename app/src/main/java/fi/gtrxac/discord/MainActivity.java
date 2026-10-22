@@ -55,6 +55,8 @@ public class MainActivity extends TabActivity {
             return;
         }
 
+        acc.startGateway();
+
         try {
             setTitle(acc.getDisplayTitle());
         }
@@ -311,6 +313,8 @@ public class MainActivity extends TabActivity {
     }
 
     private void goToLoginScreen() {
+        final Account acc = Accounts.getActive();
+        if (acc != null) acc.gateway.stop = true;
         Intent intent = new Intent(this, AccountListActivity.class);
         startActivity(intent);
         finish();

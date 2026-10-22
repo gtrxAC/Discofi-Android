@@ -1,10 +1,6 @@
 package fi.gtrxac.tinytls;
 
 public final class TLSCrypto {
-
-    private TLSCrypto() {
-    }
-
     public static void hmacSha256(
             byte[] key,
             int keyOff,

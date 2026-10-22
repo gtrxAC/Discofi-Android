@@ -1,14 +1,12 @@
 package fi.gtrxac.tinytls;
 
+import fi.gtrxac.bluewap.*;
 import java.io.IOException;
 import java.io.InputStream;
 
 public final class TLSUtil {
-
-    private TLSUtil() {
-    }
-
     public static void log(StringBuffer log, String s) {
+//#ifdef DEBUG
         if (log == null) {
             return;
         }
@@ -22,6 +20,7 @@ public final class TLSUtil {
 
         log.append(s);
         log.append('\n');
+//#endif
     }
 
     public static void logHex(
@@ -31,6 +30,7 @@ public final class TLSUtil {
             int off,
             int len) {
 
+//#ifdef DEBUG
         if (log == null || log.length() > 4096) {
             return;
         }
@@ -43,63 +43,21 @@ public final class TLSUtil {
         for (i = 0; i < len; i++) {
             int x = b[off + i] & 0xFF;
 
-            log.append(hexDigit((x >>> 4) & 15));
-            log.append(hexDigit(x & 15));
+            log.append(Util.intToHex((x >>> 4) & 15));
+            log.append(Util.intToHex(x & 15));
         }
 
         log.append('\n');
-    }
-
-    public static void logAscii(
-            StringBuffer log,
-            byte[] b,
-            int off,
-            int len) {
-
-        if (log == null) {
-            return;
-        }
-
-        int i;
-
-        for (i = 0; i < len; i++) {
-
-            if (log.length() > 4096) {
-                return;
-            }
-
-            int c = b[off + i] & 255;
-
-            /*
-            * Preserve CR/LF/TAB and printable ASCII.
-            */
-            if (c == 10 || c == 13 || c == 9) {
-                log.append((char)c);
-            } else if (c >= 32 && c <= 126) {
-                log.append((char)c);
-            } else {
-                log.append('.');
-            }
-        }
-
-        log.append('\n');
-    }
-
-    public static char hexDigit(int x) {
-        if (x < 10) {
-            return (char) ('0' + x);
-        }
-
-        return (char) ('A' + x - 10);
+//#endif
     }
 
     public static String hex16(int x) {
         char[] c = new char[4];
 
-        c[0] = hexDigit((x >>> 12) & 15);
-        c[1] = hexDigit((x >>> 8) & 15);
-        c[2] = hexDigit((x >>> 4) & 15);
-        c[3] = hexDigit(x & 15);
+        c[0] = Util.intToHex((x >>> 12) & 15);
+        c[1] = Util.intToHex((x >>> 8) & 15);
+        c[2] = Util.intToHex((x >>> 4) & 15);
+        c[3] = Util.intToHex(x & 15);
 
         return new String(c);
     }
@@ -180,11 +138,9 @@ public final class TLSUtil {
     }
 
     /*
-     * Temporary entropy source.
-     *
      * NOT cryptographically secure.
      */
-    public static void temporaryRandom(
+    public static void random(
             byte[] out,
             int off,
             int len) {

@@ -32,37 +32,37 @@ public class ModernConnector {
 
             return new ModernSecureConnection(host, port);
         }
-        // if (protocol.equals("ws")) {
-        //     String endpoint = Utils.split(connectionURL.substring(5), '/')[0];
-        //     String[] endpointData = Utils.split(endpoint, ':');
-        //     String host = endpointData[0];
-        //     int port = 80;
-        //     try {
-        //         port = Integer.parseInt(endpointData[1]);
-        //     } catch (Exception e) {
-        //         // Nothing
-        //     }
-        //     SocketConnection socket = (SocketConnection) ModernConnector.open("socket://" + host + ":" + port);
-        //     WebSocketClient ws = new WebSocketClient(host, port);
-        //     ws.connectWithSocket(socket);
-        //     return ws;
-        // }
-        // if (protocol.equals("wss")) {
-        //     String endpoint = Utils.split(connectionURL.substring(6), '/')[0];
+        if (protocol.equals("ws")) {
+            String endpoint = Utils.split(connectionURL.substring(5), '/')[0];
+            String[] endpointData = Utils.split(endpoint, ':');
+            String host = endpointData[0];
+            int port = 80;
+            try {
+                port = Integer.parseInt(endpointData[1]);
+            } catch (Exception e) {
+                // Nothing
+            }
+            SocketConnection socket = (SocketConnection) ModernConnector.open("socket://" + host + ":" + port);
+            WebSocketClient ws = new WebSocketClient(host, port);
+            ws.connectWithSocket(socket);
+            return ws;
+        }
+        if (protocol.equals("wss")) {
+            String endpoint = Utils.split(connectionURL.substring(6), '/')[0];
 
-        //     String[] endpointData = Utils.split(endpoint, ':');
-        //     String host = endpointData[0];
-        //     int port = 443;
-        //     try {
-        //         port = Integer.parseInt(endpointData[1]);
-        //     } catch (Exception e) {
-        //         // Nothing
-        //     }
-        //     SocketConnection socket = (SocketConnection) ModernConnector.open("tls://" + host + ":" + port);
-        //     WebSocketClient ws = new WebSocketClient(host, port);
-        //     ws.connectWithSocket(socket);
-        //     return ws;
-        // }
+            String[] endpointData = Utils.split(endpoint, ':');
+            String host = endpointData[0];
+            int port = 443;
+            try {
+                port = Integer.parseInt(endpointData[1]);
+            } catch (Exception e) {
+                // Nothing
+            }
+            SocketConnection socket = (SocketConnection) ModernConnector.open("tls://" + host + ":" + port);
+            WebSocketClient ws = new WebSocketClient(host, port);
+            ws.connectWithSocket(socket);
+            return ws;
+        }
         if (protocol.equals("https")) {
             String endpoint = Utils.split(connectionURL.substring(8), '/')[0];
 
@@ -78,20 +78,20 @@ public class ModernConnector {
             return new ModernHTTPSConnection(socket, connectionURL);
         }
         
-        // if (protocol.equals("socket") && ModernConnector.socketImplementation != null) {
-        //     String endpoint = Utils.split(connectionURL.substring(8), '/')[0];
+        if (protocol.equals("socket") && ModernConnector.socketImplementation != null) {
+            String endpoint = Utils.split(connectionURL.substring(8), '/')[0];
 
-        //     String[] endpointData = Utils.split(endpoint, ':');
-        //     String host = endpointData[0];
-        //     int port = 443;
-        //     try {
-        //         port = Integer.parseInt(endpointData[1]);
-        //     } catch (Exception e) {
-        //         // Nothing
-        //     }
+            String[] endpointData = Utils.split(endpoint, ':');
+            String host = endpointData[0];
+            int port = 443;
+            try {
+                port = Integer.parseInt(endpointData[1]);
+            } catch (Exception e) {
+                // Nothing
+            }
             
-        //     return ((ModernConnector) ModernConnector.socketImplementation).openSocket(host, port);
-        // }
+            return ((ModernConnector) ModernConnector.socketImplementation).openSocket(host, port);
+        }
 
         return Connector.open(connectionURL);
     }

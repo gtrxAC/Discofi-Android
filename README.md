@@ -19,6 +19,7 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Sending replies
 * Text formatting (using [nnmarkdown](https://github.com/shinovon/nnmarkdown))
 * Emojis
+* Gateway
 
 ### Planned for first release
 * Message editing
@@ -28,7 +29,6 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Theme settings (light/dark)
 
 ### Planned for later
-* Gateway
 * Sending attachments
 * Threads
 * Forums

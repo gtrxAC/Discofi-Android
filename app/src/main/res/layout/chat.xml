@@ -15,6 +15,16 @@
         android:dividerHeight="0dp"
         android:stackFromBottom="true" />
 
+    <TextView
+        android:id="@+id/typingIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/reply_panel"
         android:layout_width="fill_parent"

@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import java.util.Vector;
 
+import cc.nnproject.json.JSONObject;
+
 /**
  * Shows a guild's channels grouped by category.
  */
@@ -80,6 +82,25 @@ public class ChannelListActivity extends Activity {
             @Override
             public void run() {
                 try {
+                    // If gateway is active, subscribe to typing events for this server, if not already subscribed
+                    if (account.gatewayActive() && account.subscribedGuilds.indexOf(guildId) == -1) {
+                        JSONObject subGuild = new JSONObject();
+                        subGuild.put("typing", true);
+
+                        JSONObject subList = new JSONObject();
+                        subList.put(Long.toString(guildId), subGuild);
+
+                        JSONObject subData = new JSONObject();
+                        subData.put("subscriptions", subList);
+
+                        JSONObject subMsg = new JSONObject();
+                        subMsg.put("op", 37);
+                        subMsg.put("d", subData);
+
+                        account.gateway.send(subMsg);
+                        account.subscribedGuilds.addElement(guildId);
+                    }
+
                     final Vector categories = account.getGuildChannels(guildId);
 
                     runOnUiThread(new Runnable() {

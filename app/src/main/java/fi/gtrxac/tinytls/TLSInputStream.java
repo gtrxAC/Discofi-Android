@@ -3,9 +3,7 @@ package fi.gtrxac.tinytls;
 import java.io.IOException;
 import java.io.InputStream;
 
-public final class TLSInputStream
-        extends InputStream {
-
+public final class TLSInputStream extends InputStream {
     private TinyTLS tls;
     private boolean closed;
 
@@ -17,70 +15,37 @@ public final class TLSInputStream
         this.tls = tls;
     }
 
-    public int read()
-            throws IOException {
-
+    public int read() throws IOException {
         checkOpen();
-
         return tls.read();
     }
 
-    public int read(
-            byte[] b,
-            int off,
-            int len)
-            throws IOException {
-
+    public int read(byte[] b, int off, int len) throws IOException {
         checkOpen();
-
-        return tls.read(
-            b,
-            off,
-            len
-        );
+        return tls.read(b, off, len);
     }
 
-    public int read(byte[] b)
-            throws IOException {
-
-        return read(
-            b,
-            0,
-            b.length
-        );
+    public int read(byte[] b) throws IOException {
+        return read(b, 0, b.length);
     }
 
-    public long skip(long n)
-            throws IOException {
-
+    public long skip(long n) throws IOException {
         checkOpen();
 
-        if (n <= 0) {
-            return 0;
-        }
+        if (n <= 0) return 0;
 
         byte[] temp = new byte[128];
-
         long skipped = 0;
 
         while (skipped < n) {
-            int want =
-                (int)(n - skipped);
+            int want = (int) (n - skipped);
 
             if (want > temp.length) {
                 want = temp.length;
             }
 
-            int got =
-                read(
-                    temp,
-                    0,
-                    want
-                );
-
-            if (got < 0) {
-                break;
-            }
+            int got = read(temp, 0, want);
+            if (got < 0) break;
 
             skipped += got;
         }
@@ -88,17 +53,12 @@ public final class TLSInputStream
         return skipped;
     }
 
-    public int available()
-            throws IOException {
-
+    public int available() throws IOException {
         checkOpen();
-
         return tls.available();
     }
 
-    public void close()
-            throws IOException {
-
+    public void close() throws IOException {
         if (!closed) {
             closed = true;
 
@@ -111,13 +71,9 @@ public final class TLSInputStream
         }
     }
 
-    private void checkOpen()
-            throws IOException {
-
+    private void checkOpen() throws IOException {
         if (closed || tls == null) {
-            throw new IOException(
-                "Stream closed"
-            );
+            throw new IOException("Stream closed");
         }
     }
 }
