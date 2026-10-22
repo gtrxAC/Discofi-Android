@@ -188,7 +188,7 @@ public class ChatActivity extends Activity implements GatewayListener {
 
     public void onMessageCreate(JSONObject data) {
         final Message message = new Message(data);
-        if (Long.parseLong(message.channelId) != channelId) return;
+        if (message.channelId != channelId) return;
 
         runOnUiThread(new Runnable() {
             public void run() {
@@ -272,6 +272,7 @@ public class ChatActivity extends Activity implements GatewayListener {
 
         try {
             JSONObject user = data.getObject("member").getObject("user");
+            if (Long.parseLong(user.getString("id")) == account.userId) return;
             name = user.getString("global_name", null);
             if (name == null) name = user.getString("username", null);
         }

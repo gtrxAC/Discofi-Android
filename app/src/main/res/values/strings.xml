@@ -53,6 +53,7 @@
     <string name="badge_webhook">WEBHOOK</string>
     <string name="badge_system">OFFICIAL</string>
     <string name="edited">(edited)</string>
+    <string name="forwarded">Forwarded</string>
     <string name="typing_single">%s is typing...</string>
     <string name="typing_two">%1$s and %2$s are typing...</string>
     <string name="typing_multiple">Several people are typing...</string>

@@ -1,207 +1,212 @@
 package fi.gtrxac.discord.model;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import cc.nnproject.json.JSONArray;
-import cc.nnproject.json.JSONObject;
-
 import fi.gtrxac.discord.DiscordUtil;
+import cc.nnproject.json.*;
+import java.util.*;
 
 public class Message {
-    public static final int TYPE_ADDED = 1; // user added another user to group DM
-    public static final int TYPE_REMOVED = 2; // user left (or was removed) from group DM
+    public static final int TYPE_ADDED = 1;  // user added another user to group DM
+    public static final int TYPE_REMOVED = 2;  // user left (or removed someone) from group DM
     public static final int TYPE_CALL = 3;
-    public static final int TYPE_CHANNEL_NAME_CHANGE = 4; // changed name of group DM
+    public static final int TYPE_CHANNEL_NAME_CHANGE = 4;  // changed name of group DM
     public static final int TYPE_CHANNEL_ICON_CHANGE = 5;
     public static final int TYPE_PINNED = 6;
-    public static final int TYPE_JOINED = 7; // user joined server
-    public static final int TYPE_BOOSTED = 8; // user boosted server
+    public static final int TYPE_JOINED = 7;  // user joined server
+    public static final int TYPE_BOOSTED = 8;  // user boosted server
     public static final int TYPE_BOOSTED_LEVEL_1 = 9;
     public static final int TYPE_BOOSTED_LEVEL_2 = 10;
     public static final int TYPE_BOOSTED_LEVEL_3 = 11;
 
     public long id;
-    public String channelId;
+    public long channelId;
     public User author;
     public String content;
+    public boolean showAuthor;
     public String timestamp;
     public String timestampIso;
     public String editedTimestampIso;
-
-    // is status message? (user joined/left/boosted) - affects rendering
-    public boolean isStatus;
-
-    // reply rendering
-    public Message reply;
-
-    // attachments (images, videos and other files) shown under the content
     public Vector attachments;
-    // embeds (link previews and other rich content) shown under the attachments
     public Vector embeds;
-
-    // mentions to be parsed by the markdown renderer
     public Hashtable mentions;
     public boolean mentionEveryone;
 
-    public boolean showAuthor;
+    public boolean isStatus;
+    public boolean isForwarded;
+    public boolean isReply;
+    public Message reply;
 
     public Message(JSONObject data) {
         id = Long.parseLong(data.getString("id"));
-        channelId = data.getString("channel_id", null);
+        channelId = Long.parseLong(data.getString("channel_id"));
         author = new User(data.getObject("author"));
-        content = data.getString("content", "");
+        timestamp = DiscordUtil.formatTimestamp(id, false);
         timestampIso = data.getString("timestamp");
         editedTimestampIso = data.getString("edited_timestamp", null);
         mentionEveryone = data.getBoolean("mention_everyone", false);
 
-        int t = data.getInt("type", 0);
-        if (t >= TYPE_ADDED && t <= TYPE_BOOSTED_LEVEL_3) {
-            isStatus = true;
-        }
+        JSONObject contentObject = getContentObject(data);
+
+        int type = contentObject.getInt("type", 0);
+        isStatus = (type >= TYPE_ADDED && type <= TYPE_BOOSTED_LEVEL_3);
 
         if (isStatus) {
-            // Status message -> determine content by message type
-            String target = "(unknown)";
-            try {
-                JSONObject targetData = data.getArray("mentions").getObject(0);
-                target = new User(targetData).name;
-            }
-            catch (Exception e) {}
-
-            switch (t) {
-                case TYPE_ADDED:
-                    content = "added " + target + " to the group";
-                    break;
-                case TYPE_REMOVED:
-                    if (target.equals(author.name)) {
-                        content = "left the group";
-                    } else {
-                        content = "removed " + target + " from the group";
-                    }
-                    break;
-                case TYPE_CALL:
-                    content = "started a call";
-                    break;
-                case TYPE_CHANNEL_NAME_CHANGE:
-                    content = "changed the group name";
-                    break;
-                case TYPE_CHANNEL_ICON_CHANGE:
-                    content = "changed the group icon";
-                    break;
-                case TYPE_PINNED:
-                    content = "pinned a message";
-                    break;
-                case TYPE_JOINED:
-                    content = "joined the server";
-                    break;
-                case TYPE_BOOSTED:
-                    content = "boosted the server";
-                    break;
-                case TYPE_BOOSTED_LEVEL_1:
-                case TYPE_BOOSTED_LEVEL_2:
-                case TYPE_BOOSTED_LEVEL_3:
-                    content = "boosted the server to level " + (t - TYPE_BOOSTED);
-                    break;
-            }
-        } else {
-            try {
-                reply = new Message(data.getObject("referenced_message"));
-            }
-            catch (Exception e) {}
-
-            try {
-                JSONArray attachArray = data.getArray("attachments");
-
-                for (int i = 0; i < attachArray.size(); i++) {
-                    try {
-                        Attachment attachment = new Attachment(attachArray.getObject(i));
-                        if (attachments == null) attachments = new Vector();
-                        attachments.addElement(attachment);
-                    }
-                    catch (Exception e) {}
-                }
-            }
-            catch (Exception e) {}
-
-            try {
-                JSONArray embedArray = data.getArray("embeds");
-
-                for (int i = 0; i < embedArray.size(); i++) {
-                    try {
-                        Embed embed = new Embed(embedArray.getObject(i));
-                        if (embeds == null) embeds = new Vector();
-                        embeds.addElement(embed);
-                    }
-                    catch (Exception e) {}
-                }
-            }
-            catch (Exception e) {}
-
-            try {
-                JSONArray stickers = data.getArray("sticker_items");
-                if (stickers.size() >= 1) {
-                    if (content.length() > 0) content += "\n";
-                    content += "(sticker: " + stickers.getObject(0).getString("name", "unknown") + ")";
-                }
-            }
-            catch (Exception e) {}
-
-            try {
-                JSONArray mentionArray = data.getArray("mentions");
-                for (int i = 0; i < mentionArray.size(); i++) {
-                    try {
-                        JSONObject mention = mentionArray.getObject(i);
-
-                        String id = mention.getString("id", null);
-                        String name = null;
-
-                        try {
-                            // guild messages nest the user object and add a member part
-                            JSONObject user = mention.getObject("user");
-                            id = user.getString("id", id);
-                            name = user.getString("global_name", null);
-                            if (name == null) name = user.getString("username", null);
-                        }
-                        catch (Exception e) {}
-
-                        if (name == null) name = mention.getString("global_name", null);
-                        if (name == null) name = mention.getString("username", null);
-
-                        try {
-                            String nick = mention.getObject("member").getString("nick", null);
-                            if (nick != null) name = nick;
-                        }
-                        catch (Exception e) {}
-
-                        if (id == null || name == null) continue;
-                        if (mentions == null) mentions = new Hashtable<String, String>();
-                        mentions.put(id, name);
-                    }
-                    catch (Exception e) {}
-                }
-            }
-            catch (Exception e) {}
+            content = parseStatusMessage(contentObject, type);
         }
-
-        timestamp = DiscordUtil.formatTimestamp(id, false);
-
-        if (content.length() == 0 && attachments == null && embeds == null && !isStatus) {
-            isStatus = true;
-            content = "(unsupported message)";
+        else {
+            content = contentObject.getString("content", "");
+            parseReply(contentObject);
+            parseAttachments(contentObject);
+            parseEmbeds(contentObject);
+            parseMentions(contentObject);
         }
     }
 
     /**
-     * Determine whether or not the author/timestamp row should be shown for
-     * this message.
-     *
-     * @param above        The message shown above this message.
-     * @param clusterStart The ID of the top-most message in this message cluster.
-     * @return true if author should be shown, false if messages are "merged"
+     * Get JSON object to use for filling out message content and related fields.
+     * For forwarded messages, this is an inner object inside the message object.
      */
+    private JSONObject getContentObject(JSONObject data) {
+        JSONObject result = data;
+        isForwarded = false;
+
+        try {
+            result = data.getArray("message_snapshots").getObject(0).getObject("message");
+            isForwarded = true;
+        }
+        catch (Exception e) {}
+
+        return result;
+    }
+
+    private void parseReply(JSONObject data) {
+        try {
+            reply = new Message(data.getObject("referenced_message"));
+            isReply = true;
+        }
+        catch (Exception e) {}
+    }
+
+    private void parseAttachments(JSONObject data) {
+        JSONArray attachArray = data.getArray("attachments", null);
+        if (attachArray == null) return;
+
+        for (int i = 0; i < attachArray.size(); i++) {
+            try {
+                JSONObject attachJson = attachArray.getObject(i);
+                Attachment attachment = new Attachment(attachJson);
+
+                if (attachments == null) {
+                    attachments = new Vector();
+                }
+                attachments.addElement(attachment);
+            }
+            catch (Exception e) {}
+        }
+    }
+
+    private void parseEmbeds(JSONObject data) {
+        JSONArray embedArray = data.getArray("embeds", null);
+        if (embedArray == null) return;
+
+        for (int i = 0; i < embedArray.size(); i++) {
+            try {
+                JSONObject embedJson = embedArray.getObject(i);
+                Embed embed = new Embed(embedJson);
+
+                if (embeds == null) {
+                    embeds = new Vector();
+                }
+                embeds.addElement(embed);
+            }
+            catch (Exception e) {}
+        }
+    }
+
+    private void parseMentions(JSONObject data) {
+        JSONArray mentionArray = data.getArray("mentions", null);
+        if (mentionArray == null) return;
+
+        for (int i = 0; i < mentionArray.size(); i++) {
+            try {
+                JSONObject mention = mentionArray.getObject(i);
+
+                String id = mention.getString("id", null);
+                String name = null;
+
+                try {
+                    JSONObject user = mention.getObject("user");
+                    id = user.getString("id", id);
+                    name = user.getString("global_name", null);
+                    if (name == null) name = user.getString("username", null);
+                }
+                catch (Exception e) {}
+
+                if (name == null) name = mention.getString("global_name", null);
+                if (name == null) name = mention.getString("username", null);
+
+                try {
+                    String nick = mention.getObject("member").getString("nick", null);
+                    if (nick != null) name = nick;
+                }
+                catch (Exception e) {}
+
+                if (id == null || name == null) continue;
+                if (mentions == null) {
+                    mentions = new Hashtable();
+                }
+                mentions.put(id, name);
+            }
+            catch (Exception e) {}
+        }
+    }
+
+    private String parseStatusMessage(JSONObject data, int type) {
+        // Status message -> determine content by message type
+        String target = "(unknown)";
+        long targetID = 0;
+
+        try {
+            JSONObject targetData = data.getArray("mentions").getObject(0);
+            User targetUser = new User(targetData);
+            target = targetUser.name;
+            targetID = targetUser.id;
+        }
+        catch (Exception e) {}
+
+        switch (type) {
+            case TYPE_ADDED: {
+                return "added " + target + " to the group";
+            }
+            case TYPE_REMOVED: {
+                if (author.id == targetID) {
+                    return "left the group";
+                }
+                return "removed " + target + " from the group";
+            }
+            case TYPE_CALL: {
+                return "started a call";
+            }
+            case TYPE_CHANNEL_NAME_CHANGE: {
+                return "changed the group name";
+            }
+            case TYPE_CHANNEL_ICON_CHANGE: {
+                return "changed the group icon";
+            }
+            case TYPE_PINNED: {
+                return "pinned a message";
+            }
+            case TYPE_JOINED: {
+                return "joined the server";
+            }
+            case TYPE_BOOSTED: {
+                return "boosted the server";
+            }
+            default: {
+                return "boosted the server to level " + (type - TYPE_BOOSTED);
+            }
+        }
+    }
+
     public boolean shouldShowAuthor(Message above, long clusterStart) {
         // Different authors -> true
         if (above.author.id != author.id) return true;

@@ -12,6 +12,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.format.DateFormat;
+import android.text.style.QuoteSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
 import android.text.util.Linkify;
@@ -174,6 +175,15 @@ public class MessageListAdapter extends BaseAdapter {
                     content.append(" " + context.getResources().getString(R.string.edited));
                     int end = content.length();
                     content.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+                if (message.isForwarded) {
+                    SpannableStringBuilder forwarded = new SpannableStringBuilder(context.getResources().getString(R.string.forwarded));
+                    forwarded.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), 0, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    forwarded.setSpan(new StyleSpan(Typeface.ITALIC), 0, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    forwarded.append("\n");
+                    forwarded.append(content);
+                    forwarded.setSpan(new QuoteSpan(context.getResources().getColor(R.color.quote_color)), 0, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE | (128 << Spanned.SPAN_PRIORITY_SHIFT));
+                    content = forwarded;
                 }
                 holder.content.setText(content);
                 holder.content.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());

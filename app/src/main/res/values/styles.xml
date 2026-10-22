@@ -1,0 +1,7 @@
+<resources>
+    <style name="AppBaseTheme" parent="@android:style/Theme"></style>
+    <style name="AppBaseTheme.NoActionBar" parent="@android:style/Theme.NoTitleBar"></style>
+
+    <style name="AppTheme" parent="AppBaseTheme"></style>
+    <style name="AppTheme.NoActionBar" parent="AppBaseTheme.NoActionBar"></style>
+</resources>
