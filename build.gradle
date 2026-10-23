@@ -17,14 +17,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // TODO: make it build on jitpack so that you don't need to provide your github credentials to build microcord
-        maven {
-            url "https://maven.pkg.github.com/leap0x7b/glide-backport"
-            credentials {
-                username = project.hasProperty("gpr.user") ? project.property("gpr.user") : System.getenv("GPR_USERNAME")
-                password = project.hasProperty("gpr.key") ? project.property("gpr.key") : System.getenv("GPR_TOKEN")
-            }
-        }
+        maven { url 'https://jitpack.io' }
     }
 }
 
