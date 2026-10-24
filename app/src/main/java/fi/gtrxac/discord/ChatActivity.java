@@ -272,7 +272,7 @@ public class ChatActivity extends Activity implements GatewayListener {
 
         try {
             JSONObject user = data.getObject("member").getObject("user");
-            if (Long.parseLong(user.getString("id")) == account.userId) return;
+            if (Long.parseLong(user.getString("id")) == account.getUserID()) return;
             name = user.getString("global_name", null);
             if (name == null) name = user.getString("username", null);
         }
@@ -348,11 +348,20 @@ public class ChatActivity extends Activity implements GatewayListener {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.message, menu);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        Message message = (Message) messageList.getItemAtPosition(info.position);
+        try {
+            if (message.author.id != account.getUserID()) {
+                if (!message.isForwarded) menu.findItem(R.id.messageEdit).setVisible(false);
+                menu.findItem(R.id.messageDelete).setVisible(false); // TODO: user permissions
+            }
+        } catch (Exception e) {}
     }
 
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Message message = (Message) messageList.getItemAtPosition(info.position);
+        final Message message = (Message) messageList.getItemAtPosition(info.position);
 
         switch (item.getItemId()) {
             case R.id.messageReply:
@@ -365,8 +374,52 @@ public class ChatActivity extends Activity implements GatewayListener {
                 clipboard.setText(message.content);
                 Toast.makeText(ChatActivity.this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.messageDelete:
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.delete_message)
+                        .setMessage(R.string.message_delete_warning)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                showProgress(true);
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            account.deleteMessage(message);
+                                            runOnUiThread(new Runnable() {
+                                                public void run() {
+                                                    if (isFinishing()) return;
+                                                    showProgress(false);
+
+                                                    if (messages.contains(message)) {
+                                                        messages.removeElement(message);
+                                                        cluster();
+                                                        adapter.notifyDataSetChanged();
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        catch (final DiscordException e) {
+                                            runOnUiThread(new Runnable() {
+                                                public void run() {
+                                                    if (isFinishing()) return;
+                                                    showProgress(false);
+                                                    Toast.makeText(ChatActivity.this,
+                                                            "Failed to delete message: " + e.message,
+                                                            Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }.start();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+                return true;
             default:
-                return super.onContextItemSelected(item);
+                Toast.makeText(ChatActivity.this, "Unimplemented: " + item.getTitle(), Toast.LENGTH_LONG).show();
+                return false;
         }
     }
 

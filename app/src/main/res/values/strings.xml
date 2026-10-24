@@ -38,7 +38,7 @@
     <string name="add_account">Add account</string>
     <string name="no_accounts">No accounts defined. Select &quot;Add account&quot; to log in.</string>
     <string name="delete_account">Delete account</string>
-    <string name="delete_warning">Are you sure you want to delete the account &quot;%s&quot; from the list?</string>
+    <string name="account_delete_warning">Are you sure you want to delete the account &quot;%s&quot; from the list?</string>
     <string name="guilds">Servers</string>
     <string name="dms">Direct Messages</string>
     <string name="inbox">Inbox</string>
@@ -57,5 +57,7 @@
     <string name="typing_single">%s is typing...</string>
     <string name="typing_two">%1$s and %2$s are typing...</string>
     <string name="typing_multiple">Several people are typing...</string>
+    <string name="delete_message">Delete message</string>
+    <string name="message_delete_warning">Are you sure you want to delete this message?</string>
 
 </resources>

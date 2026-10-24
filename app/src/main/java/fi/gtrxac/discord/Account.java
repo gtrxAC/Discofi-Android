@@ -11,6 +11,7 @@ import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONException;
 import cc.nnproject.json.JSONObject;
 import fi.gtrxac.bluewap.http.HTTP;
+import fi.gtrxac.bluewap.http.StandardHTTP;
 import util.Base64;
 /**
  * Created by gtrx on 29.8.2026.
@@ -230,11 +231,22 @@ public class Account {
         return postJSON(route, body, null);
     }
 
-    private AbstractJSON handleJSONResponse(int responseCode, String responseText) throws DiscordException {
+    /**
+     * Throw exception if API response is an error, otherwise do nothing
+     */
+    public void checkApiResponse(int responseCode, String responseText) throws DiscordException {
+        if (responseText == null) responseText = "";
+
+        if (responseCode == 400 && responseText.indexOf("captcha") != -1) {
+            throw new DiscordException("A CAPTCHA was received");
+        }
         if (responseCode < 200 || responseCode >= 300) {
             throw new DiscordException(getApiErrorMessage(responseCode, responseText));
         }
+    }
 
+    private AbstractJSON handleJSONResponse(int responseCode, String responseText) throws DiscordException {
+        checkApiResponse(responseCode, responseText);
         return JSON.get(responseText);
     }
 
@@ -503,6 +515,29 @@ public class Account {
 
         JSONObject created = (JSONObject) postJSON("/channels/" + channelId + "/messages", body);
         return new Message(created);
+    }
+
+    public void deleteMessage(Message message) throws DiscordException {
+        try {
+            HTTP h = createApiRequest("DELETE",
+                "/channels/" + message.channelId + "/messages/" + message.id);
+
+            int responseCode = h.getResponseCode();
+            String responseText = h.getResponseString();
+            checkApiResponse(responseCode, responseText);
+        }
+        catch (Exception e) {
+            if (e == StandardHTTP.requestMethodException) {
+                Vector tips = new Vector();
+                tips.addElement("use a different connection mode");
+
+                throw new DiscordException(
+                    "Deleting messages is not supported",
+                    "Your device does not support the HTTP DELETE method",
+                    tips);
+            }
+            throw new DiscordException(e);
+        }
     }
 
     public void startGateway() {

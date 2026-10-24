@@ -12,6 +12,8 @@ import javax.net.ssl.HttpsURLConnection;
 import tech.alicesworld.ModernConnector.ModernConnector;
 
 public class StandardHTTP extends HTTP {
+    public static final Exception requestMethodException = new Exception();
+
 	private HttpsURLConnection conn;
 	private HttpConnection modernConn;
 
@@ -43,7 +45,12 @@ public class StandardHTTP extends HTTP {
 				conn.setSSLSocketFactory(new TLSSocketFactory());
 			}
 			conn.setInstanceFollowRedirects(false);
-			conn.setRequestMethod(currentMethod);
+			try {
+			    conn.setRequestMethod(currentMethod);
+			}
+			catch (Exception e) {
+			    throw requestMethodException;
+			}
 
 			for (Enumeration e = requestHeaders.keys(); e.hasMoreElements();) {
 				String key = (String) e.nextElement();
@@ -106,7 +113,12 @@ public class StandardHTTP extends HTTP {
 			HttpConnection hc = (HttpConnection) ModernConnector.open(currentUrl);
 
 			try {
-				hc.setRequestMethod(method);
+			    try {
+			        hc.setRequestMethod(method);
+			    }
+			    catch (Exception e) {
+			        throw requestMethodException;
+			    }
 
 				for (Enumeration e = requestHeaders.keys(); e.hasMoreElements();) {
 					String key = (String) e.nextElement();

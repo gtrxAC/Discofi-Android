@@ -148,7 +148,7 @@ public class AccountListActivity extends Activity {
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.delete_account)
-                .setMessage(getResources().getString(R.string.delete_warning, name))
+                .setMessage(getResources().getString(R.string.account_delete_warning, name))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Accounts.list.removeElement(acc);
