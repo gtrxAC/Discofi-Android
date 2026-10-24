@@ -47,6 +47,7 @@
     <string name="title_activity_chat">Chat</string>
     <string name="msg_composer_hint">Message %s</string>
     <string name="reply_to">Replying to &lt;b&gt;%s&lt;/b&gt;</string>
+    <string name="editing_message">Editing message</string>
     <string name="ping_off">\@ Off</string>
     <string name="ping_on">\@ On</string>
     <string name="badge_bot">APP</string>

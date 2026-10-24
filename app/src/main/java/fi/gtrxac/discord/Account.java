@@ -540,6 +540,34 @@ public class Account {
         }
     }
 
+    public Message editMessage(Message message, String content) throws DiscordException {
+        try {
+            HTTP h = createApiRequest("PATCH",
+                "/channels/" + message.channelId + "/messages/" + message.id);
+
+            JSONObject editData = new JSONObject();
+            editData.put("content", content);
+
+            h.setData(editData.build());
+
+            int responseCode = h.getResponseCode();
+            String responseText = h.getResponseString();
+            return new Message((JSONObject) handleJSONResponse(responseCode, responseText));
+        }
+        catch (Exception e) {
+            if (e == StandardHTTP.requestMethodException) {
+                Vector tips = new Vector();
+                tips.addElement("use a different connection mode");
+
+                throw new DiscordException(
+                    "Deleting messages is not supported",
+                    "Your device does not support the HTTP DELETE method",
+                    tips);
+            }
+            throw new DiscordException(e);
+        }
+    }
+
     public void startGateway() {
         gateway = new GatewayThread(this);
         gateway.start();

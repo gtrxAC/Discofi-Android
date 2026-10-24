@@ -65,7 +65,9 @@ public class ChatActivity extends Activity implements GatewayListener {
     private boolean sending;
     private boolean atBottom = true;
     private long lastTypingSent;
+
     private Message activeReply;
+    private Message activeEdit;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +107,11 @@ public class ChatActivity extends Activity implements GatewayListener {
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendMessage();
+                if (activeEdit != null) {
+                    editMessage();
+                } else {
+                    sendMessage();
+                }
             }
         });
 
@@ -134,6 +140,11 @@ public class ChatActivity extends Activity implements GatewayListener {
 
         cancelReply.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                if (activeEdit != null) {
+                    composer.setText("");
+                }
+                activeReply = null;
+                activeEdit = null;
                 replyPanel.setVisibility(View.GONE);
             }
         });
@@ -351,9 +362,10 @@ public class ChatActivity extends Activity implements GatewayListener {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Message message = (Message) messageList.getItemAtPosition(info.position);
+        if (message.isForwarded) menu.findItem(R.id.messageEdit).setVisible(false);
         try {
             if (message.author.id != account.getUserID()) {
-                if (!message.isForwarded) menu.findItem(R.id.messageEdit).setVisible(false);
+                menu.findItem(R.id.messageEdit).setVisible(false);
                 menu.findItem(R.id.messageDelete).setVisible(false); // TODO: user permissions
             }
         } catch (Exception e) {}
@@ -366,8 +378,18 @@ public class ChatActivity extends Activity implements GatewayListener {
         switch (item.getItemId()) {
             case R.id.messageReply:
                 activeReply = message;
+                activeEdit = null;
                 replyPanel.setVisibility(View.VISIBLE);
+                pingToggle.setVisibility(View.VISIBLE);
                 replyTo.setText(Html.fromHtml(getResources().getString(R.string.reply_to, message.author.name)));
+                return true;
+            case R.id.messageEdit:
+                activeReply = null;
+                activeEdit = message;
+                replyPanel.setVisibility(View.VISIBLE);
+                pingToggle.setVisibility(View.GONE);
+                replyTo.setText(R.string.editing_message);
+                composer.setText(message.content);
                 return true;
             case R.id.messageCopy:
                 ClipboardManager clipboard = (ClipboardManager) ChatActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -558,6 +580,8 @@ public class ChatActivity extends Activity implements GatewayListener {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             sending = false;
+                            activeReply = null;
+                            activeEdit = null;
                             composer.setEnabled(true);
                             sendButton.setEnabled(true);
                             if (isFinishing()) return;
@@ -572,6 +596,65 @@ public class ChatActivity extends Activity implements GatewayListener {
                             }
                             if (!exists) {
                                 messages.add(created);
+                            }
+                            cluster();
+                            adapter.notifyDataSetChanged();
+                            messageList.setSelection(messages.size() - 1);
+                            composer.setText("");
+                        }
+                    });
+                }
+                catch (final DiscordException e) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            sending = false;
+                            composer.setEnabled(true);
+                            sendButton.setEnabled(true);
+                            if (isFinishing()) return;
+                            showProgress(false);
+
+                            e.show(c);
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
+    private void editMessage() {
+        if (sending) return;
+
+        final Context c = this;
+        final String text = composer.getText().toString().trim();
+        if (text.length() == 0) return;
+
+        sending = true;
+        composer.setEnabled(false);
+        sendButton.setEnabled(false);
+        replyPanel.setVisibility(View.GONE);
+        showProgress(true);
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final Message edited = account.editMessage(activeEdit, text);
+
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            sending = false;
+                            activeReply = null;
+                            activeEdit = null;
+                            composer.setEnabled(true);
+                            sendButton.setEnabled(true);
+                            if (isFinishing()) return;
+                            showProgress(false);
+
+                            for (int i = 0; i < messages.size(); i++) {
+                                Message message = (Message) messages.elementAt(i);
+                                if (message.id == edited.id) {
+                                    message = edited;
+                                }
                             }
                             cluster();
                             adapter.notifyDataSetChanged();
