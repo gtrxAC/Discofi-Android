@@ -77,6 +77,7 @@
             android:id="@+id/msg_avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:padding="4dp"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_launcher"/>
 
@@ -84,7 +85,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="6dp"
             android:layout_marginTop="2dp"
             android:orientation="vertical">
 
@@ -106,9 +107,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="4dp"
+                    android:background="@color/badge_background"
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"
-                    android:background="@color/badge_background"
                     android:text="@string/badge_bot"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@android:color/white"
@@ -129,10 +130,10 @@
                 android:textAppearance="?android:attr/textAppearance"/>
 
             <LinearLayout
-                android:orientation="vertical"
+                android:id="@+id/msg_attachments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/msg_attachments"></LinearLayout>
+                android:orientation="vertical"></LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
