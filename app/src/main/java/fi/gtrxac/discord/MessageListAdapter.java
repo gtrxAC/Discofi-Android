@@ -45,20 +45,20 @@ import java.util.regex.Pattern;
 public class MessageListAdapter extends BaseAdapter {
     private final Context context;
     private final Vector messages;
-    private final Account account;
+    private final Account acc;
     private final boolean enableMention;
     private final LayoutInflater inflater;
     private final int maxAttachmentHeight;
     private final int maxAttachmentWidth;
 
-    public MessageListAdapter(Context context, Vector messages, Account account) {
-        this(context, messages, account, true);
+    public MessageListAdapter(Context context, Vector messages, Account acc) {
+        this(context, messages, acc, true);
     }
 
-    public MessageListAdapter(Context context, Vector messages, Account account, boolean enableMention) {
+    public MessageListAdapter(Context context, Vector messages, Account acc, boolean enableMention) {
         this.context = context;
         this.messages = messages;
-        this.account = account;
+        this.acc = acc;
         this.enableMention = enableMention;
         this.inflater = LayoutInflater.from(context);
         this.maxAttachmentHeight = context.getResources().getDisplayMetrics().heightPixels;
@@ -108,7 +108,7 @@ public class MessageListAdapter extends BaseAdapter {
 
             if (enableMention) {
                 try {
-                    if ((message.mentions != null && message.mentions.containsKey(Long.toString(account.getUserID()))) || message.mentionEveryone) {
+                    if ((message.mentions != null && message.mentions.containsKey(Long.toString(acc.getUserID()))) || message.mentionEveryone) {
                         convertView.setBackgroundResource(R.color.message_mentioned_background);
                     } else {
                         convertView.setBackgroundResource(0);
@@ -134,7 +134,7 @@ public class MessageListAdapter extends BaseAdapter {
                     holder.badge.setVisibility(View.GONE);
                 }
                 holder.timestamp.setText(message.timestamp);
-                loadAvatar(holder.avatar, message.author.getAvatarUrl(account.getCdnUrl()));
+                loadAvatar(holder.avatar, message.author.getAvatarUrl(acc.getCdnUrl()));
             } else {
                 holder.metadata.setVisibility(View.GONE);
                 holder.avatar.getLayoutParams().height = 0;
@@ -143,7 +143,7 @@ public class MessageListAdapter extends BaseAdapter {
             // Reply preview
             if (message.reply != null) {
                 holder.reply.setVisibility(View.VISIBLE);
-                loadAvatar(holder.replyAvatar, message.reply.author.getAvatarUrl(account.getCdnUrl()));
+                loadAvatar(holder.replyAvatar, message.reply.author.getAvatarUrl(acc.getCdnUrl()));
                 holder.replyAuthor.setText(message.reply.author.name);
                 if (message.reply.author.system) {
                     holder.replyBadge.setVisibility(View.VISIBLE);
@@ -156,7 +156,7 @@ public class MessageListAdapter extends BaseAdapter {
                 }
                 if (message.reply.content.length() > 0) {
                     MarkdownRenderer renderer = new MarkdownRenderer(context, message.reply,
-                            account.getCdnUrl(), holder.replyContent);
+                            acc.getCdnUrl(), holder.replyContent);
                     holder.replyContent.setText(renderer.render(message.reply.content));
                 } else {
                     holder.replyContent.setVisibility(View.GONE);
@@ -168,7 +168,7 @@ public class MessageListAdapter extends BaseAdapter {
             if (message.content.length() > 0) {
                 holder.content.setVisibility(View.VISIBLE);
                 MarkdownRenderer renderer = new MarkdownRenderer(context, message,
-                        account.getCdnUrl(), holder.content);
+                        acc.getCdnUrl(), holder.content);
                 SpannableStringBuilder content = renderer.render(message.content);
 
                 if (message.isEdited) {
@@ -249,7 +249,7 @@ public class MessageListAdapter extends BaseAdapter {
             image.setScaleType(ImageView.ScaleType.FIT_CENTER);
             image.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    openInBrowser(account.getCdnAssetUrl(attachment.proxyUrl));
+                    openInBrowser(acc.getCdnAssetUrl(attachment.proxyUrl));
                 }
             });
 
@@ -260,11 +260,15 @@ public class MessageListAdapter extends BaseAdapter {
             image.setLayoutParams(imageParams);
             container.addView(image);
 
-            loadImage(image, account.getCdnAssetUrl(attachment.getPreviewUrl(maxAttachmentWidth)),
-                    attachment.animated
-                            ? account.getCdnAssetUrl(attachment.getStillPreviewUrl(maxAttachmentWidth))
-                            : null);
-        } else {
+            String url = acc.getCdnAssetUrl(attachment.getPreviewUrl(maxAttachmentWidth));
+
+            String fallbackUrl = attachment.animated ?
+                acc.getCdnAssetUrl(attachment.getStillPreviewUrl(maxAttachmentWidth)) :
+                null;
+
+            loadImage(image, url, fallbackUrl);
+        }
+        else {
             View view = inflater.inflate(R.layout.attachment, container, false);
             TextView name = (TextView) view.findViewById(R.id.attachment_filename);
             TextView size = (TextView) view.findViewById(R.id.attachment_size);
@@ -274,7 +278,7 @@ public class MessageListAdapter extends BaseAdapter {
             size.setText(Attachment.formatSize(attachment.size));
             view.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    openInBrowser(account.getCdnAssetUrl(attachment.proxyUrl));
+                    openInBrowser(acc.getCdnAssetUrl(attachment.proxyUrl));
                 }
             });
 
@@ -351,7 +355,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         if (embed.description != null) {
             MarkdownRenderer renderer = new MarkdownRenderer(context, null,
-                    account.getCdnUrl(), description);
+                    acc.getCdnUrl(), description);
             description.setText(renderer.render(embed.description));
             description.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
         } else {
@@ -405,7 +409,7 @@ public class MessageListAdapter extends BaseAdapter {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
             if (embed.title != null || embed.description != null) params.topMargin = dp(4);
             image.setLayoutParams(params);
-            loadImage(image, account.getCdnAssetUrl(embed.image.getPreviewUrl(maxAttachmentWidth)));
+            loadImage(image, acc.getCdnAssetUrl(embed.image.getPreviewUrl(maxAttachmentWidth)));
         } else {
             image.setVisibility(View.GONE);
         }
@@ -415,7 +419,7 @@ public class MessageListAdapter extends BaseAdapter {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
             if (embed.title != null || embed.description != null) params.topMargin = dp(4);
             video.setLayoutParams(params);
-            loadImage(video, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
+            loadImage(video, acc.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
             video.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     openInBrowser(embed.video.url);
@@ -431,11 +435,11 @@ public class MessageListAdapter extends BaseAdapter {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
                 if (embed.title != null || embed.description != null) params.topMargin = dp(4);
                 image.setLayoutParams(params);
-                loadImage(image, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
+                loadImage(image, acc.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(maxAttachmentWidth)));
                 image.setVisibility(View.VISIBLE);
                 icon.setVisibility(View.GONE);
             } else {
-                loadImage(icon, account.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(dp(48))));
+                loadImage(icon, acc.getCdnAssetUrl(embed.thumbnail.getPreviewUrl(dp(48))));
             }
         } else {
             icon.setVisibility(View.GONE);
@@ -449,9 +453,9 @@ public class MessageListAdapter extends BaseAdapter {
                 }
             });
             if (embed.author.proxyIconUrl != null) {
-                loadImage(authorIcon, account.getCdnAssetUrl(embed.author.proxyIconUrl));
+                loadImage(authorIcon, acc.getCdnAssetUrl(embed.author.proxyIconUrl), true);
             } else if (embed.author.iconUrl != null) {
-                loadImage(authorIcon, embed.author.iconUrl);
+                loadImage(authorIcon, embed.author.iconUrl, true);
             } else {
                 authorIcon.setVisibility(View.GONE);
             }
@@ -474,9 +478,9 @@ public class MessageListAdapter extends BaseAdapter {
             footer.setVisibility(View.VISIBLE);
             footerContent.setText(footerText);
             if (embed.footer.proxyIconUrl != null) {
-                loadImage(footerIcon, account.getCdnAssetUrl(embed.footer.proxyIconUrl));
+                loadImage(footerIcon, acc.getCdnAssetUrl(embed.footer.proxyIconUrl), true);
             } else if (embed.footer.iconUrl != null) {
-                loadImage(footerIcon, embed.footer.iconUrl);
+                loadImage(footerIcon, embed.footer.iconUrl, true);
             } else {
                 footerIcon.setVisibility(View.GONE);
             }
@@ -540,10 +544,18 @@ public class MessageListAdapter extends BaseAdapter {
     }
 
     private void loadImage(ImageView view, String url) {
-        loadImage(view, url, null);
+        loadImage(view, url, false);
     }
 
-    private void loadImage(final ImageView view, final String url, final String fallbackUrl) {
+    private void loadImage(ImageView view, String url, boolean rounded) {
+        loadImage(view, url, null, rounded);
+    }
+
+    private void loadImage(ImageView view, String url, String fallbackUrl) {
+        loadImage(view, url, fallbackUrl, false);
+    }
+
+    private void loadImage(final ImageView view, final String url, final String fallbackUrl, final boolean rounded) {
         view.setImageDrawable(null);
         if (url == null) {
             Glide.clear(view);
@@ -551,13 +563,18 @@ public class MessageListAdapter extends BaseAdapter {
         }
 
         DrawableRequestBuilder<String> request = Glide.with(context).load(url);
+
+        if (rounded) {
+            request.transform(new CircleTransform(context));
+        }
+
         if (fallbackUrl != null) {
             request = request.listener(new RequestListener<String, GlideDrawable>() {
                 public boolean onException(Exception e, String model, Target<GlideDrawable> target,
                         boolean isFirstResource) {
                     // An animated preview can fail (too big for memory, invalid
                     // gif data); show the still frame instead.
-                    loadImage(view, fallbackUrl);
+                    loadImage(view, fallbackUrl, rounded);
                     return true;
                 }
 
@@ -580,7 +597,7 @@ public class MessageListAdapter extends BaseAdapter {
             Glide.clear(view);
             view.setImageResource(R.mipmap.ic_launcher);
         } else {
-            loadImage(view, url);
+            loadImage(view, url, true);
         }
     }
 

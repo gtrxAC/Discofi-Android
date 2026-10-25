@@ -40,7 +40,11 @@ public class IconArrayAdapter extends ArrayAdapter<String> {
             image.setImageResource(R.mipmap.ic_launcher);
         } else {
             image.setImageDrawable(null);
-            Glide.with(getContext()).load(url).into(image);
+
+            Glide.with(getContext())
+                .load(url)
+                .transform(new CircleTransform(getContext()))
+                .into(image);
         }
 
         return convertView;
