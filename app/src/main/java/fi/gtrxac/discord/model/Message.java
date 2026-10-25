@@ -23,7 +23,6 @@ public class Message {
     public String content;
     public boolean showAuthor;
     public String timestamp;
-    public String timestampIso;
     public Vector attachments;
     public Vector embeds;
     public Hashtable mentions;
@@ -40,7 +39,6 @@ public class Message {
         channelId = Long.parseLong(data.getString("channel_id"));
         author = new User(data.getObject("author"));
         timestamp = DiscordUtil.formatTimestamp(id, false);
-        timestampIso = data.getString("timestamp");
         mentionEveryone = data.getBoolean("mention_everyone", false);
 
         isEdited = (data.getString("edited_timestamp", null) != null);
