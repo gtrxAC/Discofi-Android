@@ -170,12 +170,14 @@ public class MessageListAdapter extends BaseAdapter {
                 MarkdownRenderer renderer = new MarkdownRenderer(context, message,
                         account.getCdnUrl(), holder.content);
                 SpannableStringBuilder content = renderer.render(message.content);
-                if (message.editedTimestampIso != null) {
+
+                if (message.isEdited) {
                     int start = content.length();
                     content.append(" " + context.getResources().getString(R.string.edited));
                     int end = content.length();
                     content.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
+
                 if (message.isForwarded) {
                     SpannableStringBuilder forwarded = new SpannableStringBuilder(context.getResources().getString(R.string.forwarded));
                     forwarded.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), 0, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -185,9 +187,11 @@ public class MessageListAdapter extends BaseAdapter {
                     forwarded.setSpan(new QuoteSpan(context.getResources().getColor(R.color.quote_color)), 0, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE | (128 << Spanned.SPAN_PRIORITY_SHIFT));
                     content = forwarded;
                 }
+
                 holder.content.setText(content);
                 holder.content.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
-            } else {
+            }
+            else {
                 holder.content.setVisibility(View.GONE);
             }
 

@@ -24,12 +24,12 @@ public class Message {
     public boolean showAuthor;
     public String timestamp;
     public String timestampIso;
-    public String editedTimestampIso;
     public Vector attachments;
     public Vector embeds;
     public Hashtable mentions;
     public boolean mentionEveryone;
 
+    public boolean isEdited;
     public boolean isStatus;
     public boolean isForwarded;
     public boolean isReply;
@@ -41,8 +41,9 @@ public class Message {
         author = new User(data.getObject("author"));
         timestamp = DiscordUtil.formatTimestamp(id, false);
         timestampIso = data.getString("timestamp");
-        editedTimestampIso = data.getString("edited_timestamp", null);
         mentionEveryone = data.getBoolean("mention_everyone", false);
+
+        isEdited = (data.getString("edited_timestamp", null) != null);
 
         JSONObject contentObject = getContentObject(data);
 

@@ -229,7 +229,6 @@ public class ChatActivity extends Activity implements GatewayListener {
         final long messageId = Long.parseLong(data.getString("id"));
 
         final String newContent = data.getString("content", null);
-        final String editedTimestamp = data.getString("edited_timestamp", null);
 
         runOnUiThread(new Runnable() {
             public void run() {
@@ -239,13 +238,10 @@ public class ChatActivity extends Activity implements GatewayListener {
                     Message message = (Message) messages.elementAt(i);
                     if (message.id != messageId) continue;
 
+                    message.isEdited = true;
+
                     if (newContent != null) {
                         message.content = newContent;
-                        if (editedTimestamp != null) {
-                            message.editedTimestampIso = editedTimestamp;
-                        } else if (message.editedTimestampIso == null) {
-                            message.editedTimestampIso = "";
-                        }
                     }
 
                     cluster();
