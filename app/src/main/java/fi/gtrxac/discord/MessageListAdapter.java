@@ -384,14 +384,14 @@ public class MessageListAdapter extends BaseAdapter {
                 if (field.name != null) {
                     TextView name = new TextView(context);
                     name.setText(field.name);
-                    name.setTextColor(context.getResources().getColor(android.R.color.primary_text_dark));
+                    name.setTextColor(context.getResources().getColor(android.R.color.white));
                     name.setTypeface(null, Typeface.BOLD);
                     column.addView(name);
                 }
                 if (field.value != null) {
                     TextView value = new TextView(context);
                     value.setText(field.value);
-                    value.setTextColor(context.getResources().getColor(android.R.color.primary_text_dark));
+                    value.setTextColor(context.getResources().getColor(android.R.color.white));
                     column.addView(value);
                 }
 

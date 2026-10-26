@@ -52,7 +52,8 @@
 
         <activity
             android:label="Chat"
-            android:name="fi.gtrxac.discord.ChatActivity">
+            android:name="fi.gtrxac.discord.ChatActivity"
+            android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
 
     </application>
