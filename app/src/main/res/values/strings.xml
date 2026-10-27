@@ -32,6 +32,7 @@
     <string name="token_login">Token login is only intended for advanced users and may be unsafe.</string>
     <string name="token">Token</string>
     <string name="use_token">Use token</string>
+    <string name="import_token_from_file">Import token from file</string>
     <string name="enter_code">Enter the 6-digit code from your authenticator app (e.g. Google Authenticator).</string>
     <string name="auth_code">Authentication code</string>
     <string name="accounts">Accounts</string>

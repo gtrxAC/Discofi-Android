@@ -43,6 +43,7 @@ public class IconArrayAdapter extends ArrayAdapter<String> {
 
             Glide.with(getContext())
                 .load(url)
+                .thumbnail(0.5f)
                 .transform(new CircleTransform(getContext()))
                 .into(image);
         }

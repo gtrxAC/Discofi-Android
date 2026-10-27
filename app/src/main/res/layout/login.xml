@@ -67,4 +67,10 @@
         android:layout_height="wrap_content"
         android:text="@string/use_token" />
 
+    <Button
+        android:id="@+id/tokenFileImportButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/import_token_from_file" />
+
 </LinearLayout>

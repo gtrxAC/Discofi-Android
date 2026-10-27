@@ -3,6 +3,7 @@
     package="fi.gtrxac.discord">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:theme="@style/AppTheme"
@@ -54,6 +55,11 @@
             android:label="Chat"
             android:name="fi.gtrxac.discord.ChatActivity"
             android:windowSoftInputMode="stateAlwaysHidden">
+        </activity>
+
+        <activity
+            android:label="Select a file"
+            android:name="fi.gtrxac.discord.FilePickerActivity">
         </activity>
 
     </application>

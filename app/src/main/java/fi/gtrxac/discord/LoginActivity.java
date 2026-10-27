@@ -4,16 +4,21 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.InputStream;
 import java.util.Hashtable;
 
 import cc.nnproject.json.JSONObject;
+
+import fi.gtrxac.bluewap.Util;
 
 /**
  * Created by gtrx on 29.8.2026.
@@ -22,6 +27,7 @@ import cc.nnproject.json.JSONObject;
 public class LoginActivity extends Activity {
     private static final String TOKEN_REGEX =
             "[A-Za-z0-9-_]{20,28}.[A-Za-z0-9-_]{4,8}.[A-Za-z0-9-_]{32,}";
+    private static final int TOKEN_FILE_REQUEST = 1;
 
     private EditText emailField;
     private EditText passwordField;
@@ -96,6 +102,7 @@ public class LoginActivity extends Activity {
 
         tokenField = (EditText) findViewById(R.id.tokenField);
         Button tokenLoginButton = (Button) findViewById(R.id.tokenLoginButton);
+        Button tokenFileImportButton = (Button) findViewById(R.id.tokenFileImportButton);
 
         if (App.pendingAccount != null) {
             tokenField.setText(App.pendingAccount.token);
@@ -104,45 +111,70 @@ public class LoginActivity extends Activity {
         tokenLoginButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                String token = tokenField.getText().toString();
-
+                String token = tokenField.getText().toString().trim();
                 if (token.length() == 0) {
                     tokenField.setError("Token is required");
                     return;
                 }
-
                 tokenField.setError(null);
-
-                final String cleanToken = token.replace("\"", "").trim();
-                final ProgressDialog dialog =
-                        ProgressDialog.show(LoginActivity.this, "", "Logging in...", true);
-
-                new Thread() {
-                    @Override
-                    public void run() {
-                        // Validate the token by fetching the user profile
-                        App.pendingAccount.token = cleanToken;
-
-                        try {
-                            App.pendingAccount.fetchUserProfile();
-                        }
-                        catch (final DiscordException e) {
-                            App.pendingAccount.token = null;
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    dialog.dismiss();
-                                    if (isFinishing()) return;
-                                    e.show(c);
-                                }
-                            });
-                            return;
-                        }
-
-                        completeLogin(c, dialog, cleanToken);
-                    }
-                }.start();
+                loginToken(token);
             }
         });
+
+        tokenFileImportButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(c, FilePickerActivity.class), TOKEN_FILE_REQUEST);
+            }
+        });
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == TOKEN_FILE_REQUEST && resultCode == RESULT_OK) {
+            try {
+                InputStream is = this.getContentResolver().openInputStream(data.getData());
+                byte[] tokenBytes = Util.readBytes(is);
+                String token = Util.bytesToString(tokenBytes).trim();
+                if (token == null || token.length() == 0) {
+                    Toast.makeText(this, "Token file is empty", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                loginToken(token);
+            } catch (Exception e) {
+                e.printStackTrace();
+                new DiscordException(e).show(this);
+            }
+        }
+    }
+
+    private void loginToken(final String token) {
+        final Context c = this;
+
+        final ProgressDialog dialog = ProgressDialog.show(c, "", "Logging in...", true);
+
+        new Thread() {
+            @Override
+            public void run() {
+                App.pendingAccount.token = token;
+
+                try {
+                    App.pendingAccount.fetchUserProfile();
+                }
+                catch (final DiscordException e) {
+                    App.pendingAccount.token = null;
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            dialog.dismiss();
+                            if (isFinishing()) return;
+                            e.show(c);
+                        }
+                    });
+                    return;
+                }
+
+                completeLogin(c, dialog, token);
+            }
+        }.start();
     }
 
     /**

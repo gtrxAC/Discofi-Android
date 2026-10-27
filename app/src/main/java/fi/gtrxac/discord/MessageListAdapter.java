@@ -562,7 +562,7 @@ public class MessageListAdapter extends BaseAdapter {
             return;
         }
 
-        DrawableRequestBuilder<String> request = Glide.with(context).load(url);
+        DrawableRequestBuilder<String> request = Glide.with(context).load(url).thumbnail(0.5f);
 
         if (rounded) {
             request.transform(new CircleTransform(context));

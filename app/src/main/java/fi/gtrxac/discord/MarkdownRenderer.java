@@ -339,6 +339,7 @@ public class MarkdownRenderer implements MarkdownListener {
             Glide.with(context)
                     .load(url)
                     .diskCacheStrategy(strategy)
+                    .thumbnail(0.5f)
                     .into(new EmojiTarget(this, view, fallbackUrl));
         }
 
