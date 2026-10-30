@@ -24,13 +24,13 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Message editing
 * Message deleting
 * Token file import
+* Theme settings (light/dark)
 
 ### Planned for later
 * Sending attachments
 * Threads
 * Forums
 * Reactions
-* Theme settings (light/dark)
 * Native Holo UI on Android 4.x or higher
 * etc.
 
