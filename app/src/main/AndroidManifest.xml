@@ -27,39 +27,44 @@
         </activity>
 
         <activity
-            android:label="Accounts"
+            android:label="@string/accounts"
             android:name="fi.gtrxac.discord.AccountListActivity">
         </activity>
 
         <activity
-            android:label="Log in"
+            android:label="@string/login"
             android:name="fi.gtrxac.discord.LoginActivity">
         </activity>
 
         <activity
-            android:label="Connection setup"
+            android:label="@string/connection_setup"
             android:name="fi.gtrxac.discord.ConnectionModeActivity">
         </activity>
 
         <activity
-            android:label="Authentication code"
+            android:label="@string/auth_code"
             android:name="fi.gtrxac.discord.MfaActivity">
         </activity>
 
         <activity
-            android:label="Channels"
+            android:label="@string/app_name"
             android:name="fi.gtrxac.discord.ChannelListActivity">
         </activity>
 
         <activity
-            android:label="Chat"
+            android:label="@string/app_name"
             android:name="fi.gtrxac.discord.ChatActivity"
             android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
 
         <activity
-            android:label="Select a file"
+            android:label="@string/app_name"
             android:name="fi.gtrxac.discord.FilePickerActivity">
+        </activity>
+
+        <activity
+            android:label="@string/settings"
+            android:name="fi.gtrxac.discord.SettingsActivity">
         </activity>
 
     </application>

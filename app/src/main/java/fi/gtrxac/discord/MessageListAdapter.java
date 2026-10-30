@@ -109,7 +109,7 @@ public class MessageListAdapter extends BaseAdapter {
             if (enableMention) {
                 try {
                     if ((message.mentions != null && message.mentions.containsKey(Long.toString(acc.getUserID()))) || message.mentionEveryone) {
-                        convertView.setBackgroundResource(R.color.message_mentioned_background);
+                        convertView.setBackgroundResource(Theme.messageMentionedBackground);
                     } else {
                         convertView.setBackgroundResource(0);
                     }
@@ -141,7 +141,7 @@ public class MessageListAdapter extends BaseAdapter {
             }
 
             // Reply preview
-            if (message.reply != null) {
+            if (message.reply != null && Settings.showReplies) {
                 holder.reply.setVisibility(View.VISIBLE);
                 loadAvatar(holder.replyAvatar, message.reply.author.getAvatarUrl(acc.getCdnUrl()));
                 holder.replyAuthor.setText(message.reply.author.name);
@@ -155,9 +155,14 @@ public class MessageListAdapter extends BaseAdapter {
                     holder.replyBadge.setVisibility(View.GONE);
                 }
                 if (message.reply.content.length() > 0) {
-                    MarkdownRenderer renderer = new MarkdownRenderer(context, message.reply,
-                            acc.getCdnUrl(), holder.replyContent);
-                    holder.replyContent.setText(renderer.render(message.reply.content));
+                    holder.replyContent.setVisibility(View.VISIBLE);
+                    if (Settings.useMarkdown) {
+                        MarkdownRenderer renderer = new MarkdownRenderer(context, message.reply,
+                                acc.getCdnUrl(), holder.replyContent);
+                        holder.replyContent.setText(renderer.render(message.reply.content));
+                    } else {
+                        holder.replyContent.setText(message.reply.content);
+                    }
                 } else {
                     holder.replyContent.setVisibility(View.GONE);
                 }
@@ -167,9 +172,15 @@ public class MessageListAdapter extends BaseAdapter {
 
             if (message.content.length() > 0) {
                 holder.content.setVisibility(View.VISIBLE);
-                MarkdownRenderer renderer = new MarkdownRenderer(context, message,
-                        acc.getCdnUrl(), holder.content);
-                SpannableStringBuilder content = renderer.render(message.content);
+
+                SpannableStringBuilder content;
+                if (Settings.useMarkdown) {
+                    MarkdownRenderer renderer = new MarkdownRenderer(context, message,
+                            acc.getCdnUrl(), holder.content);
+                    content = renderer.render(message.content);
+                } else {
+                    content = new SpannableStringBuilder(message.content);
+                }
 
                 if (message.isEdited) {
                     int start = content.length();
@@ -184,7 +195,7 @@ public class MessageListAdapter extends BaseAdapter {
                     forwarded.setSpan(new StyleSpan(Typeface.ITALIC), 0, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     forwarded.append("\n");
                     forwarded.append(content);
-                    forwarded.setSpan(new QuoteSpan(context.getResources().getColor(R.color.quote_color)), 0, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE | (128 << Spanned.SPAN_PRIORITY_SHIFT));
+                    forwarded.setSpan(new QuoteSpan(Theme.quoteColor), 0, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE | (128 << Spanned.SPAN_PRIORITY_SHIFT));
                     content = forwarded;
                 }
 
@@ -245,7 +256,7 @@ public class MessageListAdapter extends BaseAdapter {
         if (attachment.previewable) {
             // TODO: properly handle videos
             ImageView image = new ImageView(context);
-            image.setBackgroundResource(R.color.embed_background);
+            image.setBackgroundColor(Theme.embedBackground);
             image.setScaleType(ImageView.ScaleType.FIT_CENTER);
             image.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -270,6 +281,7 @@ public class MessageListAdapter extends BaseAdapter {
         }
         else {
             View view = inflater.inflate(R.layout.attachment, container, false);
+            view.setBackgroundColor(Theme.embedBackground);
             TextView name = (TextView) view.findViewById(R.id.attachment_filename);
             TextView size = (TextView) view.findViewById(R.id.attachment_size);
 
@@ -317,6 +329,7 @@ public class MessageListAdapter extends BaseAdapter {
 
     private void addEmbed(LinearLayout container, final Embed embed) {
         View view = inflater.inflate(R.layout.embed, container, false);
+        view.setBackgroundColor(Theme.embedBackground);
         View bar = view.findViewById(R.id.embed_color);
         TextView title = (TextView) view.findViewById(R.id.embed_title);
         LinkTextView description = (LinkTextView) view.findViewById(R.id.embed_content);
@@ -340,6 +353,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         if (embed.title != null) {
             title.setText(embed.title);
+            title.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
         } else {
             title.setVisibility(View.GONE);
         }
@@ -357,6 +371,7 @@ public class MessageListAdapter extends BaseAdapter {
             MarkdownRenderer renderer = new MarkdownRenderer(context, null,
                     acc.getCdnUrl(), description);
             description.setText(renderer.render(embed.description));
+            description.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
             description.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
         } else {
             description.setVisibility(View.GONE);
@@ -384,14 +399,14 @@ public class MessageListAdapter extends BaseAdapter {
                 if (field.name != null) {
                     TextView name = new TextView(context);
                     name.setText(field.name);
-                    name.setTextColor(context.getResources().getColor(android.R.color.white));
+                    name.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
                     name.setTypeface(null, Typeface.BOLD);
                     column.addView(name);
                 }
                 if (field.value != null) {
                     TextView value = new TextView(context);
                     value.setText(field.value);
-                    value.setTextColor(context.getResources().getColor(android.R.color.white));
+                    value.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
                     column.addView(value);
                 }
 
@@ -447,6 +462,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         if (embed.author != null) {
             authorName.setText(embed.author.name);
+            authorName.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
             authorName.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     openInBrowser(embed.author.url);
@@ -477,6 +493,7 @@ public class MessageListAdapter extends BaseAdapter {
         if (footerText != null) {
             footer.setVisibility(View.VISIBLE);
             footerContent.setText(footerText);
+            footerContent.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
             if (embed.footer.proxyIconUrl != null) {
                 loadImage(footerIcon, acc.getCdnAssetUrl(embed.footer.proxyIconUrl), true);
             } else if (embed.footer.iconUrl != null) {
@@ -564,7 +581,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         DrawableRequestBuilder<String> request = Glide.with(context).load(url).thumbnail(0.5f);
 
-        if (rounded) {
+        if (rounded && !Settings.squareAvatars) {
             request.transform(new CircleTransform(context));
         }
 

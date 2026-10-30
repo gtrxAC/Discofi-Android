@@ -33,6 +33,7 @@ public class ChannelListActivity extends Activity {
     private ListView channelList;
 
     public void onCreate(Bundle savedInstanceState) {
+        Theme.load(this);
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.channel_list);

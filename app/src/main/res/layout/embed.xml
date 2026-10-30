@@ -3,7 +3,6 @@
     android:id="@+id/embed"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/embed_background"
     android:orientation="horizontal">
 
     <View
@@ -23,7 +22,8 @@
             android:id="@+id/embed_site_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/tab_indicator_text" />
 
         <LinearLayout
             android:id="@+id/embed_author"
@@ -45,7 +45,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -60,8 +59,7 @@
         <fi.gtrxac.discord.LinkTextView
             android:id="@+id/embed_content"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white" />
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:orientation="vertical"
@@ -103,7 +101,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
         </LinearLayout>

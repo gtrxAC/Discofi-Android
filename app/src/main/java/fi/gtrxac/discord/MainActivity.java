@@ -42,11 +42,13 @@ public class MainActivity extends TabActivity {
 
     public void onCreate(Bundle savedInstanceState) {
 		final Context context = this;
+
+        Settings.load(this);
+        Theme.load(this);
+
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main);
-
-        Settings.load(this);
 
         final Account acc = Accounts.getActive();
 
@@ -123,6 +125,21 @@ public class MainActivity extends TabActivity {
 
         loadGuilds(context, acc);
 	}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (Theme.checkAppearanceChanged(this)) return;
+
+        // Settings may have changed while the settings screen was open.
+        for (int i = 0; i < inbox.size(); i++) {
+            inbox.elementAt(i).refreshTimestamp();
+        }
+        if (guildList != null) guildList.invalidateViews();
+        if (dmChannelList != null) dmChannelList.invalidateViews();
+        if (inboxList != null) inboxList.invalidateViews();
+    }
 
 	private void loadGuilds(final Context context, final Account acc) {
         if (acc.guildsAvailable()) {
@@ -332,6 +349,9 @@ public class MainActivity extends TabActivity {
         switch (item.getItemId()) {
             case R.id.mainRefresh:
                 refreshCurrentTab();
+                return true;
+            case R.id.mainSettings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.mainLogout:
                 goToLoginScreen();

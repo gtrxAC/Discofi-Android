@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="theme_entries">
+        <item>@string/dark</item>
+        <item>@string/light</item>
+    </array>
+    <array name="theme_values">
+        <item>dark</item>
+        <item>light</item>
+    </array>
+
+    <array name="font_size_entries">
+        <item>@string/small</item>
+        <item>@string/medium</item>
+        <item>@string/large</item>
+    </array>
+    <array name="font_size_values">
+        <item>SMALL</item>
+        <item>MEDIUM</item>
+        <item>LARGE</item>
+    </array>
+
+    <array name="avatar_shape_entries">
+        <item>@string/circle</item>
+        <item>@string/square</item>
+    </array>
+    <array name="avatar_shape_values">
+        <item>circle</item>
+        <item>square</item>
+    </array>
+
+    <array name="time_format_entries">
+        <item>@string/time_12h</item>
+        <item>@string/time_24h</item>
+    </array>
+    <string-array name="time_format_values">
+        <item>12</item>
+        <item>24</item>
+    </string-array>
+
+</resources>

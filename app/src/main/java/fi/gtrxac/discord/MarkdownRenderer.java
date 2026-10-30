@@ -143,7 +143,8 @@ public class MarkdownRenderer implements MarkdownListener {
         }
         if ((font & Markdown.FONT_FACE_MONOSPACE) != 0) {
             out.setSpan(new TypefaceSpan("monospace"), start, end, SPAN_FLAGS);
-            out.setSpan(new BackgroundColorSpan(resources.getColor(R.color.embed_background)), start, end, SPAN_FLAGS);
+            out.setSpan(new BackgroundColorSpan(Theme.codeBackground), start, end, SPAN_FLAGS);
+            out.setSpan(new ForegroundColorSpan(resources.getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white)), start, end, SPAN_FLAGS);
         }
 
         float scale = 1f;
@@ -180,8 +181,8 @@ public class MarkdownRenderer implements MarkdownListener {
         int end = out.length();
         if (start == end) return;
 
-        int background = resources.getColor(R.color.mention_background);
-        int foreground = resources.getColor(R.color.mention_foreground);
+        int background = Theme.mentionBackground;
+        int foreground = Theme.mentionForeground;
         if (color != 0) {
             background = Color.argb((int) (255 * 0.1), Color.red(color), Color.green(color), Color.blue(color));
             foreground = color;
@@ -493,7 +494,8 @@ public class MarkdownRenderer implements MarkdownListener {
     public void endCodeBlock(Object ctx) {
         if (codeStart >= out.length()) return;
         out.setSpan(new TypefaceSpan("monospace"), codeStart, out.length(), SPAN_FLAGS);
-        out.setSpan(new BackgroundColorSpan(resources.getColor(R.color.embed_background)), codeStart, out.length(), SPAN_FLAGS);
+        out.setSpan(new BackgroundColorSpan(Theme.codeBackground), codeStart, out.length(), SPAN_FLAGS);
+        out.setSpan(new ForegroundColorSpan(resources.getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white)), codeStart, out.length(), SPAN_FLAGS);
         codeStart = -1;
     }
 
@@ -507,7 +509,7 @@ public class MarkdownRenderer implements MarkdownListener {
         // Outranks bullets so quote bar is outermost; enclosing quotes outrank nested ones for left-to-right bar stacking.
         int depth = quoteStarts.size() + 1;
         int priority = Math.max(QUOTE_SPAN_PRIORITY_FLOOR, QUOTE_SPAN_PRIORITY - (depth - 1));
-        out.setSpan(new QuoteSpan(resources.getColor(R.color.quote_color)), start, out.length(),
+        out.setSpan(new QuoteSpan(Theme.quoteColor), start, out.length(),
                 SPAN_FLAGS | (priority << Spanned.SPAN_PRIORITY_SHIFT));
     }
 
@@ -534,8 +536,9 @@ public class MarkdownRenderer implements MarkdownListener {
 
     public void endSpoiler(Object ctx) {
         if (spoilerStart >= out.length()) return;
-        out.setSpan(new BackgroundColorSpan(resources.getColor(R.color.embed_background)), spoilerStart, out.length(), SPAN_FLAGS);
-        final ForegroundColorSpan hide = new ForegroundColorSpan(resources.getColor(R.color.embed_background));
+        out.setSpan(new BackgroundColorSpan(Theme.codeBackground), spoilerStart, out.length(), SPAN_FLAGS);
+        out.setSpan(new ForegroundColorSpan(resources.getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white)), spoilerStart, out.length(), SPAN_FLAGS);
+        final ForegroundColorSpan hide = new ForegroundColorSpan(Theme.codeBackground);
         out.setSpan(new ClickableSpan() {
             @Override
             public void onClick(View widget) {
@@ -676,7 +679,8 @@ public class MarkdownRenderer implements MarkdownListener {
         int end = out.length();
         if (start == end) return;
         applyFontSpans(start, end, font);
-        out.setSpan(new BackgroundColorSpan(resources.getColor(R.color.embed_background)), start, end, SPAN_FLAGS);
+        out.setSpan(new BackgroundColorSpan(Theme.codeBackground), start, end, SPAN_FLAGS);
+        out.setSpan(new ForegroundColorSpan(resources.getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white)), start, end, SPAN_FLAGS);
         if (!links.isEmpty()) {
             applyLinkSpan(start, end, links.peek());
         }

@@ -1,7 +1,6 @@
 package fi.gtrxac.discord;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,7 +28,7 @@ public class FilePickerActivity extends Activity {
     private ArrayAdapter<String> adapter;
 
     public void onCreate(Bundle savedInstanceState) {
-        final Context context = this;
+        Theme.load(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_picker);
 

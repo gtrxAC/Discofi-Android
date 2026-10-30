@@ -38,8 +38,6 @@ import cc.nnproject.json.JSONObject;
  * and sending.
  */
 public class ChatActivity extends Activity implements GatewayListener {
-    public static final int MESSAGE_LOAD_COUNT = 25;
-
     private Account account;
     private long channelId;
     private String channelName;
@@ -70,6 +68,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     private Message activeEdit;
 
     public void onCreate(Bundle savedInstanceState) {
+        Theme.load(this);
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.chat);
@@ -121,7 +120,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             public void afterTextChanged(Editable s) {
-                if (s.length() == 0) return;
+                if (!Settings.sendTyping || s.length() == 0) return;
 
                 long now = System.currentTimeMillis();
                 if (now - lastTypingSent < 10000) return;
@@ -160,7 +159,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                 if (!initialLoadDone || loadingOlder || sending) return;
 
                 // Near the top -> fetch the previous page of history
-                if (firstVisibleItem == 0 && messages.size() >= MESSAGE_LOAD_COUNT) {
+                if (firstVisibleItem == 0 && messages.size() >= Settings.messageLoadCount) {
                     loadOlderMessages();
                 }
             }
@@ -172,6 +171,16 @@ public class ChatActivity extends Activity implements GatewayListener {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (Theme.checkAppearanceChanged(this)) return;
+        if (messages == null) return;
+
+        // Settings may have changed while this activity was in the background.
+        for (int i = 0; i < messages.size(); i++) {
+            ((Message) messages.elementAt(i)).refreshTimestamp();
+        }
+        if (adapter != null) adapter.notifyDataSetChanged();
+
         GatewayThread.addListener(this);
     }
 
@@ -451,7 +460,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             public void run() {
                 try {
                     final Vector result =
-                            account.getMessages(channelId, 0, 0, MESSAGE_LOAD_COUNT);
+                            account.getMessages(channelId, 0, 0, Settings.messageLoadCount);
 
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -516,7 +525,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             public void run() {
                 try {
                     final Vector older = account.getMessages(
-                            channelId, first.id, 0, MESSAGE_LOAD_COUNT);
+                            channelId, first.id, 0, Settings.messageLoadCount);
 
                     runOnUiThread(new Runnable() {
                         public void run() {

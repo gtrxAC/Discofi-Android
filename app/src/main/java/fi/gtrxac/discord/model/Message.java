@@ -1,6 +1,7 @@
 package fi.gtrxac.discord.model;
 
 import fi.gtrxac.discord.DiscordUtil;
+import fi.gtrxac.discord.Settings;
 import cc.nnproject.json.*;
 import java.util.*;
 
@@ -38,7 +39,7 @@ public class Message {
         id = Long.parseLong(data.getString("id"));
         channelId = Long.parseLong(data.getString("channel_id"));
         author = new User(data.getObject("author"));
-        timestamp = DiscordUtil.formatTimestamp(id, false);
+        timestamp = DiscordUtil.formatTimestamp(id, Settings.use12hTime);
         mentionEveryone = data.getBoolean("mention_everyone", false);
 
         isEdited = (data.getString("edited_timestamp", null) != null);
@@ -204,6 +205,14 @@ public class Message {
                 return "boosted the server to level " + (type - TYPE_BOOSTED);
             }
         }
+    }
+
+    /**
+     * Re-render the timestamp after the time format setting has changed.
+     */
+    public void refreshTimestamp() {
+        timestamp = DiscordUtil.formatTimestamp(id, Settings.use12hTime);
+        if (reply != null) reply.refreshTimestamp();
     }
 
     public boolean shouldShowAuthor(Message above, long clusterStart) {

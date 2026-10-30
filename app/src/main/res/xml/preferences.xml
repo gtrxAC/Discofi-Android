@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/appearance">
+
+        <ListPreference
+            android:key="theme"
+            android:title="@string/theme"
+            android:summary="%s"
+            android:dialogTitle="@string/theme"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:defaultValue="dark" />
+
+        <ListPreference
+            android:key="fontSize"
+            android:title="@string/font_size"
+            android:summary="%s"
+            android:dialogTitle="@string/font_size"
+            android:entries="@array/font_size_entries"
+            android:entryValues="@array/font_size_values"
+            android:defaultValue="MEDIUM" />
+
+        <ListPreference
+            android:key="avatarShape"
+            android:title="@string/avatar_shape"
+            android:summary="%s"
+            android:dialogTitle="@string/avatar_shape"
+            android:entries="@array/avatar_shape_entries"
+            android:entryValues="@array/avatar_shape_values"
+            android:defaultValue="circle" />
+
+        <ListPreference
+            android:key="timeFormat"
+            android:title="@string/time_format"
+            android:summary="%s"
+            android:dialogTitle="@string/time_format"
+            android:entries="@array/time_format_entries"
+            android:entryValues="@array/time_format_values"
+            android:defaultValue="24" />
+
+        <CheckBoxPreference
+            android:key="showReplies"
+            android:title="@string/show_replies"
+            android:summary="@string/show_replies_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="textFormatting"
+            android:title="@string/text_formatting"
+            android:summary="@string/text_formatting_summary"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/behavior">
+
+        <EditTextPreference
+            android:key="messageLoadCount"
+            android:title="@string/message_load_count"
+            android:dialogMessage="@string/message_load_count_dialog"
+            android:dialogTitle="@string/message_load_count"
+            android:inputType="number"
+            android:defaultValue="25" />
+
+        <CheckBoxPreference
+            android:key="sendTyping"
+            android:title="@string/send_typing"
+            android:summary="@string/send_typing_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="autoReconnect"
+            android:title="@string/auto_reconnect"
+            android:summary="@string/auto_reconnect_summary"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -33,6 +33,7 @@ public class AccountListActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         final Context context = this;
+        Theme.load(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.accounts);
 

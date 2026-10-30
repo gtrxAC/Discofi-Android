@@ -41,11 +41,18 @@ public class IconArrayAdapter extends ArrayAdapter<String> {
         } else {
             image.setImageDrawable(null);
 
-            Glide.with(getContext())
-                .load(url)
-                .thumbnail(0.5f)
-                .transform(new CircleTransform(getContext()))
-                .into(image);
+            if (Settings.squareAvatars) {
+                Glide.with(getContext())
+                    .load(url)
+                    .thumbnail(0.5f)
+                    .into(image);
+            } else {
+                Glide.with(getContext())
+                    .load(url)
+                    .thumbnail(0.5f)
+                    .transform(new CircleTransform(getContext()))
+                    .into(image);
+            }
         }
 
         return convertView;

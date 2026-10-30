@@ -196,7 +196,7 @@ public class GatewayThread extends Thread {
         stopMessage = message;
         notifyDisconnected(message);
 
-        if ((!stop || stopMessage != null) && reconnectAttempts < 3) {
+        if (Settings.autoReconnect && (!stop || stopMessage != null) && reconnectAttempts < 3) {
             reconnectAttempts++;
             new Thread() {
                 public void run() {

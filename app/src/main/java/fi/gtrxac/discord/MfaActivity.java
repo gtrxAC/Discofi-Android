@@ -19,6 +19,7 @@ public class MfaActivity extends Activity {
     private EditText totpField;
 
     public void onCreate(Bundle savedInstanceState) {
+        Theme.load(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mfa_entry);
 
