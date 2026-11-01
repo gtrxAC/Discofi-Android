@@ -66,6 +66,7 @@ public class MarkdownRenderer implements MarkdownListener {
     private final Message message;
     private final String cdnUrl;
     private final TextView view;
+    private final boolean enableBigEmoji;
 
     private final Hashtable urls = new Hashtable();
     private final Stack<Object> links = new Stack<>();
@@ -80,11 +81,16 @@ public class MarkdownRenderer implements MarkdownListener {
     private int emojiCount;
 
     public MarkdownRenderer(Context context, Message message, String cdnUrl, TextView view) {
+        this(context, message, cdnUrl, view, true);
+    }
+
+    public MarkdownRenderer(Context context, Message message, String cdnUrl, TextView view, boolean enableBigEmoji) {
         this.context = context.getApplicationContext();
         this.resources = context.getResources();
         this.message = message;
         this.cdnUrl = cdnUrl;
         this.view = view;
+        this.enableBigEmoji = enableBigEmoji;
     }
 
     public SpannableStringBuilder render(String markdown) {
@@ -111,7 +117,7 @@ public class MarkdownRenderer implements MarkdownListener {
 
         Markdown.parse(this, out, markdown, urls);
 
-        if (emojiOnly && emojiCount != 0) {
+        if (enableBigEmoji && (emojiOnly && emojiCount != 0)) {
             for (EmojiSpan emoji : out.getSpans(0, out.length(), EmojiSpan.class)) {
                 emoji.setBig(true);
             }

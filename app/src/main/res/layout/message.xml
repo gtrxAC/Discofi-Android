@@ -139,23 +139,24 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/status"
-        android:layout_width="wrap_content"
+        android:id="@+id/compact"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/status_text"
-            android:layout_width="wrap_content"
+        <fi.gtrxac.discord.LinkTextView
+            android:id="@+id/compact_text"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="4dp"
             android:textAppearance="?android:attr/textAppearance"/>
 
-        <TextView
-            android:id="@+id/status_timestamp"
+        <LinearLayout
+            android:id="@+id/compact_attachments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"/>
+            android:orientation="vertical"></LinearLayout>
     </LinearLayout>
 
 </fi.gtrxac.discord.MessageRowLayout>

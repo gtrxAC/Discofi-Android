@@ -28,6 +28,7 @@ public class Settings {
     public static boolean showReplies = true;
     public static boolean useMarkdown = true;
     public static boolean showImages = true;
+    public static boolean compactMode = false;
 
     /**
      * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each device)
@@ -67,6 +68,7 @@ public class Settings {
         showReplies = settings.getBoolean("showReplies", true);
         useMarkdown = settings.getBoolean("textFormatting", true);
         showImages = settings.getBoolean("showImages", true);
+        compactMode = settings.getBoolean("compactMode", false);
     }
 
     public static void save(Context c) {
@@ -94,6 +96,7 @@ public class Settings {
         editor.putBoolean("showReplies", showReplies);
         editor.putBoolean("useMarkdown", useMarkdown);
         editor.putBoolean("showImages", showImages);
+        editor.putBoolean("compactMode", compactMode);
 
         editor.commit();
     }

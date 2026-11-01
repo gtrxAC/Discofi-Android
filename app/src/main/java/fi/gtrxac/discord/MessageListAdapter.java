@@ -91,33 +91,98 @@ public class MessageListAdapter extends BaseAdapter {
 
         Message message = (Message) messages.elementAt(position);
 
-        if (message.isStatus) {
-            holder.msg.setVisibility(View.GONE);
-            holder.status.setVisibility(View.VISIBLE);
-
-            SpannableStringBuilder sb = new SpannableStringBuilder(
-                    message.author.name + " " + message.content);
-            sb.setSpan(new StyleSpan(Typeface.BOLD), 0,
-                    message.author.name.length(),
-                    Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            holder.statusText.setText(sb);
-            holder.statusTimestamp.setText(message.timestamp);
-        } else {
-            holder.msg.setVisibility(View.VISIBLE);
-            holder.status.setVisibility(View.GONE);
-
-            if (enableMention) {
-                try {
-                    if ((message.mentions != null && message.mentions.containsKey(Long.toString(acc.getUserID()))) || message.mentionEveryone) {
-                        convertView.setBackgroundResource(Theme.messageMentionedBackground);
-                    } else {
-                        convertView.setBackgroundResource(0);
-                    }
-                }
-                catch (Exception e) {
+        if (enableMention) {
+            try {
+                if ((message.mentions != null && message.mentions.containsKey(Long.toString(acc.getUserID()))) || message.mentionEveryone) {
+                    convertView.setBackgroundResource(Theme.messageMentionedBackground);
+                } else {
                     convertView.setBackgroundResource(0);
                 }
             }
+            catch (Exception e) {
+                convertView.setBackgroundResource(0);
+            }
+        }
+
+        // Reply preview
+        if (message.reply != null && Settings.showReplies) {
+            holder.reply.setVisibility(View.VISIBLE);
+            if (!Settings.compactMode) {
+                holder.replyAvatar.setVisibility(View.VISIBLE);
+                loadAvatar(holder.replyAvatar, message.reply.author.getAvatarUrl(acc.getCdnUrl()));
+            } else {
+                holder.replyAvatar.setVisibility(View.GONE);
+            }
+            holder.replyAuthor.setText(message.reply.author.name);
+            if (message.reply.author.system) {
+                holder.replyBadge.setVisibility(View.VISIBLE);
+                holder.replyBadge.setText(R.string.badge_system);
+            } else if (message.reply.author.bot) {
+                holder.replyBadge.setVisibility(View.VISIBLE);
+                holder.replyBadge.setText(R.string.badge_bot);
+            } else {
+                holder.replyBadge.setVisibility(View.GONE);
+            }
+            if (message.reply.content.length() > 0) {
+                holder.replyContent.setVisibility(View.VISIBLE);
+                if (Settings.useMarkdown) {
+                    MarkdownRenderer renderer = new MarkdownRenderer(context, message.reply,
+                            acc.getCdnUrl(), holder.replyContent);
+                    holder.replyContent.setText(renderer.render(message.reply.content));
+                } else {
+                    holder.replyContent.setText(message.reply.content);
+                }
+            } else {
+                holder.replyContent.setVisibility(View.GONE);
+            }
+        } else {
+            holder.reply.setVisibility(View.GONE);
+        }
+
+        if (Settings.compactMode || message.isStatus) {
+            holder.msg.setVisibility(View.GONE);
+            holder.compact.setVisibility(View.VISIBLE);
+
+            SpannableStringBuilder sb = new SpannableStringBuilder(message.timestamp + " " + message.author.name);
+            sb.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), 0, message.timestamp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // TODO: badge on author
+            sb.setSpan(new StyleSpan(Typeface.BOLD), message.timestamp.length(), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (message.content.length() > 0) {
+                SpannableStringBuilder content;
+                if (Settings.useMarkdown) {
+                    MarkdownRenderer renderer = new MarkdownRenderer(context, message,
+                            acc.getCdnUrl(), holder.compactText, false);
+                    content = renderer.render(message.content);
+                } else {
+                    content = new SpannableStringBuilder(message.content);
+                }
+
+                if (message.isEdited) {
+                    int start = content.length();
+                    content.append(" " + context.getResources().getString(R.string.edited));
+                    int end = content.length();
+                    content.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+
+                if (message.isForwarded) {
+                    SpannableStringBuilder forwarded = new SpannableStringBuilder("\n" + context.getResources().getString(R.string.forwarded));
+                    forwarded.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), 1, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    forwarded.setSpan(new StyleSpan(Typeface.ITALIC), 1, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    forwarded.append("\n");
+                    forwarded.append(content);
+                    forwarded.setSpan(new QuoteSpan(Theme.quoteColor), 1, forwarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE | (128 << Spanned.SPAN_PRIORITY_SHIFT));
+                    content = forwarded;
+                }
+
+                sb.append(" ");
+                sb.append(content);
+                holder.compactText.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
+            }
+            holder.compactText.setText(sb);
+            bindAttachments(holder.compactAttachments, message);
+        } else {
+            holder.msg.setVisibility(View.VISIBLE);
+            holder.compact.setVisibility(View.GONE);
 
             // Author row + avatar: hidden for messages merged into the cluster
             if (message.showAuthor) {
@@ -138,36 +203,6 @@ public class MessageListAdapter extends BaseAdapter {
             } else {
                 holder.metadata.setVisibility(View.GONE);
                 holder.avatar.getLayoutParams().height = 0;
-            }
-
-            // Reply preview
-            if (message.reply != null && Settings.showReplies) {
-                holder.reply.setVisibility(View.VISIBLE);
-                loadAvatar(holder.replyAvatar, message.reply.author.getAvatarUrl(acc.getCdnUrl()));
-                holder.replyAuthor.setText(message.reply.author.name);
-                if (message.reply.author.system) {
-                    holder.replyBadge.setVisibility(View.VISIBLE);
-                    holder.replyBadge.setText(R.string.badge_system);
-                } else if (message.reply.author.bot) {
-                    holder.replyBadge.setVisibility(View.VISIBLE);
-                    holder.replyBadge.setText(R.string.badge_bot);
-                } else {
-                    holder.replyBadge.setVisibility(View.GONE);
-                }
-                if (message.reply.content.length() > 0) {
-                    holder.replyContent.setVisibility(View.VISIBLE);
-                    if (Settings.useMarkdown) {
-                        MarkdownRenderer renderer = new MarkdownRenderer(context, message.reply,
-                                acc.getCdnUrl(), holder.replyContent);
-                        holder.replyContent.setText(renderer.render(message.reply.content));
-                    } else {
-                        holder.replyContent.setText(message.reply.content);
-                    }
-                } else {
-                    holder.replyContent.setVisibility(View.GONE);
-                }
-            } else {
-                holder.reply.setVisibility(View.GONE);
             }
 
             if (message.content.length() > 0) {
@@ -662,9 +697,9 @@ public class MessageListAdapter extends BaseAdapter {
         TextView replyContent;
         ImageView replyAvatar;
 
-        View status;
-        TextView statusText;
-        TextView statusTimestamp;
+        View compact;
+        LinkTextView compactText;
+        LinearLayout compactAttachments;
 
         public ViewHolder(View view) {
             msg = view.findViewById(R.id.message);
@@ -682,10 +717,9 @@ public class MessageListAdapter extends BaseAdapter {
             replyContent = (TextView) view.findViewById(R.id.reply_content);
             replyAvatar = (ImageView) view.findViewById(R.id.reply_avatar);
 
-            status = view.findViewById(R.id.status);
-            statusText = (TextView) view.findViewById(R.id.status_text);
-            statusTimestamp = (TextView) view
-                    .findViewById(R.id.status_timestamp);
+            compact = view.findViewById(R.id.compact);
+            compactText = (LinkTextView) view.findViewById(R.id.compact_text);
+            compactAttachments = (LinearLayout) view.findViewById(R.id.compact_attachments);
         }
     }
 }

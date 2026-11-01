@@ -57,6 +57,12 @@
             android:summary="@string/show_images_summary"
             android:defaultValue="true" />
 
+        <CheckBoxPreference
+            android:key="compactMode"
+            android:title="@string/compact_mode"
+            android:summary="@string/compact_mode_summary"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/behavior">

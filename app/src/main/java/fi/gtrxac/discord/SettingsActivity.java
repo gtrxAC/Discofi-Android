@@ -68,6 +68,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         Settings.showReplies = prefs.getBoolean("showReplies", true);
         Settings.useMarkdown = prefs.getBoolean("textFormatting", true);
         Settings.showImages = prefs.getBoolean("showImages", true);
+        Settings.compactMode = prefs.getBoolean("compactMode", false);
 
         if (key.equals("theme") || key.equals("fontSize")) {
             getListView().post(new Runnable() {
