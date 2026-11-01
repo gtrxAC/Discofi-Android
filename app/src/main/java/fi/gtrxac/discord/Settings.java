@@ -27,6 +27,7 @@ public class Settings {
     public static boolean autoReconnect = true;
     public static boolean showReplies = true;
     public static boolean useMarkdown = true;
+    public static boolean showImages = true;
 
     /**
      * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each device)
@@ -65,6 +66,7 @@ public class Settings {
         autoReconnect = settings.getBoolean("autoReconnect", true);
         showReplies = settings.getBoolean("showReplies", true);
         useMarkdown = settings.getBoolean("textFormatting", true);
+        showImages = settings.getBoolean("showImages", true);
     }
 
     public static void save(Context c) {
@@ -91,6 +93,7 @@ public class Settings {
         editor.putBoolean("autoReconnect", autoReconnect);
         editor.putBoolean("showReplies", showReplies);
         editor.putBoolean("useMarkdown", useMarkdown);
+        editor.putBoolean("showImages", showImages);
 
         editor.commit();
     }

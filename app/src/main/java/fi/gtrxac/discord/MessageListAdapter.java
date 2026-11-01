@@ -253,7 +253,7 @@ public class MessageListAdapter extends BaseAdapter {
     }
 
     private void addAttachment(LinearLayout container, final Attachment attachment) {
-        if (attachment.previewable) {
+        if (Settings.showImages && attachment.previewable) {
             // TODO: properly handle videos
             ImageView image = new ImageView(context);
             image.setBackgroundColor(Theme.embedBackground);
@@ -419,7 +419,7 @@ public class MessageListAdapter extends BaseAdapter {
             fields.setVisibility(View.GONE);
         }
 
-        if (embed.image != null) {
+        if (Settings.showImages && embed.image != null) {
             int[] dims = getAttachmentSize(embed.image, true);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
             if (embed.title != null || embed.description != null) params.topMargin = dp(4);
@@ -429,7 +429,7 @@ public class MessageListAdapter extends BaseAdapter {
             image.setVisibility(View.GONE);
         }
 
-        if (embed.video != null && embed.thumbnail != null) {
+        if (Settings.showImages && (embed.video != null && embed.thumbnail != null)) {
             int[] dims = getAttachmentSize(embed.thumbnail, true);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
             if (embed.title != null || embed.description != null) params.topMargin = dp(4);
@@ -444,7 +444,7 @@ public class MessageListAdapter extends BaseAdapter {
             video.setVisibility(View.GONE);
         }
 
-        if (embed.video == null && embed.thumbnail != null) {
+        if (Settings.showImages && (embed.video == null && embed.thumbnail != null)) {
             if (embed.type == Embed.Type.ARTICLE) {
                 int[] dims = getAttachmentSize(embed.thumbnail, true);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
@@ -468,10 +468,14 @@ public class MessageListAdapter extends BaseAdapter {
                     openInBrowser(embed.author.url);
                 }
             });
-            if (embed.author.proxyIconUrl != null) {
-                loadImage(authorIcon, acc.getCdnAssetUrl(embed.author.proxyIconUrl), true);
-            } else if (embed.author.iconUrl != null) {
-                loadImage(authorIcon, embed.author.iconUrl, true);
+            if (Settings.showImages) {
+                if (embed.author.proxyIconUrl != null) {
+                    loadImage(authorIcon, acc.getCdnAssetUrl(embed.author.proxyIconUrl), true);
+                } else if (embed.author.iconUrl != null) {
+                    loadImage(authorIcon, embed.author.iconUrl, true);
+                } else {
+                    authorIcon.setVisibility(View.GONE);
+                }
             } else {
                 authorIcon.setVisibility(View.GONE);
             }
@@ -494,10 +498,14 @@ public class MessageListAdapter extends BaseAdapter {
             footer.setVisibility(View.VISIBLE);
             footerContent.setText(footerText);
             footerContent.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
-            if (embed.footer.proxyIconUrl != null) {
-                loadImage(footerIcon, acc.getCdnAssetUrl(embed.footer.proxyIconUrl), true);
-            } else if (embed.footer.iconUrl != null) {
-                loadImage(footerIcon, embed.footer.iconUrl, true);
+            if (Settings.showImages) {
+                if (embed.footer.proxyIconUrl != null) {
+                    loadImage(footerIcon, acc.getCdnAssetUrl(embed.footer.proxyIconUrl), true);
+                } else if (embed.footer.iconUrl != null) {
+                    loadImage(footerIcon, embed.footer.iconUrl, true);
+                } else {
+                    footerIcon.setVisibility(View.GONE);
+                }
             } else {
                 footerIcon.setVisibility(View.GONE);
             }

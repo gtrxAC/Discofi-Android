@@ -67,6 +67,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         Settings.autoReconnect = prefs.getBoolean("autoReconnect", true);
         Settings.showReplies = prefs.getBoolean("showReplies", true);
         Settings.useMarkdown = prefs.getBoolean("textFormatting", true);
+        Settings.showImages = prefs.getBoolean("showImages", true);
 
         if (key.equals("theme") || key.equals("fontSize")) {
             getListView().post(new Runnable() {

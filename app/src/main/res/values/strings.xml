@@ -81,6 +81,8 @@
     <string name="show_replies_summary">Display the message being replied to above replies</string>
     <string name="text_formatting">Text formatting</string>
     <string name="text_formatting_summary">Render Markdown formatting in messages</string>
+    <string name="show_images">Show images</string>
+    <string name="show_images_summary">Show image attachments in messages</string>
     <string name="message_load_count">Messages per load</string>
     <string name="message_load_count_summary">%s messages</string>
     <string name="message_load_count_dialog">Enter a number between 1 and 100</string>

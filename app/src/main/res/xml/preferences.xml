@@ -51,6 +51,12 @@
             android:summary="@string/text_formatting_summary"
             android:defaultValue="true" />
 
+        <CheckBoxPreference
+            android:key="showImages"
+            android:title="@string/show_images"
+            android:summary="@string/show_images_summary"
+            android:defaultValue="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/behavior">
