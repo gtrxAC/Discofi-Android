@@ -4,6 +4,16 @@ Discofi-Android is a new Discord client for legacy Android devices targeting ver
 
 This repo is for the Android version. There is a separate repo for the [J2ME version](https://github.com/gtrxAC/Discofi), but the plan is to eventually merge these into one project and potentially add support for other Java-based platforms like desktop.
 
+## Downloads
+
+> [!IMPORTANT]
+> To avoid account restrictions, **use the "Direct" connection option and login with email and password whenever possible.** If you get a CAPTCHA when logging in, you may need to enable 2FA on your account and try the login again **while connected to a Wi-Fi network that you have previously used Discord on**.
+> 
+> Do **not** follow old Discord J2ME setup guides that ask you to get your token from browser dev tools.
+
+### <div style="text-align: center;">[Download (Codeberg)](https://codeberg.org/gtrxAC/Discofi-Android/releases) - [Download (GitHub)](https://github.com/gtrxAC/Discofi-Android/releases/latest)</div>
+### <div style="text-align: center;">[Support Server](https://discord.gg/2GKuJjQagp) <small>(go to #discord-j2me-wap)</small></div>
+
 ## Status
 ### Working
 * Password/token login
