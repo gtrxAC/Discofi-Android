@@ -14,7 +14,7 @@
         android:supportsRtl="true">
 
         <meta-data
-            android:name="fi.gtrxac.discord.MicrocordGlideModule"
+            android:name="fi.gtrxac.discord.DiscofiGlideModule"
             android:value="GlideModule" />
 
         <activity

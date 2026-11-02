@@ -12,7 +12,7 @@ It has been designed around the following requirements:
 - No secure random numbers
 
 ## Usage
-Intended usage is via the **modified version of [ModernConnector](https://github.com/ProgrammerIn-wonderland/ModernConnector)** included in the Microcord repo.
+Intended usage is via the **modified version of [ModernConnector](https://github.com/ProgrammerIn-wonderland/ModernConnector)** included in the Discofi repo.
 
 You may also use:
 

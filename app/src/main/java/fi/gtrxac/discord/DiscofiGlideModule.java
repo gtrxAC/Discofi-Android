@@ -17,7 +17,7 @@ import java.io.InputStream;
 
 import fi.gtrxac.bluewap.http.HTTP;
 
-public class MicrocordGlideModule implements GlideModule {
+public class DiscofiGlideModule implements GlideModule {
     public void applyOptions(Context context, GlideBuilder builder) {
     }
 

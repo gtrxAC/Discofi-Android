@@ -1,5 +1,7 @@
 package fi.gtrxac.discord.model;
 
+import java.util.Vector;
+
 import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONObject;
 
@@ -10,6 +12,8 @@ import cc.nnproject.json.JSONObject;
 public class Guild {
     public long id;
     public String name;
+    public Vector channels;
+    public Vector roles;
     public String iconHash;
 
     public Guild(JSONObject data) {
@@ -18,11 +22,19 @@ public class Guild {
         if (data.has("name")) {
             name = data.getString("name");
         }
-        // else if (data.has("properties")) {
-        //     name = data.getObject("properties").getString("name");
-        // }
+        else if (data.has("properties")) {
+            name = data.getObject("properties").getString("name");
+        }
         else {
             name = "(unknown)";
+        }
+
+        if (data.has("channels")) {
+            channels = Channel.parseChannels(data.getArray("channels"));
+        }
+
+        if (data.has("roles")) {
+            roles = Role.parseRoles(data.getArray("roles"));
         }
 
         iconHash = data.getString("icon", null);
