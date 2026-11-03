@@ -383,6 +383,7 @@ public class MessageListAdapter extends BaseAdapter {
     private void addEmbed(LinearLayout container, final Embed embed) {
         View view = inflater.inflate(R.layout.embed, container, false);
         view.setBackgroundColor(Theme.embedBackground);
+
         View bar = view.findViewById(R.id.embed_color);
         TextView title = (TextView) view.findViewById(R.id.embed_title);
         LinkTextView description = (LinkTextView) view.findViewById(R.id.embed_content);
@@ -402,11 +403,14 @@ public class MessageListAdapter extends BaseAdapter {
         TextView footerContent = (TextView) view.findViewById(R.id.embed_footer_content);
         ImageView footerIcon = (ImageView) view.findViewById(R.id.embed_footer_icon);
 
+        int textColor = context.getResources().getColor(
+            Settings.lightTheme ? android.R.color.black : android.R.color.white);
+
         bar.setBackgroundColor(embed.color | 0xFF000000);
 
         if (embed.title != null) {
             title.setText(embed.title);
-            title.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
+            title.setTextColor(textColor);
         } else {
             title.setVisibility(View.GONE);
         }
@@ -424,7 +428,7 @@ public class MessageListAdapter extends BaseAdapter {
             MarkdownRenderer renderer = new MarkdownRenderer(context, null,
                     acc.getCdnUrl(), description);
             description.setText(renderer.render(embed.description));
-            description.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
+            description.setTextColor(textColor);
             description.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
         } else {
             description.setVisibility(View.GONE);
@@ -448,9 +452,6 @@ public class MessageListAdapter extends BaseAdapter {
 
                 LinearLayout column = new LinearLayout(context);
                 column.setOrientation(LinearLayout.VERTICAL);
-
-                int textColor = context.getResources().getColor(
-                    Settings.lightTheme ? android.R.color.black : android.R.color.white);
 
                 if (field.name != null) {
                     TextView name = new TextView(context);
@@ -519,7 +520,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         if (embed.author != null) {
             authorName.setText(embed.author.name);
-            authorName.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
+            authorName.setTextColor(textColor);
             authorName.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     openInBrowser(embed.author.url);
@@ -554,7 +555,7 @@ public class MessageListAdapter extends BaseAdapter {
         if (footerText != null) {
             footer.setVisibility(View.VISIBLE);
             footerContent.setText(footerText);
-            footerContent.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
+            footerContent.setTextColor(textColor);
             if (Settings.showImages) {
                 if (embed.footer.proxyIconUrl != null) {
                     loadImage(footerIcon, acc.getCdnAssetUrl(embed.footer.proxyIconUrl), true);
@@ -572,6 +573,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                
         params.topMargin = dp(4);
         container.addView(view, params);
     }

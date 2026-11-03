@@ -51,16 +51,18 @@ public class Attachment {
             size = data.getInt("size", 0);
         }
 
-        isVideo = (contentType != null && contentType.indexOf("video/") == 0)
+        isVideo = (isContentType("video/"))
                 || (filename != null && endsWithAny(filename.toLowerCase(), VIDEO_EXTENSIONS));
 
-        // Anything with dimensions can be rendered by the media proxy; images
-        // without dimensions (very rare) can still be fetched as-is.
-        previewable = proxyUrl != null
-                && (width > 0 || (contentType != null && contentType.indexOf("image/") == 0));
+        // Anything with dimensions can be rendered by the media proxy
+        previewable = (proxyUrl != null && width > 0);
 
-        animated = (contentType != null && contentType.indexOf("image/gif") == 0)
+        animated = (isContentType("image/gif"))
                 || (filename != null && filename.toLowerCase().endsWith(".gif"));
+    }
+
+    private boolean isContentType(String check) {
+        return contentType != null && contentType.startsWith(check);
     }
 
     public String getPreviewUrl(int maxWidth) {
@@ -96,10 +98,9 @@ public class Attachment {
         return false;
     }
 
-    public static String formatSize(int bytes) {
-        if (bytes >= 1073741824) return (bytes / 1073741824) + " GiB";
-        if (bytes >= 1048576) return (bytes / 1048576) + " MiB";
-        if (bytes >= 1024) return (bytes / 1024) + " KiB";
-        return bytes + " bytes";
+    public static String formatSize(int size) {
+        if (size >= 1000000) return (size/1000000) + " MB";
+        if (size >= 1000) return (size/1000) + " kB";
+        return size + " bytes";
     }
 }
