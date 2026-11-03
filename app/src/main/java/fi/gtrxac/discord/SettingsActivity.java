@@ -24,6 +24,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         updateListPreferenceSummary("fontSize");
         updateListPreferenceSummary("avatarShape");
         updateListPreferenceSummary("timeFormat");
+        updateListPreferenceSummary("useDirectCdn");
 
         EditTextPreference messageLoadCount = (EditTextPreference) findPreference("messageLoadCount");
         messageLoadCount.setSummary(getString(R.string.message_load_count_summary, messageLoadCount.getText()));
@@ -70,6 +71,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         Settings.showImages = prefs.getBoolean("showImages", true);
         Settings.compactMode = prefs.getBoolean("compactMode", false);
         Settings.useNameColors = prefs.getBoolean("useNameColors", true);
+        Settings.useDirectCdn = prefs.getBoolean("useDirectCdn", true);
 
         if (key.equals("theme") || key.equals("fontSize")) {
             getListView().post(new Runnable() {

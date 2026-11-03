@@ -46,6 +46,12 @@
             android:defaultValue="true" />
 
         <CheckBoxPreference
+            android:key="useDirectCdn"
+            android:title="@string/use_direct_cdn"
+            android:summary="@string/use_direct_cdn_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
             android:key="showReplies"
             android:title="@string/show_replies"
             android:summary="@string/show_replies_summary"

@@ -94,5 +94,7 @@
     <string name="send_typing_summary">Let others know when you are typing</string>
     <string name="auto_reconnect">Auto reconnect</string>
     <string name="auto_reconnect_summary">Reconnect to the gateway after a connection loss</string>
+    <string name="use_direct_cdn">Download files directly</string>
+    <string name="use_direct_cdn_summary">Download attachments without a proxy (requires TLS 1.2 or the Wolfius app)</string>
 
 </resources>

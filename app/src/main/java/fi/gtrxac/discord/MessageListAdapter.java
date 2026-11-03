@@ -310,7 +310,7 @@ public class MessageListAdapter extends BaseAdapter {
     private void addAttachment(LinearLayout container, final Attachment attachment) {
         View.OnClickListener attachmentClickListener = new View.OnClickListener() {
             public void onClick(View v) {
-                openInBrowser(acc.getCdnAssetUrl(attachment.proxyUrl));
+                openInBrowser(acc.getCdnDownloadUrl(attachment.url));
             }
         };
 

@@ -30,6 +30,7 @@ public class Settings {
     public static boolean showImages = true;
     public static boolean compactMode = false;
     public static boolean useNameColors = true;
+    public static boolean useDirectCdn = true;
 
     /**
      * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each device)
@@ -71,6 +72,7 @@ public class Settings {
         showImages = settings.getBoolean("showImages", true);
         compactMode = settings.getBoolean("compactMode", false);
         useNameColors = settings.getBoolean("useNameColors", true);
+        useDirectCdn = settings.getBoolean("useDirectCdn", false);
     }
 
     public static void save(Context c) {
@@ -100,6 +102,7 @@ public class Settings {
         editor.putBoolean("showImages", showImages);
         editor.putBoolean("compactMode", compactMode);
         editor.putBoolean("useNameColors", useNameColors);
+        editor.putBoolean("useDirectCdn", useDirectCdn);
 
         editor.commit();
     }

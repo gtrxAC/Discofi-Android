@@ -18,6 +18,8 @@ import util.Base64;
  */
 
 public class Account {
+    public static final String DEFAULT_CDN_PROXY_URL = "http://cdn.gtrxac.fi";
+
     public String token;
     public String username;
     public long userId;
@@ -45,6 +47,7 @@ public class Account {
         subscribedGuilds = new Vector<>();
         dmChannels = new Vector<>();
         inbox = new Vector<>();
+        cdnUrl = DEFAULT_CDN_PROXY_URL;
     }
 
     public Account(JSONArray data) {
@@ -58,6 +61,10 @@ public class Account {
         cdnUrl = data.getString(6, "");
         email = data.getString(9, "");
         password = data.getString(10, "");
+
+        if (cdnUrl == null || cdnUrl.trim().length() == 0) {
+            cdnUrl = DEFAULT_CDN_PROXY_URL;
+        }
 
         JSONArray guildsJson = data.getArray(7, new JSONArray());
 
@@ -122,26 +129,31 @@ public class Account {
     }
 
     public String getCdnUrl() {
-        return useProxy ? cdnUrl : "https://cdn.discordapp.com";
+        return Settings.useDirectCdn ? "https://cdn.discordapp.com" : cdnUrl;
     }
 
-    /**
-     * Rewrite a Discord CDN/media URL (attachment preview) to the account's
-     * configured CDN base when using a proxy, mirroring how avatars are
-     * resolved through getCdnUrl(). Discord hosts are unreachable directly
-     * in that setup; the proxy CDN serves the same paths.
-     */
+    public String getCdnDownloadUrl(String url) {
+        return rewriteCdnUrl(url, getCdnUrl());
+    }
+
     public String getCdnAssetUrl(String url) {
+        // TODO: configurable media proxy in addition to CDN proxy, like in Discofi J2ME
+        return rewriteCdnUrl(url, "http://media.discordapp.net");
+    }
+
+    private String rewriteCdnUrl(String url, String newBase) {
         if (url == null) return null;
-        if (useProxy && cdnUrl != null && cdnUrl.length() > 0) {
-            String[] hosts = {
-                "https://media.discordapp.net",
-                "http://media.discordapp.net",
-                "https://cdn.discordapp.com",
-                "http://cdn.discordapp.com",
-            };
-            for (int i = 0; i < hosts.length; i++) {
-                if (url.startsWith(hosts[i])) return cdnUrl + url.substring(hosts[i].length());
+    
+        String[] hosts = {
+            "https://media.discordapp.net",
+            "http://media.discordapp.net",
+            "https://cdn.discordapp.com",
+            "http://cdn.discordapp.com",
+        };
+        
+        for (int i = 0; i < hosts.length; i++) {
+            if (url.startsWith(hosts[i])) {
+                return newBase + url.substring(hosts[i].length());
             }
         }
         return url;
