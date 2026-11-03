@@ -308,16 +308,18 @@ public class MessageListAdapter extends BaseAdapter {
     }
 
     private void addAttachment(LinearLayout container, final Attachment attachment) {
+        View.OnClickListener attachmentClickListener = new View.OnClickListener() {
+            public void onClick(View v) {
+                openInBrowser(acc.getCdnAssetUrl(attachment.proxyUrl));
+            }
+        };
+
         if (Settings.showImages && attachment.previewable) {
             // TODO: properly handle videos
             ImageView image = new ImageView(context);
             image.setBackgroundColor(Theme.embedBackground);
             image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            image.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    openInBrowser(acc.getCdnAssetUrl(attachment.proxyUrl));
-                }
-            });
+            image.setOnClickListener(attachmentClickListener);
 
             int[] dims = getAttachmentSize(attachment, false);
             LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(dims[0], dims[1]);
@@ -343,11 +345,7 @@ public class MessageListAdapter extends BaseAdapter {
             name.setText(attachment.filename);
             name.setTextColor(name.getLinkTextColors());
             size.setText(Attachment.formatSize(attachment.size));
-            view.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    openInBrowser(acc.getCdnAssetUrl(attachment.proxyUrl));
-                }
-            });
+            view.setOnClickListener(attachmentClickListener);
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -451,22 +449,26 @@ public class MessageListAdapter extends BaseAdapter {
                 LinearLayout column = new LinearLayout(context);
                 column.setOrientation(LinearLayout.VERTICAL);
 
+                int textColor = context.getResources().getColor(
+                    Settings.lightTheme ? android.R.color.black : android.R.color.white);
+
                 if (field.name != null) {
                     TextView name = new TextView(context);
                     name.setText(field.name);
-                    name.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
+                    name.setTextColor(textColor);
                     name.setTypeface(null, Typeface.BOLD);
                     column.addView(name);
                 }
                 if (field.value != null) {
                     TextView value = new TextView(context);
                     value.setText(field.value);
-                    value.setTextColor(context.getResources().getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white));
+                    value.setTextColor(textColor);
                     column.addView(value);
                 }
 
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
                 params.topMargin = dp(4);
                 fields.addView(column, params);
             }
