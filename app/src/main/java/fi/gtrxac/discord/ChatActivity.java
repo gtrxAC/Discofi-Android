@@ -39,10 +39,12 @@ import cc.nnproject.json.JSONObject;
  */
 public class ChatActivity extends Activity implements GatewayListener {
     private Account account;
+    private long guildId;
     private long channelId;
     private String channelName;
 
     private Vector messages;
+    private Vector guildRoles;
     private MessageListAdapter adapter;
     private ListView messageList;
 
@@ -94,6 +96,7 @@ public class ChatActivity extends Activity implements GatewayListener {
 
         registerForContextMenu(messageList);
 
+        guildId = getIntent().getLongExtra("guildId", 0);
         channelId = getIntent().getLongExtra("channelId", 0);
         channelName = getIntent().getStringExtra("channelName");
         if (channelName != null) {
@@ -101,7 +104,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             composer.setHint(getResources().getString(R.string.msg_composer_hint, channelName));
         }
 
-        adapter = new MessageListAdapter(this, messages, account);
+        adapter = new MessageListAdapter(this, messages, account, guildId);
         messageList.setAdapter(adapter);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -307,6 +310,45 @@ public class ChatActivity extends Activity implements GatewayListener {
     }
 
     public void onGuildMembersChunk(JSONObject data) {
+        if (guildId == 0 || guildRoles == null) return;
+
+        final JSONArray members = data.getArray("members");
+
+        // Guild member request was for role data (name colors)
+        final long gatewayGuildId = Long.parseLong(data.getString("guild_id"));
+        final JSONArray notFound = data.getArray("not_found");
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (isFinishing()) return;
+
+                for (int i = 0; i < notFound.size(); i++) {
+                    long id = Long.parseLong(notFound.getString(i));
+                    NameColorCache.set(id + gatewayGuildId, 0);
+                    adapter.notifyDataSetChanged();
+                }
+
+                for (int i = 0; i < members.size(); i++) {
+                    int resultColor = 0;
+
+                    JSONObject member = members.getObject(i);
+                    JSONArray memberRoles = member.getArray("roles");
+
+                    for (int r = 0; r < guildRoles.size(); r++) {
+                        Role role = (Role) guildRoles.elementAt(r);
+                        if (memberRoles.indexOf(Long.toString(role.id)) == -1) continue;
+
+                        resultColor = role.color;
+                        break;
+                    }
+
+                    long id = Long.parseLong(member.getObject("user").getString("id"));
+                    NameColorCache.set(id + gatewayGuildId, resultColor);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+        NameColorCache.activeRequest = false;
     }
 
     public void onPresenceUpdate(JSONObject data) {
@@ -459,6 +501,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             @Override
             public void run() {
                 try {
+                    guildRoles = account.getGuildRoles(guildId);
                     final Vector result =
                             account.getMessages(channelId, 0, 0, Settings.messageLoadCount);
 

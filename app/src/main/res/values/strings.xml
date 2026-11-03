@@ -79,6 +79,8 @@
     <string name="time_24h">24-hour</string>
     <string name="show_replies">Show reply previews</string>
     <string name="show_replies_summary">Display the message being replied to above replies</string>
+    <string name="use_name_colors">Display name colors</string>
+    <string name="use_name_colors_summary">Display the message author with role colors</string>
     <string name="text_formatting">Text formatting</string>
     <string name="text_formatting_summary">Render Markdown formatting in messages</string>
     <string name="show_images">Show images</string>

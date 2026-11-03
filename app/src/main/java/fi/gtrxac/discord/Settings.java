@@ -29,6 +29,7 @@ public class Settings {
     public static boolean useMarkdown = true;
     public static boolean showImages = true;
     public static boolean compactMode = false;
+    public static boolean useNameColors = true;
 
     /**
      * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each device)
@@ -69,6 +70,7 @@ public class Settings {
         useMarkdown = settings.getBoolean("textFormatting", true);
         showImages = settings.getBoolean("showImages", true);
         compactMode = settings.getBoolean("compactMode", false);
+        useNameColors = settings.getBoolean("useNameColors", true);
     }
 
     public static void save(Context c) {
@@ -97,6 +99,7 @@ public class Settings {
         editor.putBoolean("useMarkdown", useMarkdown);
         editor.putBoolean("showImages", showImages);
         editor.putBoolean("compactMode", compactMode);
+        editor.putBoolean("useNameColors", useNameColors);
 
         editor.commit();
     }

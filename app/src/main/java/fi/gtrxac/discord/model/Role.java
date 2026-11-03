@@ -14,6 +14,9 @@ public class Role {
     public Role(JSONObject data) {
         id = Long.parseLong(data.getString("id"));
         color = data.getInt("color");
+        if (data.has("colors")) {
+            color = data.getObject("colors").getInt("primary_color");
+        }
         permissions = Long.parseLong(data.getString("permissions"));
         position = data.getInt("position");
     }
@@ -23,9 +26,9 @@ public class Role {
 
         for (int i = arr.size() - 1; i >= 0; i--) {
             for (int a = arr.size() - 1; a >= 0; a--) {
-                JSONObject data = arr.getObject(i);
+                JSONObject data = arr.getObject(a);
 
-                if (data.getInt("position", i) != i)
+                if (data.getInt("position", -1) != i)
                     continue;
 
                 if (data.getInt("color") == 0)
@@ -38,13 +41,13 @@ public class Role {
         return result;
     }
 
-    public static Vector<Role> parseGuildMemberRoles(Guild g, JSONArray arr) {
+    public static Vector<Role> parseGuildMemberRoles(Vector guildRoles, JSONArray arr) {
         Vector<Role> result = new Vector<Role>();
 
         for (int i = arr.size() - 1; i >= 0; i--) {
-            for (int j = 0; j < g.roles.size(); j++) {
-                Role role = (Role) g.roles.elementAt(i);
-                if (role.id == Long.parseLong(arr.getString(i))) {
+            for (int j = 0; j < guildRoles.size(); j++) {
+                Role role = (Role) guildRoles.elementAt(j);
+                if (role.id == Long.parseLong(arr.getString(j))) {
                     if (role.position != i)
                         continue;
 

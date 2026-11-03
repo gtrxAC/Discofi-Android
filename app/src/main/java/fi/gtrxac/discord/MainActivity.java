@@ -58,6 +58,7 @@ public class MainActivity extends TabActivity {
         }
 
         acc.startGateway();
+        NameColorCache.init(acc);
 
         try {
             setTitle(acc.getDisplayTitle());
@@ -322,7 +323,9 @@ public class MainActivity extends TabActivity {
                 Message m = inbox.elementAt(i);
                 m.showAuthor = true;
             }
-            inboxList.setAdapter(new MessageListAdapter(c, inbox, Accounts.getActive(), false));
+            // i ain't gonna fetch the channel to know what guild its from brocacho 💔
+            // (also i only coded messagelistadapter to work with a single guild so its basically useless anyway)
+            inboxList.setAdapter(new MessageListAdapter(c, inbox, Accounts.getActive(), 0, false));
         }
 
         showProgress(false);

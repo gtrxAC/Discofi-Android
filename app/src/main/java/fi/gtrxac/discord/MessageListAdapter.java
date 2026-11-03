@@ -5,6 +5,7 @@ import fi.gtrxac.discord.model.*;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.format.DateFormat;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.QuoteSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
@@ -46,19 +48,21 @@ public class MessageListAdapter extends BaseAdapter {
     private final Context context;
     private final Vector messages;
     private final Account acc;
+    private final long guildId;
     private final boolean enableMention;
     private final LayoutInflater inflater;
     private final int maxAttachmentHeight;
     private final int maxAttachmentWidth;
 
-    public MessageListAdapter(Context context, Vector messages, Account acc) {
-        this(context, messages, acc, true);
+    public MessageListAdapter(Context context, Vector messages, Account acc, long guildId) {
+        this(context, messages, acc, guildId, true);
     }
 
-    public MessageListAdapter(Context context, Vector messages, Account acc, boolean enableMention) {
+    public MessageListAdapter(Context context, Vector messages, Account acc, long guildId, boolean enableMention) {
         this.context = context;
         this.messages = messages;
         this.acc = acc;
+        this.guildId = guildId;
         this.enableMention = enableMention;
         this.inflater = LayoutInflater.from(context);
         this.maxAttachmentHeight = context.getResources().getDisplayMetrics().heightPixels;
@@ -114,6 +118,12 @@ public class MessageListAdapter extends BaseAdapter {
                 holder.replyAvatar.setVisibility(View.GONE);
             }
             holder.replyAuthor.setText(message.reply.author.name);
+            int replyAuthorColor = NameColorCache.get(guildId, message.reply.author, messages);
+            if (replyAuthorColor != 0) {
+                holder.replyAuthor.setTextColor(replyAuthorColor);
+            } else {
+                holder.replyAuthor.setTextColor(holder.replyAuthorTextColors);
+            }
             if (message.reply.author.system) {
                 holder.replyBadge.setVisibility(View.VISIBLE);
                 holder.replyBadge.setText(R.string.badge_system);
@@ -147,6 +157,10 @@ public class MessageListAdapter extends BaseAdapter {
             sb.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), 0, message.timestamp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             // TODO: badge on author
             sb.setSpan(new StyleSpan(Typeface.BOLD), message.timestamp.length(), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            int authorColor = NameColorCache.get(guildId, message.author, messages);
+            if (authorColor != 0) {
+                sb.setSpan(new ForegroundColorSpan(authorColor), message.timestamp.length(), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
             if (message.content.length() > 0) {
                 SpannableStringBuilder content;
                 if (Settings.useMarkdown) {
@@ -189,6 +203,12 @@ public class MessageListAdapter extends BaseAdapter {
                 holder.metadata.setVisibility(View.VISIBLE);
                 holder.avatar.getLayoutParams().height = dp(48);
                 holder.author.setText(message.author.name);
+                int authorColor = NameColorCache.get(guildId, message.author, messages);
+                if (authorColor != 0) {
+                    holder.author.setTextColor(authorColor);
+                } else {
+                    holder.author.setTextColor(holder.authorTextColors);
+                }
                 if (message.author.system) {
                     holder.badge.setVisibility(View.VISIBLE);
                     holder.badge.setText(R.string.badge_system);
@@ -685,6 +705,7 @@ public class MessageListAdapter extends BaseAdapter {
         View msg;
         View metadata;
         TextView author;
+        ColorStateList authorTextColors;
         TextView badge;
         TextView timestamp;
         LinkTextView content;
@@ -693,6 +714,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         View reply;
         TextView replyAuthor;
+        ColorStateList replyAuthorTextColors;
         TextView replyBadge;
         TextView replyContent;
         ImageView replyAvatar;
@@ -705,6 +727,7 @@ public class MessageListAdapter extends BaseAdapter {
             msg = view.findViewById(R.id.message);
             metadata = view.findViewById(R.id.msg_metadata);
             author = (TextView) view.findViewById(R.id.msg_author);
+            authorTextColors = author.getTextColors();
             badge = (TextView) view.findViewById(R.id.msg_badge);
             timestamp = (TextView) view.findViewById(R.id.msg_timestamp);
             content = (LinkTextView) view.findViewById(R.id.msg_content);
@@ -713,6 +736,7 @@ public class MessageListAdapter extends BaseAdapter {
 
             reply = view.findViewById(R.id.msg_reply);
             replyAuthor = (TextView) view.findViewById(R.id.reply_author);
+            replyAuthorTextColors = replyAuthor.getTextColors();
             replyBadge = (TextView) view.findViewById(R.id.reply_badge);
             replyContent = (TextView) view.findViewById(R.id.reply_content);
             replyAvatar = (ImageView) view.findViewById(R.id.reply_avatar);

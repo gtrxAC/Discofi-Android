@@ -40,6 +40,12 @@
             android:defaultValue="24" />
 
         <CheckBoxPreference
+            android:key="useNameColors"
+            android:title="@string/use_name_colors"
+            android:summary="@string/use_name_colors_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
             android:key="showReplies"
             android:title="@string/show_replies"
             android:summary="@string/show_replies_summary"

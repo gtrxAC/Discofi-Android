@@ -9,7 +9,11 @@ public class GuildMember extends User {
     public Vector<Role> roles;
     public long permissions;
 
-    public GuildMember(JSONObject data, Guild g) {
+    public GuildMember(JSONObject data, Guild guild) {
+        this(data, guild.roles);
+    }
+
+    public GuildMember(JSONObject data, Vector guildRoles) {
         super(data.getObject("user"));
 
         JSONObject user = data.getObject("user");
@@ -22,7 +26,7 @@ public class GuildMember extends User {
 
         try {
             if (data.has("roles"))
-                roles = Role.parseGuildMemberRoles(g, data.getArray("roles"));
+                roles = Role.parseGuildMemberRoles(guildRoles, data.getArray("roles"));
         } catch (Exception e) {
             e.printStackTrace();
             roles = new Vector<Role>();

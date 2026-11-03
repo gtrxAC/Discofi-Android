@@ -264,6 +264,16 @@ public class Util {
 		return resizeFit(imgW, imgH, maxW, maxH, false);
 	}
 
+	public static void hashtablePutWithLimit(Hashtable ht, Vector keys, Object key, Object value, int limit) {
+		if (!ht.containsKey(key) && ht.size() >= limit) {
+			Object firstKey = keys.elementAt(0);
+			ht.remove(firstKey);
+			keys.removeElementAt(0);
+		}
+		ht.put(key, value);
+		keys.addElement(key);
+	}
+
     // _________________________________________________________________________
     //
     //  Color utilities
@@ -281,6 +291,101 @@ public class Util {
 			(color & 0x0000FF00) >> 8,
 			(color & 0x000000FF)
 		};
+	}
+
+	// S and V are in the range 0 to 100
+	public static int hsvToRgb100(int h, int s, int v) {
+		s = s*255/100;
+		v = v*255/100;
+		return hsvToRgb(h, s, v);
+	}
+
+	// S and V are in the range 0 to 255
+	public static int hsvToRgb(int h, int s, int v) {
+		int r, g, b;
+
+		// Ensure hue is between 0 and 359
+		h = h % 360;
+		if (h < 0) h += 360;
+
+		// Normalize s and v to be between 0 and 255
+		s = Math.min(Math.max(s, 0), 255);
+		v = Math.min(Math.max(v, 0), 255);
+
+		int region = h / 60;
+		int remainder = (h % 60) * 255 / 60;
+
+		int p = (v * (255 - s)) / 255;
+		int q = (v * (255 - (s * remainder) / 255)) / 255;
+		int t = (v * (255 - (s * (255 - remainder)) / 255)) / 255;
+
+		switch (region) {
+			case 0:
+				r = v;
+				g = t;
+				b = p;
+				break;
+			case 1:
+				r = q;
+				g = v;
+				b = p;
+				break;
+			case 2:
+				r = p;
+				g = v;
+				b = t;
+				break;
+			case 3:
+				r = p;
+				g = q;
+				b = v;
+				break;
+			case 4:
+				r = t;
+				g = p;
+				b = v;
+				break;
+			default:
+				r = v;
+				g = p;
+				b = q;
+				break;
+		}
+		return (r << 16) | (g << 8) | b;
+	}
+
+	public static int[] rgbToHsv(int hex) {
+		int[] split = splitRGB(hex);
+		return rgbToHsv(split[0], split[1], split[2]);
+	}
+
+	public static int[] rgbToHsv(int r, int g, int b) {
+		int rFixed = r*1000/255;
+		int gFixed = g*1000/255;
+		int bFixed = b*1000/255;
+
+		int max = Math.max(Math.max(rFixed, gFixed), bFixed);
+		int min = Math.min(Math.min(rFixed, gFixed), bFixed);
+
+		int h = 0;
+		int v = max;
+		int d = max - min;
+		int s = (max == 0) ? 0 : (d*1000/max);
+
+		if (max != min) {
+			if (max == rFixed) {
+				h = (gFixed - bFixed)*1000/d + (gFixed < bFixed ? 6000 : 0);
+			}
+			else if (max == gFixed) {
+				h = (bFixed - rFixed)*1000/d + 2000;
+			}
+			else {  // max == bFixed
+				h = (rFixed - gFixed)*1000/d + 4000;
+			}
+			h /= 6;
+		}
+
+		return new int[] {h*360/1000, s*100/1000, v*100/1000};
 	}
 
 	/**

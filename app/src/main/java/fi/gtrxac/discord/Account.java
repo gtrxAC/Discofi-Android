@@ -371,6 +371,30 @@ public class Account {
     }
 
     /**
+     * Get a guild's roles. Returns a Vector of Role.
+     */
+    public Vector getGuildRoles(long guildId) throws DiscordException {
+        JSONArray rolesJson = (JSONArray) fetchJSON("/guilds/" + guildId + "/roles");
+        return Role.parseRoles(rolesJson);
+    }
+
+    /**
+     * Fetch guild-specific information of a user. Returns a GuildMember.
+     */
+    public GuildMember getGuildMember(long userId, long guildId, Vector guildRoles) throws DiscordException {
+        JSONObject guildMemberJson = (JSONObject) fetchJSON("/guilds/" + guildId + "/members/" + userId);
+        return new GuildMember(guildMemberJson, guildRoles);
+    }
+
+    public GuildMember getGuildMember(long userId, Guild guild) throws DiscordException {
+        Vector roles = guild.roles;
+        if (roles == null) {
+            roles = getGuildRoles(guild.id);
+        }
+        return getGuildMember(userId, guild.id, roles);
+    }
+
+    /**
      * Fetch messages from a channel. The returned Vector is ordered oldest
      * first, regardless of the order the API returned them in.
      */

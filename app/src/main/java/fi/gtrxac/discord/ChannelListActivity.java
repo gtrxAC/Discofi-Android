@@ -67,6 +67,7 @@ public class ChannelListActivity extends Activity {
                 }
 
                 Intent intent = new Intent(ChannelListActivity.this, ChatActivity.class);
+                intent.putExtra("guildId", guildId);
                 intent.putExtra("channelId", channel.id);
                 intent.putExtra("channelName", channel.name);
                 startActivity(intent);
