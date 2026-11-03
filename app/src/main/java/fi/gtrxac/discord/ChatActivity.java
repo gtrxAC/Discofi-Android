@@ -501,9 +501,12 @@ public class ChatActivity extends Activity implements GatewayListener {
             @Override
             public void run() {
                 try {
-                    guildRoles = account.getGuildRoles(guildId);
                     final Vector result =
                             account.getMessages(channelId, 0, 0, Settings.messageLoadCount);
+
+                    if (guildId != 0) {
+                        guildRoles = account.getGuildRoles(guildId);
+                    }
 
                     runOnUiThread(new Runnable() {
                         public void run() {
