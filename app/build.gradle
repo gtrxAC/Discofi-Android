@@ -1,50 +1,50 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
-    defaultConfig {
-        applicationId "fi.gtrxac.discord"
-        minSdkVersion 1
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
-    }
+	compileSdkVersion 26
+	buildToolsVersion "26.0.2"
+	defaultConfig {
+		applicationId "fi.gtrxac.discord"
+		minSdkVersion 1
+		targetSdkVersion 26
+		versionCode 1
+		versionName "1.0"
+	}
 
-    signingConfigs {
-        release {
-            if (rootProject.file('keystore.properties').exists()) {
-                Properties props = new Properties()
-                props.load(new FileInputStream(rootProject.file("keystore.properties")))
-                storeFile file(props['store.file'])
-                storePassword props['store.password']
-                keyAlias props['key.alias']
-                keyPassword props['key.password']
-            }
-        }
-    }
+	signingConfigs {
+		release {
+			if (rootProject.file('keystore.properties').exists()) {
+				Properties props = new Properties()
+				props.load(new FileInputStream(rootProject.file("keystore.properties")))
+				storeFile file(props['store.file'])
+				storePassword props['store.password']
+				keyAlias props['key.alias']
+				keyPassword props['key.password']
+			}
+		}
+	}
 
-    buildTypes {
-        release {
-            shrinkResources true
-            minifyEnabled true
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+	buildTypes {
+		release {
+			shrinkResources true
+			minifyEnabled true
+			signingConfig signingConfigs.release
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+		}
+	}
 }
 
 apply from: 'twemoji.gradle'
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.github.leap0x7b.glide-backport:glide:3.0-backport-SNAPSHOT'
-    compileOnly 'com.android.support:support-v4:19.1.0'
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+	implementation 'com.github.leap0x7b.glide-backport:glide:3.0-backport-SNAPSHOT'
+	compileOnly 'com.android.support:support-v4:19.1.0'
 }
 
 // workaround for compileSdkVersion >= 21
 tasks.whenTaskAdded { task ->
-    if (task.name == "mockableAndroidJar") {
-        task.enabled = false
-    }
+	if (task.name == "mockableAndroidJar") {
+		task.enabled = false
+	}
 }

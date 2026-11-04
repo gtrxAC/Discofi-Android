@@ -6,7 +6,7 @@ package fi.gtrxac.discord;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
-    public void addition_isCorrect() {
+	public void addition_isCorrect() {
 
-    }
+	}
 }

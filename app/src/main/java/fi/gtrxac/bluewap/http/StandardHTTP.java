@@ -12,7 +12,7 @@ import javax.net.ssl.HttpsURLConnection;
 import tech.alicesworld.ModernConnector.ModernConnector;
 
 public class StandardHTTP extends HTTP {
-    public static final Exception requestMethodException = new Exception();
+	public static final Exception requestMethodException = new Exception();
 
 	private HttpsURLConnection conn;
 	private HttpConnection modernConn;
@@ -24,8 +24,7 @@ public class StandardHTTP extends HTTP {
 	protected InputStream makeRequest() throws Exception {
 		try {
 			return makePlatformRequest();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// Fallback to Modernconnector for older Android versions
 			closeTransport();
 			return makeModernConnectorRequest();
@@ -41,18 +40,17 @@ public class StandardHTTP extends HTTP {
 			conn = (HttpsURLConnection) parsed.openConnection();
 			// Enable TLS 1.2 on Android 4.1-4.4
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
-			    Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+					Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
 				conn.setSSLSocketFactory(new TLSSocketFactory());
 			}
 			conn.setInstanceFollowRedirects(false);
 			try {
-			    conn.setRequestMethod(currentMethod);
-			}
-			catch (Exception e) {
-			    throw requestMethodException;
+				conn.setRequestMethod(currentMethod);
+			} catch (Exception e) {
+				throw requestMethodException;
 			}
 
-			for (Enumeration e = requestHeaders.keys(); e.hasMoreElements();) {
+			for (Enumeration e = requestHeaders.keys(); e.hasMoreElements(); ) {
 				String key = (String) e.nextElement();
 				String value = (String) requestHeaders.get(key);
 				conn.setRequestProperty(key, value);
@@ -95,8 +93,7 @@ public class StandardHTTP extends HTTP {
 			if (err == null) {
 				try {
 					err = conn.getInputStream();
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					err = new ByteArrayInputStream(new byte[0]);
 				}
 			}
@@ -113,14 +110,13 @@ public class StandardHTTP extends HTTP {
 			HttpConnection hc = (HttpConnection) ModernConnector.open(currentUrl);
 
 			try {
-			    try {
-			        hc.setRequestMethod(method);
-			    }
-			    catch (Exception e) {
-			        throw requestMethodException;
-			    }
+				try {
+					hc.setRequestMethod(method);
+				} catch (Exception e) {
+					throw requestMethodException;
+				}
 
-				for (Enumeration e = requestHeaders.keys(); e.hasMoreElements();) {
+				for (Enumeration e = requestHeaders.keys(); e.hasMoreElements(); ) {
 					String key = (String) e.nextElement();
 					String value = (String) requestHeaders.get(key);
 					hc.setRequestProperty(key, value);
@@ -155,12 +151,11 @@ public class StandardHTTP extends HTTP {
 
 				hc.close();
 				currentUrl = new URL(new URL(currentUrl), location).toString();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				try {
 					hc.close();
+				} catch (Exception ignored) {
 				}
-				catch (Exception ignored) {}
 				throw e;
 			}
 		}
@@ -176,8 +171,8 @@ public class StandardHTTP extends HTTP {
 		if (modernConn != null) {
 			try {
 				modernConn.close();
+			} catch (IOException e) {
 			}
-			catch (IOException e) {}
 			modernConn = null;
 		}
 	}

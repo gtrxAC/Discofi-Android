@@ -19,68 +19,67 @@ import javax.microedition.io.SocketConnection;
 import fi.gtrxac.tinytls.*;
 
 /**
- *
  * @author NealShah
  */
 public class ModernSecureConnection implements SecureConnection {
-    private TinyTLS tls;
-    private DataInputStream inputStream;
-    private DataOutputStream outputStream;
-    
-    public ModernSecureConnection(String serverHost, int port) throws IOException {          
-        tls = new TinyTLS(null);
+	private TinyTLS tls;
+	private DataInputStream inputStream;
+	private DataOutputStream outputStream;
 
-        tls.connect(serverHost, port);
+	public ModernSecureConnection(String serverHost, int port) throws IOException {
+		tls = new TinyTLS(null);
 
-        inputStream = new DataInputStream(tls.openInputStream());
-        outputStream = new DataOutputStream(tls.openOutputStream());
-    }
-    
-    public SecurityInfo getSecurityInfo() throws IOException {
-        throw new RuntimeException("Not supported yet.");
-    }
+		tls.connect(serverHost, port);
 
-    public int getLocalPort() throws IOException {
-        throw new RuntimeException("Not supported yet.");
-    }
+		inputStream = new DataInputStream(tls.openInputStream());
+		outputStream = new DataOutputStream(tls.openOutputStream());
+	}
 
-    public int getPort() throws IOException {
-        throw new RuntimeException("Not supported yet.");
-    }
+	public SecurityInfo getSecurityInfo() throws IOException {
+		throw new RuntimeException("Not supported yet.");
+	}
 
-    public int getSocketOption(byte option) throws IOException {
-        throw new RuntimeException("Not supported yet.");
-    }
+	public int getLocalPort() throws IOException {
+		throw new RuntimeException("Not supported yet.");
+	}
 
-    public String getAddress() throws IOException {
-        throw new RuntimeException("Not supported yet.");
-    }
+	public int getPort() throws IOException {
+		throw new RuntimeException("Not supported yet.");
+	}
 
-    public String getLocalAddress() throws IOException {
-        throw new RuntimeException("Not supported yet.");
-    }
+	public int getSocketOption(byte option) throws IOException {
+		throw new RuntimeException("Not supported yet.");
+	}
 
-    public void setSocketOption(byte option, int value) throws IOException {
-    }
+	public String getAddress() throws IOException {
+		throw new RuntimeException("Not supported yet.");
+	}
 
-    public void close() throws IOException {
-        tls.close();
-    }
-    
-    public DataInputStream openDataInputStream() throws IOException {
-        return inputStream;
-    }
+	public String getLocalAddress() throws IOException {
+		throw new RuntimeException("Not supported yet.");
+	}
 
-    public InputStream openInputStream() throws IOException {
-        return inputStream;
-    }
+	public void setSocketOption(byte option, int value) throws IOException {
+	}
 
-    public DataOutputStream openDataOutputStream() throws IOException {
-        return outputStream;
-    }
+	public void close() throws IOException {
+		tls.close();
+	}
 
-    public OutputStream openOutputStream() throws IOException {
-        return outputStream;
-    }
-    
+	public DataInputStream openDataInputStream() throws IOException {
+		return inputStream;
+	}
+
+	public InputStream openInputStream() throws IOException {
+		return inputStream;
+	}
+
+	public DataOutputStream openDataOutputStream() throws IOException {
+		return outputStream;
+	}
+
+	public OutputStream openOutputStream() throws IOException {
+		return outputStream;
+	}
+
 }

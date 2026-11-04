@@ -26,6 +26,7 @@ import java.util.Stack;
 
 /**
  * Markdown parser library
+ *
  * @author Shinovon
  * @version 0.6
  */
@@ -152,10 +153,9 @@ public class Markdown {
 	public static boolean enableDiscordParsing = true;
 
 	/**
-	 *
-	 * @param ui Parsed Markdown handler
-	 * @param ctx Context passed to handler
-	 * @param src Source text
+	 * @param ui   Parsed Markdown handler
+	 * @param ctx  Context passed to handler
+	 * @param src  Source text
 	 * @param urls URLs table for output, can be null
 	 */
 	public static void parse(MarkdownListener ui, Object ctx, String src, Hashtable urls) {
@@ -183,7 +183,8 @@ public class Markdown {
 			char[] chars = src.toCharArray();
 			char l = 0;
 			while (d != -1 || o < len) {
-				a: {
+				a:
+				{
 					if (o != d) {
 						if (d == -1) d = len;
 						int i;
@@ -223,7 +224,7 @@ public class Markdown {
 									state[MD_LINK] = 0;
 									state[MD_IMAGE] = 0;
 									state[MD_PARENTHESIS] = 0;
-									state[MD_BREAKS] ++;
+									state[MD_BREAKS]++;
 
 									if (!b) {
 										sb.append(escape || breakOnNewLine ? '\n' : ' ');
@@ -234,8 +235,8 @@ public class Markdown {
 									int j = state[MD_LAST_GT] - state[MD_GT];
 									while (state[MD_BLOCKQUOTE] != 0 && j != 0) {
 										ui.endBlockQuote(ctx);
-										state[MD_BLOCKQUOTE] --;
-										j --;
+										state[MD_BLOCKQUOTE]--;
+										j--;
 									}
 
 									while (!listsStack.isEmpty()) {
@@ -252,7 +253,7 @@ public class Markdown {
 								continue;
 							} else if (c <= ' ' && l <= ' ') {
 								if ((l == c) && (state[MD_SPACES]++ == 0 || state[MD_SPACES] == 2 + 1)) {
-									state[MD_TAB] ++;
+									state[MD_TAB]++;
 									if (state[MD_SPACES] != 1) state[MD_SPACES] = 0;
 								}
 								l = c;
@@ -265,49 +266,49 @@ public class Markdown {
 								state[MD_SPACES] = 0;
 								if (c == '&' && i + 1 != len) { // entity
 									switch (chars[i + 1]) {
-									case 'n': // nbsp;
-										if (i + 5 < len && chars[i + 2] == 'b' && chars[i + 3] == 's'
-												&& chars[i + 4] == 'p' && chars[i + 5] == ';') {
-											c = ' ';
-											i += 5;
-										}
-										break;
-									case 'l': // lt
-										if (i + 3 < len && chars[i + 2] == 't' && chars[i + 3] == ';') {
-											c = '<';
-											i += 3;
-										}
-										break;
-									case 'g': // gt
-										if (i + 3 < len && chars[i + 2] == 't' && chars[i + 3] == ';') {
-											c = '>';
-											i += 3;
-										}
-										break;
-									case 'a': // amp
-										if (i + 4 < len && chars[i + 2] == 'm' && chars[i + 3] == 'p' && chars[i + 4] == ';') {
-											c = '&';
-											i += 4;
-										}
-										break;
-									case '#':
-										int k = i + 2;
-										boolean hex = chars[k] == 'x';
-										if (hex) ++k;
-										try {
-											//noinspection StatementWithEmptyBody
-											while (chars[++k] != ';' && k - i < 10);
-											if (k - i == 10) break;
-											if (hex) {
-												c = (char) Integer.parseInt(new String(chars, i + 3, k - i - 3), 16);
-											} else {
-												c = (char) Integer.parseInt(new String(chars, i + 2, k - i - 2));
+										case 'n': // nbsp;
+											if (i + 5 < len && chars[i + 2] == 'b' && chars[i + 3] == 's'
+													&& chars[i + 4] == 'p' && chars[i + 5] == ';') {
+												c = ' ';
+												i += 5;
 											}
-											i = k;
-										} catch (Exception e) {
-											e.printStackTrace();
-										}
-										break;
+											break;
+										case 'l': // lt
+											if (i + 3 < len && chars[i + 2] == 't' && chars[i + 3] == ';') {
+												c = '<';
+												i += 3;
+											}
+											break;
+										case 'g': // gt
+											if (i + 3 < len && chars[i + 2] == 't' && chars[i + 3] == ';') {
+												c = '>';
+												i += 3;
+											}
+											break;
+										case 'a': // amp
+											if (i + 4 < len && chars[i + 2] == 'm' && chars[i + 3] == 'p' && chars[i + 4] == ';') {
+												c = '&';
+												i += 4;
+											}
+											break;
+										case '#':
+											int k = i + 2;
+											boolean hex = chars[k] == 'x';
+											if (hex) ++k;
+											try {
+												//noinspection StatementWithEmptyBody
+												while (chars[++k] != ';' && k - i < 10) ;
+												if (k - i == 10) break;
+												if (hex) {
+													c = (char) Integer.parseInt(new String(chars, i + 3, k - i - 3), 16);
+												} else {
+													c = (char) Integer.parseInt(new String(chars, i + 2, k - i - 2));
+												}
+												i = k;
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
+											break;
 									}
 								} else if (state[MD_ESCAPE] == 0) {
 									if ((c == '*' || c == '-') && i + 1 < len && chars[i + 1] == ' ' && state[MD_TAB] != 0) {
@@ -318,11 +319,11 @@ public class Markdown {
 									}
 									if (state[MD_LENGTH] == 0) {
 										if (!listsStack.isEmpty()
-											&& !((c == '*' || c == '+' || c == '-')
+												&& !((c == '*' || c == '+' || c == '-')
 												&& i + 1 < len && chars[i + 1] == ' ')) {
 											int lineTab = state[MD_TAB];
 											while (!listsStack.isEmpty()
-												&& lineTab <= ((int[]) listsStack.peek())[1]) {
+													&& lineTab <= ((int[]) listsStack.peek())[1]) {
 												flush(ctx, ui, sb, state);
 												ui.endListItem(ctx);
 												int[] lt = (int[]) listsStack.pop();
@@ -380,7 +381,7 @@ public class Markdown {
 											int[] t;
 											if (listsStack.empty() || tab > (t = (int[]) listsStack.peek())[1]) {
 												flush(ctx, ui, sb, state);
-												listsStack.push(t = new int[] { c, tab, 0 });
+												listsStack.push(t = new int[]{c, tab, 0});
 												ui.lineBreak(ctx);
 												ui.beginList(ctx, false);
 											}
@@ -414,418 +415,418 @@ public class Markdown {
 									}
 
 									switch (c) {
-									case '\t':
-										c = ' ';
-										break;
-									case '\\': // escape
-										state[MD_ESCAPE] = 1;
-										l = c;
-										continue;
-									case ' ':
-										if (state[MD_HASH] != 0) {
-											flush(ctx, ui, sb, state);
-											l = c;
-											state[MD_HEADER] = state[MD_HASH];
-											state[MD_HASH] = 0;
-											continue;
-										}
-										if (state[MD_LENGTH] == 0) {
+										case '\t':
+											c = ' ';
+											break;
+										case '\\': // escape
+											state[MD_ESCAPE] = 1;
 											l = c;
 											continue;
-										}
-										break;
-									case '>':
-										if (state[MD_LENGTH] == 0) {
-											state[MD_GT] ++;
-											l = c;
-											continue;
-										}
-										break;
-									case '#':
-										if (state[MD_LENGTH] == 0 && state[MD_HEADER] == 0) {
-											state[MD_HASH] ++;
-											l = c;
-											continue;
-										}
-										break;
-									case '-': {
-										if (state[MD_LENGTH] == 0 && state[MD_HEADER] == 0
-												&& state[MD_SUBTEXT] == 0 && state[MD_GRAVE] == 0) {
-											if (i + 2 < len && chars[i + 1] == '#' && chars[i + 2] == ' ') {
+										case ' ':
+											if (state[MD_HASH] != 0) {
 												flush(ctx, ui, sb, state);
-												state[MD_SUBTEXT] = 1;
-												state[MD_LENGTH]++;
-												i += 2;
-												l = ' ';
+												l = c;
+												state[MD_HEADER] = state[MD_HASH];
+												state[MD_HASH] = 0;
 												continue;
 											}
+											if (state[MD_LENGTH] == 0) {
+												l = c;
+												continue;
+											}
+											break;
+										case '>':
+											if (state[MD_LENGTH] == 0) {
+												state[MD_GT]++;
+												l = c;
+												continue;
+											}
+											break;
+										case '#':
+											if (state[MD_LENGTH] == 0 && state[MD_HEADER] == 0) {
+												state[MD_HASH]++;
+												l = c;
+												continue;
+											}
+											break;
+										case '-': {
+											if (state[MD_LENGTH] == 0 && state[MD_HEADER] == 0
+													&& state[MD_SUBTEXT] == 0 && state[MD_GRAVE] == 0) {
+												if (i + 2 < len && chars[i + 1] == '#' && chars[i + 2] == ' ') {
+													flush(ctx, ui, sb, state);
+													state[MD_SUBTEXT] = 1;
+													state[MD_LENGTH]++;
+													i += 2;
+													l = ' ';
+													continue;
+												}
+											}
+											if (enableHorizontalLines && state[MD_LENGTH] == 0) {
+												if (i + 2 < len && chars[i + 1] == c && chars[i + 2] == c) {
+													int k = i;
+													//noinspection StatementWithEmptyBody
+													while (++k < len && chars[k] != '\n' && chars[k] != '\r') ;
+													if (chars[k - 1] == c) {
+														i = k - 1;
+														state[MD_LINE]++;
+														flush(ctx, ui, sb, state);
+														continue;
+													}
+												}
+											}
+											break;
 										}
-										if (enableHorizontalLines && state[MD_LENGTH] == 0) {
-											if (i + 2 < len && chars[i + 1] == c && chars[i + 2] == c) {
+										case '*':
+										case '_': {
+											int t = c == '*' ? MD_ASTERISK : MD_UNDERSCORE;
+											if (enableHorizontalLines && state[t] == 0 && state[MD_LENGTH] == 0 && i + 2 < len
+													&& chars[i + 1] == c && chars[i + 2] == c) {
 												int k = i;
 												//noinspection StatementWithEmptyBody
-												while (++k < len && chars[k] != '\n' && chars[k] != '\r');
+												while (++k < len && chars[k] != '\n' && chars[k] != '\r') ;
 												if (chars[k - 1] == c) {
 													i = k - 1;
-													state[MD_LINE] ++;
+													state[MD_LINE]++;
 													flush(ctx, ui, sb, state);
 													continue;
 												}
 											}
-										}
-										break;
-									}
-									case '*':
-									case '_': {
-										int t = c == '*' ? MD_ASTERISK : MD_UNDERSCORE;
-										if (enableHorizontalLines && state[t] == 0 && state[MD_LENGTH] == 0 && i + 2 < len
-												&& chars[i + 1] == c && chars[i + 2] == c) {
-											int k = i;
-											//noinspection StatementWithEmptyBody
-											while (++k < len && chars[k] != '\n' && chars[k] != '\r');
-											if (chars[k - 1] == c) {
-												i = k - 1;
-												state[MD_LINE] ++;
-												flush(ctx, ui, sb, state);
-												continue;
+
+											if (state[t] == 0 && ((c == '_' && l > ' ' && l != '*') || i + 1 >= len)) {
+												break;
 											}
-										}
+											int k = i; // line length
+											//noinspection StatementWithEmptyBody
+											while (++k < len && chars[k] != '\n' && chars[k] != '\r') ;
 
-										if (state[t] == 0 && ((c == '_' && l > ' ' && l != '*') || i + 1 >= len)) {
-											break;
-										}
-										int k = i; // line length
-										//noinspection StatementWithEmptyBody
-										while (++k < len && chars[k] != '\n' && chars[k] != '\r');
+											if (state[t] == 0) {
+												if (i + 2 >= k) break;
+												int j = src.indexOf(c, i + 1);
+												if (j == -1 || j >= k) break;
+											}
 
-										if (state[t] == 0) {
-											if (i + 2 >= k) break;
-											int j = src.indexOf(c, i + 1);
-											if (j == -1 || j >= k) break;
-										}
-
-										l = c;
-										if (i + 1 < k && chars[i + 1] == c) {
-											String s;
-											if (i + 2 < k && chars[i + 2] == c) {
-												s = c == '*' ? "***" : "___";
-												if (state[t] == 3) {
-													flush(ctx, ui, sb, state);
-													state[t] = 0;
-													state[c == '_' ? MD_UNDERLINE : MD_BOLD] --;
-													state[MD_ITALIC] --;
-													i += 2;
-													continue;
-												} else if (state[t] == 0) {
-													int j = src.indexOf(s, i + 1);
-													if (i + 6 >= k || j == -1 || j >= k || chars[i + 3] <= ' '
-															|| (j + 3 != k && chars[j + 3] > ' ')) {
-														sb.append(s);
+											l = c;
+											if (i + 1 < k && chars[i + 1] == c) {
+												String s;
+												if (i + 2 < k && chars[i + 2] == c) {
+													s = c == '*' ? "***" : "___";
+													if (state[t] == 3) {
+														flush(ctx, ui, sb, state);
+														state[t] = 0;
+														state[c == '_' ? MD_UNDERLINE : MD_BOLD]--;
+														state[MD_ITALIC]--;
+														i += 2;
+														continue;
+													} else if (state[t] == 0) {
+														int j = src.indexOf(s, i + 1);
+														if (i + 6 >= k || j == -1 || j >= k || chars[i + 3] <= ' '
+																|| (j + 3 != k && chars[j + 3] > ' ')) {
+															sb.append(s);
+															i += 2;
+															continue;
+														}
+														flush(ctx, ui, sb, state);
+														state[t] = 3;
+														state[c == '_' ? MD_UNDERLINE : MD_BOLD]++;
+														state[MD_ITALIC]++;
 														i += 2;
 														continue;
 													}
-													flush(ctx, ui, sb, state);
-													state[t] = 3;
-													state[c == '_' ? MD_UNDERLINE : MD_BOLD] ++;
-													state[MD_ITALIC] ++;
-													i += 2;
-													continue;
+													sb.append(c).append(c);
+													i += 3;
+													break;
 												}
-												sb.append(c).append(c);
-												i+=3;
-												break;
-											}
-											s = c == '*' ? "**" : "__";
-											if (state[t] == 2) {
-												flush(ctx, ui, sb, state);
-												state[t] = 0;
-												state[c == '_' ? MD_UNDERLINE : MD_BOLD] --;
-												i++;
-												continue;
-											} else if (state[t] == 0) {
-												int j = src.indexOf(s, i + 1);
-												if (i + 4 >= k || j == -1 || j >= k
-														|| chars[i + 2] <= ' ' || chars[j - 1] <= ' '
-														|| (c == '_' && j + 2 != k && chars[j + 2] > ' ' && chars[j + 2] != '*')) {
-													sb.append(s);
+												s = c == '*' ? "**" : "__";
+												if (state[t] == 2) {
+													flush(ctx, ui, sb, state);
+													state[t] = 0;
+													state[c == '_' ? MD_UNDERLINE : MD_BOLD]--;
+													i++;
+													continue;
+												} else if (state[t] == 0) {
+													int j = src.indexOf(s, i + 1);
+													if (i + 4 >= k || j == -1 || j >= k
+															|| chars[i + 2] <= ' ' || chars[j - 1] <= ' '
+															|| (c == '_' && j + 2 != k && chars[j + 2] > ' ' && chars[j + 2] != '*')) {
+														sb.append(s);
+														i++;
+														continue;
+													}
+													flush(ctx, ui, sb, state);
+													state[t] = 2;
+													state[c == '_' ? MD_UNDERLINE : MD_BOLD]++;
 													i++;
 													continue;
 												}
+												sb.append(c);
+												i++;
+												break;
+											}
+
+											if (state[t] == 1) {
 												flush(ctx, ui, sb, state);
-												state[t] = 2;
-												state[c == '_' ? MD_UNDERLINE : MD_BOLD] ++;
+												state[t] = 0;
+												state[MD_ITALIC] = 0;
+												continue;
+											}
+
+											if (state[t] == 0) {
+												int j = src.indexOf(c, i + 1);
+												if (j == -1 || j >= k || chars[i] <= ' '
+														|| (c == '_' && j + 1 != k && chars[j + 1] > ' ' && chars[j + 1] != '*')) {
+													break;
+												}
+												flush(ctx, ui, sb, state);
+												state[t] = 1;
+												state[MD_ITALIC] = 1;
+												state[MD_LENGTH]++;
+												continue;
+											}
+											break;
+										}
+										case '~': {
+											if (i + 1 >= len || chars[i + 1] != c) {
+												break;
+											}
+											int k = i; // line length
+											//noinspection StatementWithEmptyBody
+											while (++k < len && chars[k] != '\n' && chars[k] != '\r') ;
+											if (state[MD_STRIKE] == 0) {
+												if (i + 4 >= k) break;
+												int j = src.indexOf("~~", i + 1);
+												if (j == -1 || j >= k || chars[i + 2] <= ' ' || chars[j - 1] <= ' ') {
+													break;
+												}
+
+												flush(ctx, ui, sb, state);
+												state[MD_STRIKE] = 1;
+												state[MD_LENGTH]++;
 												i++;
 												continue;
 											}
-											sb.append(c);
-											i++;
-											break;
-										}
-
-										if (state[t] == 1) {
-											flush(ctx, ui, sb, state);
-											state[t] = 0;
-											state[MD_ITALIC] = 0;
-											continue;
-										}
-
-										if (state[t] == 0) {
-											int j = src.indexOf(c, i + 1);
-											if (j == -1 || j >= k || chars[i] <= ' '
-													|| (c == '_' && j + 1 != k && chars[j + 1] > ' ' && chars[j + 1] != '*')) {
-												break;
-											}
-											flush(ctx, ui, sb, state);
-											state[t] = 1;
-											state[MD_ITALIC] = 1;
-											state[MD_LENGTH] ++;
-											continue;
-										}
-										break;
-									}
-									case '~': {
-										if (i + 1 >= len || chars[i + 1] != c) {
-											break;
-										}
-										int k = i; // line length
-										//noinspection StatementWithEmptyBody
-										while (++k < len && chars[k] != '\n' && chars[k] != '\r');
-										if (state[MD_STRIKE] == 0) {
-											if (i + 4 >= k) break;
-											int j = src.indexOf("~~", i + 1);
-											if (j == -1 || j >= k || chars[i + 2] <= ' ' || chars[j - 1] <= ' ') {
-												break;
-											}
-
-											flush(ctx, ui, sb, state);
-											state[MD_STRIKE] = 1;
-											state[MD_LENGTH] ++;
-											i++;
-											continue;
-										}
-										if (state[MD_STRIKE] == 1) {
-											flush(ctx, ui, sb, state);
-											state[MD_STRIKE] = 0;
-											i++;
-											continue;
-										}
-										continue;
-									}
-									case '|': {
-										// Discord spoiler ||...||
-										if (!enableDiscordParsing || state[MD_GRAVE] != 0) {
-											break;
-										}
-										if (i + 1 >= len || chars[i + 1] != '|') {
-											break;
-										}
-										if (state[MD_DISCORD_SPOILER] == 0) {
-											int j = src.indexOf("||", i + 2);
-											if (j == -1 || j == i + 2) {
-												break;
-											}
-											flush(ctx, ui, sb, state);
-											state[MD_DISCORD_SPOILER] = 1;
-											ui.beginSpoiler(ctx);
-											state[MD_LENGTH]++;
-											i++;
-											l = '|';
-											continue;
-										} else {
-											flush(ctx, ui, sb, state);
-											state[MD_DISCORD_SPOILER] = 0;
-											ui.endSpoiler(ctx);
-											state[MD_LENGTH]++;
-											i++;
-											l = '|';
-											continue;
-										}
-									}
-									case '<': {
-										// Discord mentions, channel, emoji, timestamp (<@id>, <@&id>, <#id>, <:name:id>, <t:unix:style>)
-										if (!enableDiscordParsing || state[MD_GRAVE] != 0) {
-											break;
-										}
-										int end = handleDiscordTag(ui, ctx, src, chars, sb, state, i, len);
-										if (end == -1) {
-											break;
-										}
-										i = end;
-										l = '>';
-										continue;
-									}
-									case '@': {
-										// Discord @everyone / @here
-										if (!enableDiscordParsing || state[MD_GRAVE] != 0) {
-											break;
-										}
-										if (i + 9 <= len && src.regionMatches(i, "@everyone", 0, 9)
-												&& (i + 9 == len || !isDiscordWordChar(chars[i + 9]))) {
-											flush(ctx, ui, sb, state);
-											ui.appendEveryone(ctx, getFont(state));
-											state[MD_LENGTH]++;
-											i += 8;
-											l = 'e';
-											continue;
-										}
-										if (i + 5 <= len && src.regionMatches(i, "@here", 0, 5)
-												&& (i + 5 == len || !isDiscordWordChar(chars[i + 5]))) {
-											flush(ctx, ui, sb, state);
-											ui.appendHere(ctx, getFont(state));
-											state[MD_LENGTH]++;
-											i += 4;
-											l = 'e';
-											continue;
-										}
-										break;
-									}
-									case '`': {
-										if (i + 2 < len && chars[i + 1] == c && chars[i + 2] == c) {
-											int j = src.indexOf('\n', i + 1);
-											int k = src.indexOf('`', i + 3);
-											flush(ctx, ui, sb, state);
-											i += state[MD_GRAVE] = 3;
-
-											String lang = null;
-											if (j != -1 && j < k) {
-												lang = src.substring(i, j);
-												i = j + 1;
-											}
-
-											ui.beginCodeBlock(ctx, lang);
-										} else {
-											int j = src.indexOf('`', i + 1);
-											if (j == -1) break;
-											if (i + 1 < len && chars[i + 1] == c) {
+											if (state[MD_STRIKE] == 1) {
 												flush(ctx, ui, sb, state);
-												i += state[MD_GRAVE] = 2;
+												state[MD_STRIKE] = 0;
+												i++;
+												continue;
+											}
+											continue;
+										}
+										case '|': {
+											// Discord spoiler ||...||
+											if (!enableDiscordParsing || state[MD_GRAVE] != 0) {
+												break;
+											}
+											if (i + 1 >= len || chars[i + 1] != '|') {
+												break;
+											}
+											if (state[MD_DISCORD_SPOILER] == 0) {
+												int j = src.indexOf("||", i + 2);
+												if (j == -1 || j == i + 2) {
+													break;
+												}
+												flush(ctx, ui, sb, state);
+												state[MD_DISCORD_SPOILER] = 1;
+												ui.beginSpoiler(ctx);
+												state[MD_LENGTH]++;
+												i++;
+												l = '|';
+												continue;
 											} else {
 												flush(ctx, ui, sb, state);
-												i += state[MD_GRAVE] = 1;
+												state[MD_DISCORD_SPOILER] = 0;
+												ui.endSpoiler(ctx);
+												state[MD_LENGTH]++;
+												i++;
+												l = '|';
+												continue;
 											}
 										}
-										if (state[MD_GRAVE] != 0) {
-											while (i < len) {
-												if ((c = chars[i++]) == '`') {
-													if (state[MD_GRAVE] == 1) {
-														break;
-													} else if (state[MD_GRAVE] == 2) {
-														if (i < len && chars[i] == c) {
-															i++;
-															break;
-														}
-													} else if (state[MD_GRAVE] == 3) {
-														if (i + 1 < len && chars[i] == c && chars[i + 1] == c) {
-															i += 2;
-															break;
-														}
-													}
-												} else if (c <= ' ' && state[MD_GRAVE] != 3) {
-													if (l == ' ') continue;
-													c = ' ';
-												} else if (c == '\t') {
-													l = c;
-													sb.append("    ");
-													continue;
+										case '<': {
+											// Discord mentions, channel, emoji, timestamp (<@id>, <@&id>, <#id>, <:name:id>, <t:unix:style>)
+											if (!enableDiscordParsing || state[MD_GRAVE] != 0) {
+												break;
+											}
+											int end = handleDiscordTag(ui, ctx, src, chars, sb, state, i, len);
+											if (end == -1) {
+												break;
+											}
+											i = end;
+											l = '>';
+											continue;
+										}
+										case '@': {
+											// Discord @everyone / @here
+											if (!enableDiscordParsing || state[MD_GRAVE] != 0) {
+												break;
+											}
+											if (i + 9 <= len && src.regionMatches(i, "@everyone", 0, 9)
+													&& (i + 9 == len || !isDiscordWordChar(chars[i + 9]))) {
+												flush(ctx, ui, sb, state);
+												ui.appendEveryone(ctx, getFont(state));
+												state[MD_LENGTH]++;
+												i += 8;
+												l = 'e';
+												continue;
+											}
+											if (i + 5 <= len && src.regionMatches(i, "@here", 0, 5)
+													&& (i + 5 == len || !isDiscordWordChar(chars[i + 5]))) {
+												flush(ctx, ui, sb, state);
+												ui.appendHere(ctx, getFont(state));
+												state[MD_LENGTH]++;
+												i += 4;
+												l = 'e';
+												continue;
+											}
+											break;
+										}
+										case '`': {
+											if (i + 2 < len && chars[i + 1] == c && chars[i + 2] == c) {
+												int j = src.indexOf('\n', i + 1);
+												int k = src.indexOf('`', i + 3);
+												flush(ctx, ui, sb, state);
+												i += state[MD_GRAVE] = 3;
+
+												String lang = null;
+												if (j != -1 && j < k) {
+													lang = src.substring(i, j);
+													i = j + 1;
 												}
-												l = c;
-												sb.append(c);
+
+												ui.beginCodeBlock(ctx, lang);
+											} else {
+												int j = src.indexOf('`', i + 1);
+												if (j == -1) break;
+												if (i + 1 < len && chars[i + 1] == c) {
+													flush(ctx, ui, sb, state);
+													i += state[MD_GRAVE] = 2;
+												} else {
+													flush(ctx, ui, sb, state);
+													i += state[MD_GRAVE] = 1;
+												}
 											}
-											flush(ctx, ui, sb, state);
-											if (state[MD_GRAVE] == 3) {
-												ui.endCodeBlock(ctx);
+											if (state[MD_GRAVE] != 0) {
+												while (i < len) {
+													if ((c = chars[i++]) == '`') {
+														if (state[MD_GRAVE] == 1) {
+															break;
+														} else if (state[MD_GRAVE] == 2) {
+															if (i < len && chars[i] == c) {
+																i++;
+																break;
+															}
+														} else if (state[MD_GRAVE] == 3) {
+															if (i + 1 < len && chars[i] == c && chars[i + 1] == c) {
+																i += 2;
+																break;
+															}
+														}
+													} else if (c <= ' ' && state[MD_GRAVE] != 3) {
+														if (l == ' ') continue;
+														c = ' ';
+													} else if (c == '\t') {
+														l = c;
+														sb.append("    ");
+														continue;
+													}
+													l = c;
+													sb.append(c);
+												}
+												flush(ctx, ui, sb, state);
+												if (state[MD_GRAVE] == 3) {
+													ui.endCodeBlock(ctx);
+												}
+												o = i;
+												d = enableHtmlTags ? src.indexOf('<', o) : -1;
+												state[MD_LENGTH]++;
+												state[MD_GRAVE] = 0;
+												l = '`';
+												break a;
 											}
-											o = i;
-											d = enableHtmlTags ? src.indexOf('<', o) : -1;
-											state[MD_LENGTH] ++;
-											state[MD_GRAVE] = 0;
-											l = '`';
-											break a;
+											continue;
 										}
-										continue;
-									}
-									case '!': {
-										if (!enableImages || i + 1 == len || chars[i + 1] != '[') {
-											break;
+										case '!': {
+											if (!enableImages || i + 1 == len || chars[i + 1] != '[') {
+												break;
+											}
+											state[MD_IMAGE]++;
+											continue;
 										}
-										state[MD_IMAGE] ++;
-										continue;
-									}
-									case '[': {
-	//									if (state[MD_BRACKET] != 0) {
-	//										break;
-	//									}
+										case '[': {
+											//									if (state[MD_BRACKET] != 0) {
+											//										break;
+											//									}
 
-										int k = i; // line length
-										//noinspection StatementWithEmptyBody
-										while (++k < len && chars[k] != '\n' && chars[k] != '\r');
+											int k = i; // line length
+											//noinspection StatementWithEmptyBody
+											while (++k < len && chars[k] != '\n' && chars[k] != '\r') ;
 
-										int n, m;
-										if ((n = src.indexOf(']', i)) == -1 || n >= k
-												|| (m = src.indexOf('(', n)) == -1
-												|| m != n + 1 || m >= k
-												|| (m = src.indexOf(')', m)) == -1 || m >= k) {
-											break;
-										}
+											int n, m;
+											if ((n = src.indexOf(']', i)) == -1 || n >= k
+													|| (m = src.indexOf('(', n)) == -1
+													|| m != n + 1 || m >= k
+													|| (m = src.indexOf(')', m)) == -1 || m >= k) {
+												break;
+											}
 
-										flush(ctx, ui, sb, state);
-
-										Object t = new StringBuffer();
-										linksStack.push(t);
-										if (state[MD_IMAGE] == 0) ui.beginHref(ctx, t);
-
-										l = c;
-										state[MD_BRACKET] ++;
-										state[MD_LINK] ++;
-										state[MD_LENGTH] ++;
-										continue;
-									}
-									case ']': {
-										if (state[MD_BRACKET] == 0 || i + 1 == len || chars[i + 1] != '(') {
-											break;
-										}
-
-										((StringBuffer) linksStack.peek()).append(sb.toString());
-										if (state[MD_IMAGE] == 0) {
 											flush(ctx, ui, sb, state);
-										}
-										sb.setLength(0);
 
-										l = c;
-										state[MD_BRACKET] --;
-	//									i++;
-										continue;
-									}
-									case '(': {
-										if (state[MD_LINK] == 0 || chars[i - 1] != ']') {
-											break;
-										}
+											Object t = new StringBuffer();
+											linksStack.push(t);
+											if (state[MD_IMAGE] == 0) ui.beginHref(ctx, t);
 
-										l = '(';
-										state[MD_PARENTHESIS] = 1;
-										continue;
-									}
-									case ')': {
-										if (state[MD_LINK] == 0 || state[MD_PARENTHESIS] == 0) {
-											break;
+											l = c;
+											state[MD_BRACKET]++;
+											state[MD_LINK]++;
+											state[MD_LENGTH]++;
+											continue;
 										}
+										case ']': {
+											if (state[MD_BRACKET] == 0 || i + 1 == len || chars[i + 1] != '(') {
+												break;
+											}
 
-										StringBuffer t = (StringBuffer) linksStack.pop();
-										if (state[MD_IMAGE] != 0) {
-											ui.appendImage(ctx, sb.toString(), t.toString());
-											state[MD_IMAGE] --;
-										} else if (t != null) {
-											if (urls != null) urls.put(t, sb.toString());
-											ui.endHref(ctx);
+											((StringBuffer) linksStack.peek()).append(sb.toString());
+											if (state[MD_IMAGE] == 0) {
+												flush(ctx, ui, sb, state);
+											}
+											sb.setLength(0);
+
+											l = c;
+											state[MD_BRACKET]--;
+											//									i++;
+											continue;
 										}
-										sb.setLength(0);
+										case '(': {
+											if (state[MD_LINK] == 0 || chars[i - 1] != ']') {
+												break;
+											}
 
-										l = c;
-										state[MD_PARENTHESIS] --;
-										state[MD_LINK] --;
-										continue;
-									}
-									// TODO
+											l = '(';
+											state[MD_PARENTHESIS] = 1;
+											continue;
+										}
+										case ')': {
+											if (state[MD_LINK] == 0 || state[MD_PARENTHESIS] == 0) {
+												break;
+											}
+
+											StringBuffer t = (StringBuffer) linksStack.pop();
+											if (state[MD_IMAGE] != 0) {
+												ui.appendImage(ctx, sb.toString(), t.toString());
+												state[MD_IMAGE]--;
+											} else if (t != null) {
+												if (urls != null) urls.put(t, sb.toString());
+												ui.endHref(ctx);
+											}
+											sb.setLength(0);
+
+											l = c;
+											state[MD_PARENTHESIS]--;
+											state[MD_LINK]--;
+											continue;
+										}
+										// TODO
 //									case '1': {
 //										if (state[MD_LENGTH] == 0 && i + 1 != len && chars[i + 1] == '.') {
 //
@@ -833,48 +834,48 @@ public class Markdown {
 //										}
 //										break;
 //									}
-									default:
-										if (c < ' ' && state[MD_LENGTH] == 0) {
-											l = c;
-											continue;
-										}
-										break;
+										default:
+											if (c < ' ' && state[MD_LENGTH] == 0) {
+												l = c;
+												continue;
+											}
+											break;
 									}
 								} else {
 									state[MD_ESCAPE] = 0;
 									switch (c) {
-									case '\t':
-										sb.append("    ");
-										l = c;
-										state[MD_LENGTH] ++;
-										continue;
-									case '\\':
-									case '>':
-									case '<':
-									case '*':
-									case '_':
-									case '~':
-									case '`':
-									case '[':
-									case ']':
-									case '(':
-									case ')':
-									case '#':
-									case '@':
-									case '|':
-									case ':':
-									case '-':
-										break;
-									default:
-										sb.append('\\');
-										break;
+										case '\t':
+											sb.append("    ");
+											l = c;
+											state[MD_LENGTH]++;
+											continue;
+										case '\\':
+										case '>':
+										case '<':
+										case '*':
+										case '_':
+										case '~':
+										case '`':
+										case '[':
+										case ']':
+										case '(':
+										case ')':
+										case '#':
+										case '@':
+										case '|':
+										case ':':
+										case '-':
+											break;
+										default:
+											sb.append('\\');
+											break;
 									}
 								}
 
 							}
 							l = c;
 							sb.append(c);
-							state[MD_LENGTH] ++;
+							state[MD_LENGTH]++;
 						}
 
 						if (state[MD_HTML_LINK] == 0 && sb.length() != 0) {
@@ -911,35 +912,35 @@ public class Markdown {
 							if ((chars[d + 2] == 'b' && chars[d + 3] == '>')
 									|| (chars[d + 2] == 's' && chars[d + 3] == 't')) {
 								// </b> or </strong>
-								state[MD_HTML_BOLD] --;
+								state[MD_HTML_BOLD]--;
 							} else if (chars[d + 2] == 'h' && chars[d + 4] == '>') {
 								// </h?>
 								state[MD_HTML_HEADER] = 0;
 							} else if ((chars[d + 2] == 'e' && chars[d + 3] == 'm')
-								|| (chars[d + 2] == 'i' && chars[d + 3] == '>')) {
+									|| (chars[d + 2] == 'i' && chars[d + 3] == '>')) {
 								// </em> or </i>
-								state[MD_HTML_ITALIC] --;
+								state[MD_HTML_ITALIC]--;
 							} else if (chars[d + 2] == 'b' && chars[d + 3] == 'i' && chars[d + 4] == 'g') {
 								// </small>
-								state[MD_HTML_BIG] --;
+								state[MD_HTML_BIG]--;
 							} else if ((chars[d + 2] == 's' && chars[d + 3] == 'u' && chars[d + 4] == 'b')
 									|| (chars[d + 2] == 'i' && chars[d + 3] == 'n' && chars[d + 4] == 's')
 									|| (chars[d + 2] == 'u' && chars[d + 3] == '>')) {
 								// </sub>, </ins>, </u>
-								state[MD_HTML_UNDERLINE] --;
+								state[MD_HTML_UNDERLINE]--;
 								state[1] &= ~FONT_STYLE_UNDERLINED;
 							} else if (chars[d + 2] == 'p' && chars[d + 3] == '>') {
 								// </p>
-								state[MD_HTML_PARAGRAPH] --;
+								state[MD_HTML_PARAGRAPH]--;
 								sb.append('\n');
 							} else if (chars[d + 2] == 's' && chars[d + 3] == 'm') {
 								// </small>
 							} else if (chars[d + 2] == 's' && chars[d + 3] == '>') {
 								// </s>
-								state[MD_HTML_STRIKE] --;
+								state[MD_HTML_STRIKE]--;
 							} else if (chars[d + 2] == 'a' && chars[d + 3] == '>') {
 								// </a>
-								state[MD_HTML_LINK] --;
+								state[MD_HTML_LINK]--;
 
 								flush(ctx, ui, sb, state);
 
@@ -952,29 +953,29 @@ public class Markdown {
 							if ((chars[d + 1] == 'b' && chars[d + 2] == '>')
 									|| (chars[d + 1] == 's' && chars[d + 2] == 't')) {
 								// <b> or <strong>
-								state[MD_HTML_BOLD] ++;
+								state[MD_HTML_BOLD]++;
 							} else if (chars[d + 1] == 'h' && chars[d + 3] == '>') {
 								// <h?>
 								state[MD_HTML_HEADER] = chars[d + 2] - '0';
 							} else if ((chars[d + 1] == 'e' && chars[d + 2] == 'm')
 									|| (chars[d + 1] == 'i' && chars[d + 2] == '>')) {
 								// <em> or <i>
-								state[MD_HTML_ITALIC] ++;
+								state[MD_HTML_ITALIC]++;
 							} else if (chars[d + 1] == 'b' && chars[d + 2] == 'i' && chars[d + 3] == 'g') {
 								// <big>
-								state[MD_HTML_BIG] ++;
+								state[MD_HTML_BIG]++;
 							} else if ((chars[d + 1] == 's' && chars[d + 2] == 'u' && chars[d + 3] == 'b')
 									|| (chars[d + 1] == 'i' && chars[d + 2] == 'n' && chars[d + 3] == 's')
 									|| (chars[d + 1] == 'u')) {
 								// <sub>, <ins>, <u>
-								state[MD_HTML_UNDERLINE] ++;
+								state[MD_HTML_UNDERLINE]++;
 								state[1] |= FONT_STYLE_UNDERLINED;
 							} else if (chars[d + 1] == 'b' && chars[d + 2] == 'r') {
 								// <br>
 								sb.append('\n');
 							} else if (chars[d + 1] == 'p' && (chars[d + 2] == ' ' || chars[d + 2] == '>')) {
 								// <p>
-								state[MD_HTML_PARAGRAPH] ++;
+								state[MD_HTML_PARAGRAPH]++;
 								if (state[MD_BREAKS] != 0) sb.append('\n');
 							} else if (enableImages && chars[d + 1] == 'i' && chars[d + 2] == 'm' && chars[d + 3] == 'g') {
 								// <img>
@@ -1000,12 +1001,12 @@ public class Markdown {
 								// <small>
 							} else if (chars[d + 1] == 's' && chars[d + 2] == '>') {
 								// <s>
-								state[MD_HTML_STRIKE] ++;
+								state[MD_HTML_STRIKE]++;
 							} else if (chars[d + 1] == 'a'
 									&& (chars[d + 2] == ' ' || chars[d + 2] == '>')) {
 								// <a>
 								flush(ctx, ui, sb, state);
-								state[MD_HTML_LINK] ++;
+								state[MD_HTML_LINK]++;
 
 								String url = src.substring(d + 2, e);
 								int i;
@@ -1051,7 +1052,7 @@ public class Markdown {
 			}
 
 			while (state[MD_BLOCKQUOTE] != 0) {
-				state[MD_BLOCKQUOTE] --;
+				state[MD_BLOCKQUOTE]--;
 				ui.endBlockQuote(ctx);
 			}
 			ui.endMarkdown(ctx);
@@ -1070,7 +1071,7 @@ public class Markdown {
 		int space = 0;
 		while (sb.length() != 0 && sb.charAt(sb.length() - 1) == ' ') {
 			sb.setLength(sb.length() - 1);
-			space ++;
+			space++;
 		}
 		String t = sb.toString();
 		int f = getFont(state);
@@ -1095,13 +1096,14 @@ public class Markdown {
 				} else b = i != -1;
 
 				if (b) {
-					b: {
+					b:
+					{
 						boolean https;
 						char c;
 						if (i < 4 || ((https = t.charAt(i - 1) != 'p')
 								&& (i < 5 || t.charAt(i - 1) != 's'))
-							|| (i != (j = https ? 5 : 4)
-							&& (c = t.charAt(i - j - 1)) > ' ' && c != '(')) {
+								|| (i != (j = https ? 5 : 4)
+								&& (c = t.charAt(i - j - 1)) > ' ' && c != '(')) {
 							break b;
 						}
 						j = i - j;
@@ -1125,7 +1127,8 @@ public class Markdown {
 					}
 					d = i + 3;
 				} else {
-					b: {
+					b:
+					{
 						char c;
 						if (i != 0 && (c = t.charAt(i - 1)) > ' ' && c != '(') {
 							break b;
@@ -1161,7 +1164,7 @@ public class Markdown {
 			ui.endHeader(ctx, state[MD_HEADER]);
 		} else if (isSubtext) {
 			ui.endSubtext(ctx);
-		} else if ( state[MD_LINE] != 0) {
+		} else if (state[MD_LINE] != 0) {
 			if (enableHorizontalLines) ui.horizontalLine(ctx);
 			state[MD_LINE] = 0;
 			state[MD_PARAGRAPH] = 1;
@@ -1197,23 +1200,23 @@ public class Markdown {
 		}
 		int header = state[MD_HEADER];
 		switch (header != 0 ? header : state[MD_HTML_HEADER]) {
-		case 1:
-			size = FONT_SIZE_LARGE;
-			style |= FONT_STYLE_BOLD;
-			break;
-		case 2:
-			size = FONT_SIZE_MEDIUM;
-			style |= FONT_STYLE_BOLD;
-			break;
-		case 3:
-			size = FONT_SIZE_SMALL;
-			style |= FONT_STYLE_BOLD;
-			break;
-		case 4:
-		case 5:
-		case 6:
-			size = FONT_SIZE_SMALL;
-			break;
+			case 1:
+				size = FONT_SIZE_LARGE;
+				style |= FONT_STYLE_BOLD;
+				break;
+			case 2:
+				size = FONT_SIZE_MEDIUM;
+				style |= FONT_STYLE_BOLD;
+				break;
+			case 3:
+				size = FONT_SIZE_SMALL;
+				style |= FONT_STYLE_BOLD;
+				break;
+			case 4:
+			case 5:
+			case 6:
+				size = FONT_SIZE_SMALL;
+				break;
 		}
 		return face | style | size;
 	}
@@ -1236,12 +1239,12 @@ public class Markdown {
 	 * Parses a Discord-specific &lt;...&gt; element at the given start index.
 	 * On success flushes pending text, notifies the listener and returns the index
 	 * of the closing '&gt;'. On failure returns -1 (caller treats '&lt;' as literal).
-	 *
+	 * <p>
 	 * Supported: &lt;@id&gt;, &lt;@!id&gt;, &lt;@&amp;id&gt;, &lt;#id&gt;,
 	 * &lt;:name:id&gt;, &lt;a:name:id&gt;, &lt;t:unix&gt;, &lt;t:unix:style&gt;.
 	 */
 	private static int handleDiscordTag(MarkdownListener ui, Object ctx, String src,
-			char[] chars, StringBuffer sb, int[] state, int start, int len) {
+										char[] chars, StringBuffer sb, int[] state, int start, int len) {
 		if (start + 2 >= len || chars[start] != '<') {
 			return -1;
 		}
@@ -1357,20 +1360,30 @@ public class Markdown {
 		return -1;
 	}
 
-	/** Zero width joiner */
+	/**
+	 * Zero width joiner
+	 */
 	private static final int ZERO_WIDTH_JOINER = 0x200D;
-	/** Variation selector-16, requests emoji presentation */
+	/**
+	 * Variation selector-16, requests emoji presentation
+	 */
 	private static final int VARIATION_SELECTOR_16 = 0xFE0F;
-	/** Variation selector-15, requests text presentation */
+	/**
+	 * Variation selector-15, requests text presentation
+	 */
 	private static final int VARIATION_SELECTOR_15 = 0xFE0E;
-	/** Combining enclosing keycap, makes digits into emoji */
+	/**
+	 * Combining enclosing keycap, makes digits into emoji
+	 */
 	private static final int ENCLOSING_KEYCAP = 0x20E3;
 	private static final int REGIONAL_INDICATOR_FIRST = 0x1F1E6;
 	private static final int REGIONAL_INDICATOR_LAST = 0x1F1FF;
 	private static final int EMOJI_MODIFIER_FIRST = 0x1F3FB;
 	private static final int EMOJI_MODIFIER_LAST = 0x1F3FF;
 	private static final int EMOJI_TAG_FIRST = 0xE0020;
-	/** Tag sequences (subdivision flags) end with the cancel tag */
+	/**
+	 * Tag sequences (subdivision flags) end with the cancel tag
+	 */
 	private static final int EMOJI_TAG_LAST = 0xE007F;
 
 	private static final int[] EMOJI_PICTOGRAPHICS = {
@@ -1411,7 +1424,7 @@ public class Markdown {
 		if (codePoint < 0xA9 || !isEmojiPicto(codePoint)) return -1;
 
 		int p = i;
-		for (;;) {
+		for (; ; ) {
 			p += codePointLength(codePoint);
 			if (p < len) {
 				if (chars[p] == VARIATION_SELECTOR_15) return -1; // text presentation

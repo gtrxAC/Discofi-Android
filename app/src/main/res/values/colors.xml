@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="embed_background_dark">#282828</color>
-    <color name="embed_background_light">#E8E8E8</color>
-    <color name="code_background_dark">#282828</color>
-    <color name="code_background_light">#E8E8E8</color>
-    <color name="message_mentioned_background">#1AF0B132</color>
-    <color name="quote_color_dark">#808080</color>
-    <color name="quote_color_light">#A0A0A0</color>
-    <color name="mention_background">#4D5865F2</color>
-    <color name="mention_foreground_dark">#E0E3FF</color>
-    <color name="mention_foreground_light">#5865F2</color>
-    <color name="badge_background">#5865F2</color>
+	<color name="embed_background_dark">#282828</color>
+	<color name="embed_background_light">#E8E8E8</color>
+	<color name="code_background_dark">#282828</color>
+	<color name="code_background_light">#E8E8E8</color>
+	<color name="message_mentioned_background">#1AF0B132</color>
+	<color name="quote_color_dark">#808080</color>
+	<color name="quote_color_light">#A0A0A0</color>
+	<color name="mention_background">#4D5865F2</color>
+	<color name="mention_foreground_dark">#E0E3FF</color>
+	<color name="mention_foreground_light">#5865F2</color>
+	<color name="badge_background">#5865F2</color>
 </resources>

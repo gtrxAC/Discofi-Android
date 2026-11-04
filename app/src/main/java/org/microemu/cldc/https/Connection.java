@@ -87,7 +87,8 @@ public class Connection extends org.microemu.cldc.http.Connection implements Htt
 	/**
 	 * Returns the network port number of the URL for this HttpsConnection
 	 *
-	 * @return the network port number of the URL for this HttpsConnection. The default HTTPS port number (443) is returned if there was no port number in the string passed to Connector.open.
+	 * @return the network port number of the URL for this HttpsConnection. The default HTTPS port
+	 * number (443) is returned if there was no port number in the string passed to Connector.open.
 	 */
 	@Override
 	public int getPort() {

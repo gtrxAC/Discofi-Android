@@ -1,6 +1,7 @@
 package fi.gtrxac.bluewap.http;
 
 import fi.gtrxac.bluewap.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -140,13 +141,12 @@ public abstract class HTTP {
 	public byte[] getResponseBytes() throws Exception {
 		try {
 			checkMakeRequest();
-			
+
 			if (responseBytes != null) {
 				return responseBytes;
 			}
 			return Util.readBytes(is);
-		}
-		finally {
+		} finally {
 			close();
 		}
 	}
@@ -165,6 +165,9 @@ public abstract class HTTP {
 	 */
 	public void close() {
 		closeTransport();
-		try { is.close(); } catch (Exception e) {}
+		try {
+			is.close();
+		} catch (Exception e) {
+		}
 	}
 }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/messageEdit"
-          android:title="@string/action_edit"/>
-    <item android:id="@+id/messageReply"
-          android:title="@string/action_reply"/>
-    <item android:id="@+id/messageForward"
-          android:title="@string/action_forward"/>
-    <item android:id="@+id/messageCopy"
-          android:title="@string/action_copy_text"/>
-    <item android:id="@+id/messageDelete"
-          android:title="@string/action_delete"/>
+	<item android:id="@+id/messageEdit"
+		  android:title="@string/action_edit"/>
+	<item android:id="@+id/messageReply"
+		  android:title="@string/action_reply"/>
+	<item android:id="@+id/messageForward"
+		  android:title="@string/action_forward"/>
+	<item android:id="@+id/messageCopy"
+		  android:title="@string/action_copy_text"/>
+	<item android:id="@+id/messageDelete"
+		  android:title="@string/action_delete"/>
 </menu>

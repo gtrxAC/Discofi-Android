@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:padding="8dp">
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:gravity="center_vertical"
+		android:padding="8dp">
 
-    <ImageView
-        android:id="@+id/itemImage"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginRight="8dp"
-        android:src="@mipmap/ic_launcher" />
+	<ImageView
+			android:id="@+id/itemImage"
+			android:layout_width="32dp"
+			android:layout_height="32dp"
+			android:layout_marginRight="8dp"
+			android:src="@mipmap/ic_launcher"/>
 
-    <TextView
-        android:id="@+id/itemText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+	<TextView
+			android:id="@+id/itemText"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 </LinearLayout>
