@@ -26,7 +26,7 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/reply_panel"
+        android:id="@+id/replyPanel"
         android:layout_width="fill_parent"
         android:layout_height="46dp"
         android:background="@android:drawable/bottom_bar"
@@ -35,7 +35,7 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/reply_to"
+            android:id="@+id/replyTo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -44,7 +44,7 @@
             android:textAppearance="?android:attr/textAppearance" />
 
         <ToggleButton
-            android:id="@+id/ping_toggle"
+            android:id="@+id/pingToggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textOff="@string/ping_off"
@@ -52,7 +52,7 @@
             style="?android:attr/buttonStyleSmall" />
 
         <ImageButton
-            android:id="@+id/cancel_reply"
+            android:id="@+id/cancelReply"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:src="@drawable/ic_btn_close_panel"/>
@@ -75,7 +75,7 @@
             android:inputType="textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
             android:maxLength="2000"
             android:maxLines="4"
-            android:nextFocusRight="@+id/msg_send" />
+            android:nextFocusRight="@+id/msgSend" />
 
         <Button
             android:id="@+id/sendButton"

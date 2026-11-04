@@ -6,7 +6,7 @@
     android:orientation="horizontal">
 
     <View
-        android:id="@+id/embed_color"
+        android:id="@+id/embedColor"
         android:layout_width="4dp"
         android:layout_height="wrap_content"
         android:background="#000" />
@@ -19,21 +19,21 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/embed_site_name"
+            android:id="@+id/embedSiteName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/tab_indicator_text" />
 
         <LinearLayout
-            android:id="@+id/embed_author"
+            android:id="@+id/embedAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal" >
 
             <ImageView
-                android:id="@+id/embed_author_icon"
+                android:id="@+id/embedAuthorIcon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginRight="4dp"
@@ -41,7 +41,7 @@
                 android:src="@mipmap/ic_launcher" />
 
             <TextView
-                android:id="@+id/embed_author_name"
+                android:id="@+id/embedAuthorName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -50,14 +50,14 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/embed_title"
+            android:id="@+id/embedTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearance"
             android:textStyle="bold" />
 
         <fi.gtrxac.discord.LinkTextView
-            android:id="@+id/embed_content"
+            android:id="@+id/embedContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -65,31 +65,31 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/embed_fields"></LinearLayout>
+            android:id="@+id/embedFields"></LinearLayout>
 
         <ImageView
-            android:id="@+id/embed_image"
+            android:id="@+id/embedImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="fitCenter"
             android:src="@mipmap/ic_launcher" />
 
         <ImageView
-            android:id="@+id/embed_video"
+            android:id="@+id/embedVideo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="fitCenter"
             android:src="@mipmap/ic_launcher" />
 
         <LinearLayout
-            android:id="@+id/embed_footer"
+            android:id="@+id/embedFooter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal" >
 
             <ImageView
-                android:id="@+id/embed_footer_icon"
+                android:id="@+id/embedFooterIcon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginRight="4dp"
@@ -97,7 +97,7 @@
                 android:src="@mipmap/ic_launcher" />
 
             <TextView
-                android:id="@+id/embed_footer_content"
+                android:id="@+id/embedFooterContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -108,7 +108,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/embed_icon"
+        android:id="@+id/embedIcon"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginBottom="4dp"
