@@ -35,7 +35,7 @@ public class AccountListActivity extends Activity {
         final Context context = this;
         Theme.load(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.accounts);
+        setContentView(R.layout.activity_accounts);
 
         Accounts.setActive(-1);
         Settings.save(this);

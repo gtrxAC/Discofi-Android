@@ -573,7 +573,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                
+
         params.topMargin = dp(4);
         container.addView(view, params);
     }

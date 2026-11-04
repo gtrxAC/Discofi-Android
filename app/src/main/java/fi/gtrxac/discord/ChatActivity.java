@@ -73,7 +73,7 @@ public class ChatActivity extends Activity implements GatewayListener {
         Theme.load(this);
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_PROGRESS);
-        setContentView(R.layout.chat);
+        setContentView(R.layout.activity_chat);
 
         account = Accounts.getActive();
 

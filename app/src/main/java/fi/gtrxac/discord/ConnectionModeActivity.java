@@ -22,7 +22,7 @@ public class ConnectionModeActivity extends Activity {
         final Context context = this;
         Theme.load(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.connection);
+        setContentView(R.layout.activity_connection);
 
         // The pending account is set by the caller: a new one when adding an
         // account, an existing one when editing it.
