@@ -37,7 +37,7 @@ public class LoginActivity extends Activity {
         final Context context = this;
         Theme.load(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.activity_login);
 
         initPasswordLoginComponents();
         initTokenLoginComponents();

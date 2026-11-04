@@ -10,14 +10,14 @@
     android:paddingTop="2dp">
 
     <TextView
-        android:id="@+id/attachment_filename"
+        android:id="@+id/attachmentFilename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearance"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/attachment_size"
+        android:id="@+id/attachmentSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall" />

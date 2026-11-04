@@ -30,7 +30,7 @@ public class FilePickerActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         Theme.load(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.file_picker);
+        setContentView(R.layout.activity_file_picker);
 
         filePicker = (ListView) findViewById(R.id.filePicker);
 

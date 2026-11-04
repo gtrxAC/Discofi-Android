@@ -36,7 +36,7 @@ public class ChannelListActivity extends Activity {
         Theme.load(this);
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_PROGRESS);
-        setContentView(R.layout.channel_list);
+        setContentView(R.layout.activity_channel_list);
 
         account = Accounts.getActive();
 

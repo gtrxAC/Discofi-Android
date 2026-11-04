@@ -73,7 +73,7 @@ public class ChatActivity extends Activity implements GatewayListener {
         Theme.load(this);
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_PROGRESS);
-        setContentView(R.layout.chat);
+        setContentView(R.layout.activity_chat);
 
         account = Accounts.getActive();
 
@@ -85,10 +85,10 @@ public class ChatActivity extends Activity implements GatewayListener {
         messages = new Vector();
         messageList = (ListView) findViewById(R.id.messageList);
 
-        replyPanel = (View) findViewById(R.id.reply_panel);
-        replyTo = (TextView) findViewById(R.id.reply_to);
-        pingToggle = (ToggleButton) findViewById(R.id.ping_toggle);
-        cancelReply = (ImageButton) findViewById(R.id.cancel_reply);
+        replyPanel = (View) findViewById(R.id.replyPanel);
+        replyTo = (TextView) findViewById(R.id.replyTo);
+        pingToggle = (ToggleButton) findViewById(R.id.pingToggle);
+        cancelReply = (ImageButton) findViewById(R.id.cancelReply);
 
         composer = (EditText) findViewById(R.id.messageComposer);
         sendButton = (Button) findViewById(R.id.sendButton);

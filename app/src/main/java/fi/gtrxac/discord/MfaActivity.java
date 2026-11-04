@@ -21,7 +21,7 @@ public class MfaActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         Theme.load(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mfa_entry);
+        setContentView(R.layout.activity_mfa_entry);
 
         if (App.pendingAccount == null) {
             finish();

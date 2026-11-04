@@ -48,7 +48,7 @@ public class MainActivity extends TabActivity {
 
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_PROGRESS);
-		setContentView(R.layout.main);
+		setContentView(R.layout.activity_main);
 
         final Account acc = Accounts.getActive();
 

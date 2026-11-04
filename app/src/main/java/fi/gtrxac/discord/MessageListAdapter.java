@@ -339,8 +339,8 @@ public class MessageListAdapter extends BaseAdapter {
         else {
             View view = inflater.inflate(R.layout.attachment, container, false);
             view.setBackgroundColor(Theme.embedBackground);
-            TextView name = (TextView) view.findViewById(R.id.attachment_filename);
-            TextView size = (TextView) view.findViewById(R.id.attachment_size);
+            TextView name = (TextView) view.findViewById(R.id.attachmentFilename);
+            TextView size = (TextView) view.findViewById(R.id.attachmentSize);
 
             name.setText(attachment.filename);
             name.setTextColor(name.getLinkTextColors());
@@ -384,24 +384,24 @@ public class MessageListAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.embed, container, false);
         view.setBackgroundColor(Theme.embedBackground);
 
-        View bar = view.findViewById(R.id.embed_color);
-        TextView title = (TextView) view.findViewById(R.id.embed_title);
-        LinkTextView description = (LinkTextView) view.findViewById(R.id.embed_content);
-        TextView siteName = (TextView) view.findViewById(R.id.embed_site_name);
+        View bar = view.findViewById(R.id.embedColor);
+        TextView title = (TextView) view.findViewById(R.id.embedTitle);
+        LinkTextView description = (LinkTextView) view.findViewById(R.id.embedContent);
+        TextView siteName = (TextView) view.findViewById(R.id.embedSiteName);
 
-        LinearLayout fields = (LinearLayout) view.findViewById(R.id.embed_fields);
+        LinearLayout fields = (LinearLayout) view.findViewById(R.id.embedFields);
 
-        ImageView image = (ImageView) view.findViewById(R.id.embed_image);
-        ImageView video = (ImageView) view.findViewById(R.id.embed_video);
-        ImageView icon = (ImageView) view.findViewById(R.id.embed_icon);
+        ImageView image = (ImageView) view.findViewById(R.id.embedImage);
+        ImageView video = (ImageView) view.findViewById(R.id.embedVideo);
+        ImageView icon = (ImageView) view.findViewById(R.id.embedIcon);
 
-        View author = view.findViewById(R.id.embed_author);
-        TextView authorName = (TextView) view.findViewById(R.id.embed_author_name);
-        ImageView authorIcon = (ImageView) view.findViewById(R.id.embed_author_icon);
+        View author = view.findViewById(R.id.embedAuthor);
+        TextView authorName = (TextView) view.findViewById(R.id.embedAuthorName);
+        ImageView authorIcon = (ImageView) view.findViewById(R.id.embedAuthorIcon);
 
-        View footer = view.findViewById(R.id.embed_footer);
-        TextView footerContent = (TextView) view.findViewById(R.id.embed_footer_content);
-        ImageView footerIcon = (ImageView) view.findViewById(R.id.embed_footer_icon);
+        View footer = view.findViewById(R.id.embedFooter);
+        TextView footerContent = (TextView) view.findViewById(R.id.embedFooterContent);
+        ImageView footerIcon = (ImageView) view.findViewById(R.id.embedFooterIcon);
 
         int textColor = context.getResources().getColor(
             Settings.lightTheme ? android.R.color.black : android.R.color.white);
@@ -573,7 +573,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                
+
         params.topMargin = dp(4);
         container.addView(view, params);
     }
@@ -729,25 +729,25 @@ public class MessageListAdapter extends BaseAdapter {
 
         public ViewHolder(View view) {
             msg = view.findViewById(R.id.message);
-            metadata = view.findViewById(R.id.msg_metadata);
-            author = (TextView) view.findViewById(R.id.msg_author);
+            metadata = view.findViewById(R.id.msgMetadata);
+            author = (TextView) view.findViewById(R.id.msgAuthor);
             authorTextColors = author.getTextColors();
-            badge = (TextView) view.findViewById(R.id.msg_badge);
-            timestamp = (TextView) view.findViewById(R.id.msg_timestamp);
-            content = (LinkTextView) view.findViewById(R.id.msg_content);
-            avatar = (ImageView) view.findViewById(R.id.msg_avatar);
-            attachments = (LinearLayout) view.findViewById(R.id.msg_attachments);
+            badge = (TextView) view.findViewById(R.id.msgBadge);
+            timestamp = (TextView) view.findViewById(R.id.msgTimestamp);
+            content = (LinkTextView) view.findViewById(R.id.msgContent);
+            avatar = (ImageView) view.findViewById(R.id.msgAvatar);
+            attachments = (LinearLayout) view.findViewById(R.id.msgAttachments);
 
-            reply = view.findViewById(R.id.msg_reply);
-            replyAuthor = (TextView) view.findViewById(R.id.reply_author);
+            reply = view.findViewById(R.id.msgReply);
+            replyAuthor = (TextView) view.findViewById(R.id.replyAuthor);
             replyAuthorTextColors = replyAuthor.getTextColors();
-            replyBadge = (TextView) view.findViewById(R.id.reply_badge);
-            replyContent = (TextView) view.findViewById(R.id.reply_content);
-            replyAvatar = (ImageView) view.findViewById(R.id.reply_avatar);
+            replyBadge = (TextView) view.findViewById(R.id.replyBadge);
+            replyContent = (TextView) view.findViewById(R.id.replyContent);
+            replyAvatar = (ImageView) view.findViewById(R.id.replyAvatar);
 
             compact = view.findViewById(R.id.compact);
-            compactText = (LinkTextView) view.findViewById(R.id.compact_text);
-            compactAttachments = (LinearLayout) view.findViewById(R.id.compact_attachments);
+            compactText = (LinkTextView) view.findViewById(R.id.compactText);
+            compactAttachments = (LinearLayout) view.findViewById(R.id.compactAttachments);
         }
     }
 }
