@@ -28,15 +28,13 @@ public class GuildMember extends User {
 			if (data.has("roles")) {
 				JSONArray roleArray = data.getArray("roles");
 				roles = Role.parseGuildMemberRoles(guildRoles, roleArray);
-				if (Settings.useNameColors) {
-					for (int i = 0; i < guildRoles.size(); i++) {
-						Role role = (Role) guildRoles.elementAt(i);
-						if (roleArray.indexOf(Long.toString(role.id)) == -1) continue;
+				for (int i = 0; i < guildRoles.size(); i++) {
+					Role role = (Role) guildRoles.elementAt(i);
+					if (roleArray.indexOf(Long.toString(role.id)) == -1) continue;
 
-						color = role.color;
-						if (color != 0) color |= 0xFF000000;
-						break;
-					}
+					color = role.color;
+					if (color != 0) color |= 0xFF000000;
+					break;
 				}
 			}
 		} catch (Exception e) {

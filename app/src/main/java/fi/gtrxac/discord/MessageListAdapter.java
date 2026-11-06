@@ -120,7 +120,7 @@ public class MessageListAdapter extends BaseAdapter {
 			}
 			String replyAuthorName = replyAuthor.nickname != null ? replyAuthor.nickname : replyAuthor.name;
 			holder.replyAuthor.setText(replyAuthorName);
-			if (replyAuthor.color != 0) {
+			if (Settings.useNameColors && replyAuthor.color != 0) {
 				holder.replyAuthor.setTextColor(replyAuthor.color);
 			} else {
 				holder.replyAuthor.setTextColor(holder.replyAuthorTextColors);
@@ -159,7 +159,7 @@ public class MessageListAdapter extends BaseAdapter {
 			sb.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), 0, message.timestamp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			// TODO: badge on author
 			sb.setSpan(new StyleSpan(Typeface.BOLD), message.timestamp.length(), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			if (author.color != 0) {
+			if (Settings.useNameColors && author.color != 0) {
 				sb.setSpan(new ForegroundColorSpan(author.color), message.timestamp.length(), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
 			if (message.content.length() > 0) {
@@ -205,7 +205,7 @@ public class MessageListAdapter extends BaseAdapter {
 				holder.avatar.getLayoutParams().height = dp(48);
 				String authorName = author.nickname != null ? author.nickname : author.name;
 				holder.author.setText(authorName);
-				if (author.color != 0) {
+				if (Settings.useNameColors && author.color != 0) {
 					holder.author.setTextColor(author.color);
 				} else {
 					holder.author.setTextColor(holder.authorTextColors);
