@@ -28,13 +28,15 @@ public class GuildMember extends User {
 			if (data.has("roles")) {
 				JSONArray roleArray = data.getArray("roles");
 				roles = Role.parseGuildMemberRoles(guildRoles, roleArray);
-				for (int i = 0; i < guildRoles.size(); i++) {
-					Role role = (Role) guildRoles.elementAt(i);
-					if (roleArray.indexOf(Long.toString(role.id)) == -1) continue;
+				if (true) { // FIXME: for whatever reason guild member parsing stopped working if i remove the if block????? (don't want to make it check Settings.useNameColors so name colors would still work when reenabling name colors)
+					for (int i = 0; i < guildRoles.size(); i++) {
+						Role role = (Role) guildRoles.elementAt(i);
+						if (roleArray.indexOf(Long.toString(role.id)) == -1) continue;
 
-					color = role.color;
-					if (color != 0) color |= 0xFF000000;
-					break;
+						color = role.color;
+						if (color != 0) color |= 0xFF000000;
+						break;
+					}
 				}
 			}
 		} catch (Exception e) {
