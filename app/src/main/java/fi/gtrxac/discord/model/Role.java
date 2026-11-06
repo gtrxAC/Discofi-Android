@@ -47,7 +47,7 @@ public class Role {
 		for (int i = arr.size() - 1; i >= 0; i--) {
 			for (int j = 0; j < guildRoles.size(); j++) {
 				Role role = (Role) guildRoles.elementAt(j);
-				if (role.id == Long.parseLong(arr.getString(j))) {
+				if (role.id == Long.parseLong(arr.getString(i))) {
 					if (role.position != i)
 						continue;
 

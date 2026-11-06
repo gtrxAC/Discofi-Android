@@ -94,6 +94,7 @@ public class MessageListAdapter extends BaseAdapter {
 		}
 
 		Message message = (Message) messages.elementAt(position);
+		GuildMember author = GuildMemberCache.get(guildId, message.author, messages);
 
 		if (enableMention) {
 			try {
@@ -109,17 +110,18 @@ public class MessageListAdapter extends BaseAdapter {
 
 		// Reply preview
 		if (message.reply != null && Settings.showReplies) {
+			GuildMember replyAuthor = GuildMemberCache.get(guildId, message.reply.author, messages);
 			holder.reply.setVisibility(View.VISIBLE);
 			if (!Settings.compactMode) {
 				holder.replyAvatar.setVisibility(View.VISIBLE);
-				loadAvatar(holder.replyAvatar, message.reply.author.getAvatarUrl(acc.getCdnUrl()));
+				loadAvatar(holder.replyAvatar, replyAuthor.getAvatarUrl(acc.getCdnUrl(), guildId));
 			} else {
 				holder.replyAvatar.setVisibility(View.GONE);
 			}
-			holder.replyAuthor.setText(message.reply.author.name);
-			int replyAuthorColor = NameColorCache.get(guildId, message.reply.author, messages);
-			if (replyAuthorColor != 0) {
-				holder.replyAuthor.setTextColor(replyAuthorColor);
+			String replyAuthorName = replyAuthor.nickname != null ? replyAuthor.nickname : replyAuthor.name;
+			holder.replyAuthor.setText(replyAuthorName);
+			if (replyAuthor.color != 0) {
+				holder.replyAuthor.setTextColor(replyAuthor.color);
 			} else {
 				holder.replyAuthor.setTextColor(holder.replyAuthorTextColors);
 			}
@@ -152,13 +154,13 @@ public class MessageListAdapter extends BaseAdapter {
 			holder.msg.setVisibility(View.GONE);
 			holder.compact.setVisibility(View.VISIBLE);
 
-			SpannableStringBuilder sb = new SpannableStringBuilder(message.timestamp + " " + message.author.name);
+			String authorName = author.nickname != null ? author.nickname : author.name;
+			SpannableStringBuilder sb = new SpannableStringBuilder(message.timestamp + " " + authorName);
 			sb.setSpan(new TextAppearanceSpan(context, android.R.style.TextAppearance_Small), 0, message.timestamp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			// TODO: badge on author
 			sb.setSpan(new StyleSpan(Typeface.BOLD), message.timestamp.length(), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			int authorColor = NameColorCache.get(guildId, message.author, messages);
-			if (authorColor != 0) {
-				sb.setSpan(new ForegroundColorSpan(authorColor), message.timestamp.length(), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			if (author.color != 0) {
+				sb.setSpan(new ForegroundColorSpan(author.color), message.timestamp.length(), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
 			if (message.content.length() > 0) {
 				SpannableStringBuilder content;
@@ -201,24 +203,24 @@ public class MessageListAdapter extends BaseAdapter {
 			if (message.showAuthor) {
 				holder.metadata.setVisibility(View.VISIBLE);
 				holder.avatar.getLayoutParams().height = dp(48);
-				holder.author.setText(message.author.name);
-				int authorColor = NameColorCache.get(guildId, message.author, messages);
-				if (authorColor != 0) {
-					holder.author.setTextColor(authorColor);
+				String authorName = author.nickname != null ? author.nickname : author.name;
+				holder.author.setText(authorName);
+				if (author.color != 0) {
+					holder.author.setTextColor(author.color);
 				} else {
 					holder.author.setTextColor(holder.authorTextColors);
 				}
-				if (message.author.system) {
+				if (author.system) {
 					holder.badge.setVisibility(View.VISIBLE);
 					holder.badge.setText(R.string.badge_system);
-				} else if (message.author.bot) {
+				} else if (author.bot) {
 					holder.badge.setVisibility(View.VISIBLE);
 					holder.badge.setText(R.string.badge_bot);
 				} else {
 					holder.badge.setVisibility(View.GONE);
 				}
 				holder.timestamp.setText(message.timestamp);
-				loadAvatar(holder.avatar, message.author.getAvatarUrl(acc.getCdnUrl()));
+				loadAvatar(holder.avatar, author.getAvatarUrl(acc.getCdnUrl(), guildId));
 			} else {
 				holder.metadata.setVisibility(View.GONE);
 				holder.avatar.getLayoutParams().height = 0;

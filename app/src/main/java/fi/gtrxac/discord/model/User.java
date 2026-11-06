@@ -16,9 +16,10 @@ public class User {
 	public User(JSONObject data) {
 		id = Long.parseLong(data.getString("id"));
 		username = data.getString("username", null);
-		name = data.getString("global_name", null);
+		name = data.getString("display_name", null);
+		if (name == null) name = data.getString("global_name", null);
 		if (name == null) name = username;
-		if (name == null) name = "(no name)";
+		if (name == null) name = "(unknown)";
 		iconHash = data.getString("avatar", null);
 		bot = data.getBoolean("bot", false);
 		system = data.getBoolean("system", false);

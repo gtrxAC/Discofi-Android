@@ -7,15 +7,15 @@ import java.util.*;
 
 import cc.nnproject.json.*;
 
-public class NameColorCache {
+public class GuildMemberCache {
 	private static Account account;
-	private static Hashtable colors;
+	private static Hashtable members;
 	private static Vector keys;
 	public static boolean activeRequest;
 
 	public static void init(Account acc) {
 		account = acc;
-		colors = new Hashtable();
+		members = new Hashtable();
 		keys = new Vector();
 	}
 
@@ -26,8 +26,8 @@ public class NameColorCache {
 		JSONArray requestIds = new JSONArray();
 
 		// Populate requestIds with authors and recipients of all messages that
-		// are currently loaded and that don't have name colors already fetched
-		for (int i = 0; i < messages.size(); i++) {
+		// are currently loaded and that don't have guild member data fetched
+		for (int i = 0; messages != null && i < messages.size(); i++) {
 			Message msg = (Message) messages.elementAt(i);
 			long userId = msg.author.id;
 
@@ -52,39 +52,37 @@ public class NameColorCache {
 	}
 
 	public static boolean active() {
-		return Settings.useNameColors &&
-				// name colors cannot be fetched without gateway (technically can but isn't practical)
-				account.gatewayActive();
+		return account.gatewayActive();
 	}
 
-	public static int get(long guildId, long userId, Vector messages) {
-		if (!active() || guildId == 0) return 0;
+	public static GuildMember get(long guildId, long userId, Vector messages) {
+		if (!active() || guildId == 0) return null;
 
 		long key = userId + guildId;
 
-		Integer result = (Integer) colors.get(key);
-		if (result != null) return result.intValue();
+		GuildMember result = (GuildMember) members.get(key);
+		if (result != null) return result;
 
 		if (!activeRequest) {
 			activeRequest = true;
 			fetch(guildId, messages);
 		}
-		return 0;
+		return null;
 	}
 
-	public static int get(long guildId, User user, Vector messages) {
-		return get(guildId, user.id, messages);
+	public static GuildMember get(long guildId, User user, Vector messages) {
+		GuildMember member = get(guildId, user.id, messages);
+		if (member != null) return member;
+		return new GuildMember(user);
 	}
 
-	public static void set(long key, int color) {
-		// Discord role colors are RGB; Android needs an opaque ARGB value
-		if (color != 0) color |= 0xFF000000;
-		Util.hashtablePutWithLimit(colors, keys, key, new Integer(color), 50);
+	public static void set(long key, GuildMember member) {
+		Util.hashtablePutWithLimit(members, keys, key, member, 50);
 	}
 
 	public static boolean has(long guildId, User user, boolean def) {
 		if (!active()) return def;
-		return colors.containsKey(user.id + guildId);
+		return members.containsKey(user.id + guildId);
 	}
 
 	public static boolean has(long guildId, User user) {

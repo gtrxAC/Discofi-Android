@@ -214,6 +214,8 @@ public class ChatActivity extends Activity implements GatewayListener {
 
 	public void onMessageCreate(JSONObject data) {
 		final Message message = new Message(data);
+		GuildMember author = GuildMemberCache.get(guildId, message.author, messages);
+		final String name = author.nickname != null ? author.nickname : author.name;
 		if (message.channelId != channelId) return;
 
 		runOnUiThread(new Runnable() {
@@ -234,7 +236,7 @@ public class ChatActivity extends Activity implements GatewayListener {
 					messageList.setSelection(messages.size() - 1);
 				}
 
-				removeTypingUser(message.author.name);
+				removeTypingUser(name);
 			}
 		});
 	}
@@ -293,10 +295,9 @@ public class ChatActivity extends Activity implements GatewayListener {
 		String name = null;
 
 		try {
-			JSONObject user = data.getObject("member").getObject("user");
-			if (Long.parseLong(user.getString("id")) == account.getUserID()) return;
-			name = user.getString("global_name", null);
-			if (name == null) name = user.getString("username", null);
+			GuildMember member = new GuildMember(data.getObject("member"), guildRoles);
+			if (member.id == account.getUserID()) return;
+			name = member.nickname != null ? member.nickname : member.name;
 		} catch (Exception e) {
 		}
 
@@ -317,7 +318,6 @@ public class ChatActivity extends Activity implements GatewayListener {
 
 		final JSONArray members = data.getArray("members");
 
-		// Guild member request was for role data (name colors)
 		final long gatewayGuildId = Long.parseLong(data.getString("guild_id"));
 		final JSONArray notFound = data.getArray("not_found");
 
@@ -327,31 +327,19 @@ public class ChatActivity extends Activity implements GatewayListener {
 
 				for (int i = 0; i < notFound.size(); i++) {
 					long id = Long.parseLong(notFound.getString(i));
-					NameColorCache.set(id + gatewayGuildId, 0);
+					GuildMemberCache.set(id + gatewayGuildId, null);
 					adapter.notifyDataSetChanged();
 				}
 
 				for (int i = 0; i < members.size(); i++) {
-					int resultColor = 0;
-
 					JSONObject member = members.getObject(i);
-					JSONArray memberRoles = member.getArray("roles");
-
-					for (int r = 0; r < guildRoles.size(); r++) {
-						Role role = (Role) guildRoles.elementAt(r);
-						if (memberRoles.indexOf(Long.toString(role.id)) == -1) continue;
-
-						resultColor = role.color;
-						break;
-					}
-
 					long id = Long.parseLong(member.getObject("user").getString("id"));
-					NameColorCache.set(id + gatewayGuildId, resultColor);
+					GuildMemberCache.set(id + gatewayGuildId, new GuildMember(member, guildRoles));
 					adapter.notifyDataSetChanged();
 				}
 			}
 		});
-		NameColorCache.activeRequest = false;
+		GuildMemberCache.activeRequest = false;
 	}
 
 	public void onPresenceUpdate(JSONObject data) {
@@ -425,6 +413,8 @@ public class ChatActivity extends Activity implements GatewayListener {
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		final Message message = (Message) messageList.getItemAtPosition(info.position);
+		GuildMember author = GuildMemberCache.get(guildId, message.author, messages);
+		final String name = author.nickname != null ? author.nickname : author.name;
 
 		switch (item.getItemId()) {
 			case R.id.messageReply:
@@ -432,7 +422,7 @@ public class ChatActivity extends Activity implements GatewayListener {
 				activeEdit = null;
 				replyPanel.setVisibility(View.VISIBLE);
 				pingToggle.setVisibility(View.VISIBLE);
-				replyTo.setText(Html.fromHtml(getResources().getString(R.string.reply_to, message.author.name)));
+				replyTo.setText(Html.fromHtml(getResources().getString(R.string.reply_to, name)));
 				return true;
 			case R.id.messageEdit:
 				activeReply = null;

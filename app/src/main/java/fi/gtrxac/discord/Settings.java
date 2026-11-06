@@ -33,7 +33,8 @@ public class Settings {
 	public static boolean useDirectCdn = true;
 
 	/**
-	 * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each device)
+	 * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each
+	 * device)
 	 */
 	public static String deviceVendorID = DiscordUtil.generateRandomUUID();
 

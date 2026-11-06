@@ -58,7 +58,7 @@ public class MainActivity extends TabActivity {
 		}
 
 		acc.startGateway();
-		NameColorCache.init(acc);
+		GuildMemberCache.init(acc);
 
 		try {
 			setTitle(acc.getDisplayTitle());
