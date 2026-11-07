@@ -17,7 +17,7 @@
     As this is XML, you'll need to pay attention when using some special
     characters in your strings:
 
-    - To use ', write "\\&apos;"
+    - To use ', write "\&apos;"
     - To use ", write "&quot;"
     - To use &, write "&amp;"
     - To use <, write "&lt;"
@@ -58,7 +58,7 @@
     <string name="gateway_url">Gateway URL</string>
     <string name="login">Logga in</string>
     <string name="logout">Logga ut</string>
-    <string name="password_login">Enabling multi-factor authentication (authenticator app) on your account is recommended to log in with your email and password.</string>
+    <string name="password_login">To log in with your email and password, you may need to enable multi-factor authentication (authenticator app) and connect to a Wi-Fi network that you\&apos;ve previously used Discord on.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="existing_password">Leave blank to use the existing password</string>

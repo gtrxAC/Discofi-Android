@@ -25,9 +25,7 @@
 	<string name="gateway_url">Gateway URL</string>
 	<string name="login">Log in</string>
 	<string name="logout">Log out</string>
-	<string name="password_login">Enabling multi-factor authentication (authenticator app) on your account is
-		recommended to log in with your email and password.
-	</string>
+    <string name="password_login">To log in with your email and password, you may need to enable multi-factor authentication (authenticator app) and connect to a Wi-Fi network that you\&apos;ve previously used Discord on.</string>
 	<string name="email">Email</string>
 	<string name="password">Password</string>
 	<string name="existing_password">Leave blank to use the existing password</string>
