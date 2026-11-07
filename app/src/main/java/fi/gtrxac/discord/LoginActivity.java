@@ -106,6 +106,11 @@ public class LoginActivity extends Activity {
 
 		if (App.pendingAccount != null) {
 			tokenField.setText(App.pendingAccount.token);
+
+			if (App.pendingAccount.token != null) {
+				TextView dontShareText = (TextView) findViewById(R.id.dontShareText);
+				dontShareText.setVisibility(View.VISIBLE);
+			}
 		}
 
 		tokenLoginButton.setOnClickListener(new OnClickListener() {
