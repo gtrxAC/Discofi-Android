@@ -1,0 +1,1197 @@
+[
+    // Translation notes:
+    // - Any line that begins with a "//" is a comment and is ignored.
+    //   In this file, comments are used for explaining each string.
+    // - Write your translated string inside the two quotation marks.
+    // - If you need to use a quotation mark inside any of your translated
+    //   strings, write it as \" instead.
+    // - If the original string has any special formatting
+    //   (e.g. space at the beginning or end), keep the formatting the same.
+    // - If you want the English text to be shown for a specific string,
+    //   replace the string with null (without any quotation marks).
+    // - For any Discord-specific terminology (e.g. servers), use the same
+    //   translated term that Discord officially uses for your language.
+
+    // Notes about softkey command labels:
+    // - Each softkey label has two variations, a short and a long one.
+    // - In this translation file, the short labels are listed above the long ones.
+    // - Short labels are used in places where there is limited screen space.
+    // - Keep short labels as short as possible, ideally below 10 characters.
+    //   If needed, you may use abbreviations.
+    // - If a long label is short enough to where it could be used as a
+    //   short label, use the same string for both labels.
+
+    // Placeholder file name shown when the name of an attachment in the attachment view screen could not be loaded.
+    "ไฟล์ที่ไม่มีชื่อ",
+
+    // Title text for the attachment picker (native file picker) screen.
+    "เลือกไฟล์แนบ",
+
+    // Softkey labels for going back to the previous screen.
+    "ย้อนกลับ",
+    "ย้อนกลับ",
+
+    // Softkey label for closing a menu.
+    // Currently used in the attachment picker for closing the whole picker (because there is also a "Back" softkey for going back one directory)
+    "ปิด",
+    "ปิด",
+
+    // Title text for attachment view screen.
+    "ไฟล์แนบ",
+
+    // Softkey labels for refetching contents of channel view or attachment view.
+    "รีเฟรช",
+    "รีเฟรช",
+
+    // Softkey labels used in channel or DM list for marking the selected channel or DM as read.
+    "ตั้งเป็นอ่านแล้ว",
+    "ตั้งเป็นอ่านแล้ว",
+
+    // Softkey labels used in channel and DM lists for marking every DM or every channel in the currently shown server as read.
+    "ตั้งทั้งหมดเป็นอ่านแล้ว",
+    "ตั้งทั้งหมดเป็นอ่านแล้ว",
+
+    // Generic "Select" softkey labels.
+    "เลือก",
+    "เลือก",
+
+    // Softkey labels for sending a message in the currently open channel.
+    "ส่ง",
+    "ส่งข้อความ",
+
+    // Softkey labels for sending a reply to the selected message.
+    "ตอบกลับ",
+    "ตอบกลับ",
+
+    // Softkey labels for sending an attachment in the currently open channel.
+    "อัพโหลด",
+    "อัพโหลดไฟล์",
+
+    // Softkey labels for copying the text content of the selected message.
+    "คัดลอก",
+    "คัดลอกเนื้อหา",
+
+    // Softkey labels for editing the selected message.
+    "แก้ไข",
+    "แก้ไข",
+
+    // Softkey labels for deleting the selected message.
+    "ลบ",
+    "ลบ",
+
+    // Softkey labels for selecting an URL in the selected message. This opens a screen where each URL found in the message is listed, and one can be selected to be opened in the device's browser.
+    "เปิด URL",
+    "เปิด URL",
+
+    // Channel view title suffix when reading older messages.
+    " (เก่า)",
+
+    // Text shown at the center of the channel view when it is empty (no messages).
+    "ไม่มีอะไรอยู่ในนี้",
+
+    // Channel view banner text shown when reading older messages and a new message arrives via the gateway.
+    "รีเฟรชเพื่ออ่านข้อความใหม่",
+
+    // Channel view banner text shown when a gateway disconnect occurred and an automatic reconnect is in progress.
+    "กำลังเชื่อมต่อใหม่",
+
+    // Channel view banner shown when a message is being sent by the client.
+    "กำลังส่งข้อความ",
+
+    // Channel view banner shown when a message is being edited by the client.
+    "กำลังแก้ไขข้อความ",
+
+    // Channel view banner shown when a message is being deleted by the client.
+    "กำลังลบข้อความ",
+
+    // Channel view banner shown when messages are being loaded, e.g. during a refresh or after a message was sent by the client.
+    "กำลังโหลดข้อความ",
+
+    // Suffix for channel view banner text when one person is typing.
+    // Example: "aa is typing"
+    " กำลังพิมพ์",
+
+    // Suffix for channel view banner text when two or three people are typing.
+    // Example: "aa, bb, cc are typing"
+    " กำลังพิมพ์",
+
+    // Suffix for channel view banner text when more than three people are typing.
+    // Example: "4 people are typing"
+    " คนกำลังพิมพ์",
+
+    // Comma separator used to separate usernames in the channel view banner text shown when people are typing.
+    ", ",
+
+    // Error messages shown when trying to upload a file, delete a message, or edit a message, and the current proxy server is a direct HTTPS-HTTP proxy (and not a Discord J2ME specific proxy)
+    "พร็อกซี่นี้ไม่รองรับการอัพโหลดไฟล์",
+    "พร็อกซี่นี้ไม่รองรับการลบข้อความ",
+    "พร็อกซี่นี้ไม่รองรับการแก้ไขข้อความ",
+
+    // Error message shown when trying to open the native file picker and the device does not support the J2ME FileConnection API.
+    "อุปกรณ์นี้ไม่รองรับ API FileConnection สำหรับการเลือกไฟล์",
+
+    // Button labels for navigating between pages of messages in the channel view. Try to keep these as long as (or shorter than) the English strings.
+    // In the old channel view, these are shown as softkey labels (these strings are short and long variations of each)
+    "เก่ากว่า",
+    "ดูข้อความเก่ากว่า",
+    "ใหม่กว่า",
+    "ดูข้อความใหม่กว่า",
+
+    // Parts of the button label for viewing attachments of a message.
+    // Examples: "View 1 attachment", "View 2 attachments"
+    "ดู ",
+    " ไฟล์แนบ",
+    " ไฟล์แนบ",
+
+    // Title for confirmation screen shown when deleting a message.
+    "ลบ",
+
+    // Body text for confirmation screen shown when deleting a message.
+    "ต้องการลบข้อความนี้หรือไม่?",
+
+    // Generic softkey labels.
+    "ใช่",
+    "ใช่",
+    "ไม่",
+    "ไม่",
+    "ตกลง",
+    "ตกลง",
+
+    // Placeholder name shown when fetching the name of an item (e.g. message author or DM) failed.
+    "(ไม่รู้จัก)",
+
+    // Placeholder shown when the recipient message of a reply does not have any text content.
+    "(ไม่มีเนื้อหา)",
+
+    // Placeholder message content shown when a message does not have any content that is supported by Discord J2ME.
+    "(ข้อความที่ไม่รองรับ)",
+
+    // Message content shown for a message that has been deleted.
+    "(ข้อความถูกลบ)",
+
+    // Title text for direct message search screen.
+    "ค้นหาข้อความส่วนตัว",
+
+    // Guide text for text field in direct message search and "insert mention" screens.
+    "ใส่ชื่อผู้ใช้",
+
+    // Error message shown when the searched user was not found in the direct messages list. Discord J2ME cannot initiate DM conversations based on only a username, so this message asks the user to use another client.
+    "ไม่พบผู้ใช้นี้ ลองส่งข้อความส่วนตัวจากแอพรุ่นอื่น",
+
+    // Title text for direct message list.
+    "ข้อความส่วนตัว",
+
+    // Generic "Search" softkey label. Currently used for searching for usernames in direct messages and when inserting a mention/ping.
+    "ค้นหา",
+    "ค้นหา",
+
+    // Title text shown for all error message screens.
+    "ข้อผิดพลาด",
+
+    // Title text shown for guild (server) selector.
+    "เซิร์ฟเวอร์",
+
+    // Title text shown for favorite servers list.
+    "รายการโปรด",
+
+    // Generic "Remove" softkey command. Currently used for removing a server from the favorites list.
+    "เอาออก",
+    "เอาออก",
+
+    // Softkey command for adding a server to the favorites list.
+    "เพิ่ม",
+    "เพิ่มไปยังรายการโปรด",
+
+    // Text shown when the gateway disconnects due to an error with the heartbeat thread. As this error message is quite technical, you may simplify/generalize it to, for example, "connection error".
+    "ข้อผิดพลาดในการเชื่อมต่อ: ",
+
+    // Error message shown when the supplied authentication token is invalid (HTTP Unauthorized).
+    "กรุณาตรวจสอบรหัส token ของคุณ",
+
+    // Prefix of error message shown when the HTTP response has an error code.
+    // The full message consists of this string and the code itself,
+    // e.g. HTTP error 500
+    "ข้อผิดพลาด HTTP ",
+
+    // Error message shown when trying to load attachments and the CDN URL hasn't been set (is empty).
+    "ไม่ได้กำหนด URL สำหรับพร็อกซี่ CDN ตอนนี้เรียกดูไฟล์แนบไม่ได้",
+
+    // Parentheses. Don't change these unless your language uses a different writing system where a different type of parentheses is normally used.
+    " (",
+    ")",
+
+    // Softkey labels for showing a text attachment's contents within the app.
+    "แสดง",
+    "แสดงเป็นข้อความ",
+
+    // Softkey labels for showing an attachment in the device's built-in web browser.
+    "เปิด",
+    "เปิดในบราวเซอร์",
+
+    // Generic "Loading..." text shown in loading screen and in "Insert mention" screen.
+    "กำลังโหลด...",
+
+    // Loading screen text shown when an attachment is being sent.
+    "กำลังส่ง...",
+
+    // Error message prefix shown when an error occurs while uploading an attachment.
+    "ข้อผิดพลาดขณะส่งไฟล์: ",
+
+    // Generic "Skip" softkey label. Currently used for skipping an action in the key mapper.
+    "ข้าม",
+    "ข้าม",
+
+    // Key press prompt shown in hotkey mapper.
+    "กดปุ่มที่จะใช้เพื่อ",
+
+    // Names of hotkey actions shown in the key mapper.
+    // These are shown after the "Press the key to use for:" string.
+    // "going back" only applies to the chat view, 
+    "ส่งข้อความ",
+    "ตอบกลับข้อความ",
+    "คัดลอกเนื้อหาของข้อความ",
+    "รีเฟรชข้อความ",
+    "ย้อนกลับ",
+
+    // Error message prefix shown when a key has been mapped to an action and the user tried to map the same key to another action. The name of the already mapped action (see above) is written after this prefix.
+    "ปุ่มนี้ถูกใช้แล้วสำหรับการ",
+
+    // Title text shown in login screen.
+    "เข้าสู่ระบบ",
+
+    // Proxy server warning message shown at the top of the login screen.
+    "เพื่อความปลอดภัย ขอให้ใช้พร็อกซี่ที่ปลอดภัยและไว้ใจได้เท่านั้น!",
+
+    // Help message for finding your token. Shown in login screen above the token field.
+    "Token เป็นรหัสประจำตัวการเข้าสู่ระบบของผู้ใช้งาน ซึ่งดูได้จากเครื่องมือของนักพัฒนาหรือ DevTools (สำหรับวิธีดูให้ค้นหาในเน็ต) ขอแนะนำให้ใช้บัญชีสำรองเพื่อความปลอดภัย",
+
+    // "Use Wi-Fi" option shown in login screen on BlackBerry devices.
+    "ใช้ Wi-Fi",
+
+    // Labels of text fields shown in the login screen.
+    // You don't need to use these acronyms if they don't make sense in your language. Translations like "Server URL" and "Image server URL" are acceptable too.
+    "URL สำหรับพร็อกซี่ API",
+    "URL สำหรับพร็อกซี่ CDN",
+    "URL สำหรับพร็อกซี่ Gateway",
+    "รหัส token",
+
+    // Softkey label for confirming the login options in the login screen.
+    "เข้าสู่ระบบ",
+    "เข้าสู่ระบบ",
+
+    // Softkey command for exiting the application.
+    "ออก",
+    "ออก",
+
+    // "Use gateway" option shown in login screen.
+    "ใช้ gateway",
+
+    // Label for radio button field for token sending options.
+    "ส่งรหัส token เป็น",
+
+    // Token sending options.
+    "Header (ค่าเริ่มต้น)",
+    "JSON",
+    "Query parameter",
+
+    // Error messages shown when trying to login and the token or API URL fields are empty.
+    "กรุณาใส่รหัส token ของคุณ",
+    "กรุณาใส่ URL สำหรับพร็อกซี่ API",
+
+    // Main menu items.
+    // "Log out" brings you back to the login screen where you enter your token and other login settings.
+    "เซิร์ฟเวอร์",
+    "รายการโปรด",
+    "ข้อความส่วนตัว",
+    "การตั้งค่า",
+    "ออกจากระบบ",
+
+    // Title text shown in "Insert mention" screen (for adding a ping when writing a message).
+    "ใส่การพูดถึง",
+
+    // Label shown for username search results in "Insert mention" screen. Shown if more than one user matches the username query.
+    "ผลการค้นหา",
+
+    // Message shown when the username query resulted in no matches in the "Insert mention" screen.
+    "ไม่มีผลการค้นหา",
+
+    // Error message shown when selecting "Insert" in the "Insert mention" screen and none of the search results (radio buttons) were picked.
+    "ไม่ได้เลือกผู้ใช้",
+
+    // Prefix and suffix of status message shown when a user has been added to a group DM. The whole message is in the form "added X to the group"
+    "เพิ่ม ",
+    " เข้ากลุ่ม",
+
+    // Status message shown when a user has left a group DM.
+    "ออกจากกลุ่ม",
+
+    // Prefix and suffix of status message shown when a user has removed another user from a group DM. The whole message is in the form "removed X from the group".
+    "ลบ ",
+    " ออกจากกลุ่ม",
+
+    // Status messages.
+    "ได้เริ่มการโทร",
+    "ได้เปลี่ยนชื่อกลุ่ม",
+    "ได้เปลี่ยนรูปของกลุ่ม",
+    "ได้ปักหมุดข้อความ",
+    "ได้เข้าร่วมเซิร์ฟเวอร์",
+    "ได้บูสต์เซิร์ฟเวอร์",
+
+    // Prefix of status message shown when a user has boosted the server and the server has reached a certain boosting level. The level is appended to the end of this string, in the form "boosted the server to level X".
+    "บูสต์เซิร์ฟเวอร์ถึงระดับ ",
+
+    // Prefix of message content when the message is a sticker.
+    // The whole message is in the form of "(sticker: Name)"
+    "(สติ๊กเกอร์: ",
+
+    // Placeholder name for a sticker when the sticker's name could not be fetched.
+    "ไม่รู้จัก",
+
+    // Message timestamp hour-minute separator, day-month separator, and AM/PM indicators.
+    // Note: order of day and month cannot be changed currently
+    ":",
+    "/",
+    "A",
+    "P",
+
+    // Softkey labels for inserting a mention/ping in the "send message" screen.
+    "พูดถึง",
+    "ใส่การพูดถึง",
+
+    // Prefixes of title text for "send message" screen.
+    // The full title is in the form of "Send message (@user)" or "Send message (#channel)".
+    "ส่งข้อความ (@",
+    "ส่งข้อความ (#",
+
+    // Error message shown when trying to insert a mention into a message and the gateway connection is not active.
+    "ต้องมีการเชื่อมต่อ gateway",
+
+    // Title text for "copy message content" screen.
+    "คัดลอกข้อความ",
+
+    // Title text for "edit message content" screen.
+    "แก้ไขข้อความ",
+
+    // Title text for gateway disconnect prompt screen.
+    "การเชื่อมต่อถูกตัด",
+
+    // Main body text for gateway disconnect prompt screen.
+    "การเชื่อมต่อ gateway มีปัญหา ต้องการเชื่อมต่ออีกครั้งหรือไม่?",
+
+    // Top label for disconnection message shown in gateway disconnect prompt screen. The disconnection message is either a message sent by the Discord gateway (such as "requesting client reconnect") or a Java exception.
+    "ข้อความ",
+
+    // Prefix for top body text shown in the reply form. The whole top text is in the form "Replying to @user". The contents of the recipient message are shown below this.
+    "ตอบกลับไปยัง ",
+
+    // Top label for the message entry box in the reply form.
+    "ข้อความของคุณ:",
+
+    // Checkbox for selecting whether to mention/ping the recipient. Shown in the reply form.
+    "พูดถึงผู้ส่ง",
+
+    // Title text for settings menu.
+    "การตั้งค่า",
+
+    // Settings screen heading for themes section.
+    "ธีม",
+
+    // Theme options.
+    "มืด",
+    "สว่าง",
+    "ดำ",
+
+    // Settings screen heading for miscellaneous user interface related settings.
+    "หน้าตา",
+
+    // Settings option for enabling the old channel view user interface (from version 1.1 and below).
+    null,
+
+    // Settings option for using 12-hour time format in timestamps.
+    "แสดงเวลาแบบ 12 ชั่วโมง",
+
+    // Settings option for using the Java-based file picker for sending attachments. If disabled, the web-based file picker is used.
+    "ใช้เมนูเลือกไฟล์ของเครื่อง",
+
+    // Settings option for automatically reconnecting to the gateway if the connection closes.
+    "เชื่อมต่อ gateway อีกครั้งโดยอัตโนมัติ",
+
+    // Settings option for enabling icons in server and direct message lists.
+    "ไอคอนเซิร์ฟเวอร์/ข้อความส่วนตัว",
+
+    // Settings option for enabling nickname role colors.
+    "สีของชื่อ",
+
+    // Settings screen heading for message author font size.
+    "ขนาดตัวอักษรผู้ส่ง",
+
+    // Font size options.
+    "เล็ก",
+    "กลาง",
+    "ใหญ่",
+
+    // Settings screen heading for message content font size.
+    "ขนาดตัวอักษรข้อความ",
+
+    // Settings screen heading for message load count. This is the amount of messages that are loaded and shown at a time.
+    "จำนวนข้อความที่จะโหลด",
+
+    // Settings screen heading for selecting attachment file format.
+    "รูปแบบไฟล์แนบ",
+
+    // Settings screen heading for maximum attachment size in pixels.
+    "ขนาดไฟล์แนบสูงสุด",
+
+    // Settings screen heading for profile picture shape.
+    // Note: The word "avatar" was used here because "profile picture shape" is too long to fit on one row on some phones, and I didn't want to shorten it as "PFP".
+    "รูปร่างของรูปโปรไฟล์",
+
+    // Settings options for profile picture shape. "Circle (HQ)" is circle but with anti-aliasing and smoothing enabled.
+    "สี่เหลี่ยม",
+    "วงกลม",
+    "วงกลม (ละเอียด)",
+
+    // Settings section for profile picture resolution.
+    "ความละเอียดของรูปโปรไฟล์",
+
+    // Settings options for profile picture resolution. Placeholder means the PFPs won't get downloaded, but instead a placeholder (username's initials) is shown.
+    "เฉพาะอักษรย่อ",
+
+    // Resolution options. Used for profile picture resolution and menu icon resolution.
+    "ปิด",
+    "16 พิกเซล",
+    "32 พิกเซล",
+
+    // Settings section for menu icon size.
+    "ขนาดไอคอนในเมนู",
+
+    // Settings section for controlling the display of reply messages.
+    "แสดงการตอบกลับเป็น",
+
+    // Settings option to show replies as only the recipient (in the form "Author -> Recipient").
+    "เฉพาะผู้รับ",
+
+    // Settings option to show replies with the whole recipient message.
+    "ข้อความฉบับเต็ม",
+
+    // Settings section for hotkey action management.
+    "ปุ่มลัด",
+
+    // Settings option to use "default" hotkeys. When enabled, the J2ME game actions (ABCD) are used for hotkey actions, instead of user-defined key bindings. I named it "default" due to the lack of a better term for people who aren't familiar with J2ME development.
+    "ปุ่มลัดเริ่มต้น",
+
+    // Softkey label for opening the key remapper in the settings menu. The long variant of the label is shown as the button text.
+    "ตั้งปุ่มลัด",
+    "เปลี่ยนปุ่มลัด",
+
+    // Generic softkey labels. Currently used in settings menu.
+    "บันทึก",
+    "บันทึก",
+    "ยกเลิก",
+    "ยกเลิก",
+
+    // Error message shown when trying to open an URL (e.g. attachment)from the app, but the phone does not support opening URLs while keeping the app running in the background.
+    "ต้องปิดแอพนี้ก่อนจึงจะเปิด URL นี้ได้",
+
+    // Prefix of error message shown when an error occurs when trying to open an URL.
+    "ไม่สามารถเปิด URL นี้ได้ (",
+
+    // Suffix of error message shown when an error occurs when trying to open an URL. The actual URL is shown after this message.
+    ")\n\nลองคัดลอก URL นี้แล้วนำไปเปิดในบราวเซอร์แทน: ",
+
+    // Title text for URL list screen ('Open URL' option in channel view).
+    "เลือก URL",
+
+    // Softkey labels for inserting a mention in the "Insert mention" screen.
+    "ใส่",
+    "ใส่",
+
+    // Title for language selection screen.
+    "ภาษา",
+
+    // Settings section for language options.
+    "ภาษา",
+    
+    // Softkey labels for opening the language selection menu in the settings menu. The long variant of the label is shown as the button text.
+    "ภาษา",
+    "เลือกภาษา",
+
+    // Softkey commands for toggling fullscreen mode in the chat view.
+    "โหมดเต็มจอ",
+    "เปิด/ปิดโหมดเต็มจอ",
+
+    // Hotkey action for toggling fullscreen mode in the chat view. Shown in the key mapper.
+    // Related to "Names of hotkey actions shown in the key mapper" above.
+    "เปิด/ปิดโหมดเต็มจอ",
+
+    // Settings option for enabling fullscreen mode by default in the chat view.
+    "โหมดเต็มจอ",
+
+    // Settings section for selecting which kinds of messages notifications should be shown for.
+    "แสดงการแจ้งเตือนสำหรับ",
+
+    // Options for the kinds of messages that notifications should be shown for.
+    "ทุกข้อความ",
+    "การกล่าวถึง",
+    "ข้อความส่วนตัว",
+
+    // Text shown in notification alert windows. This is in the form of:
+    // User sent you a direct message: "message content"
+    // User sent a message in Server Name #channel: "message content"
+    " ส่งข้อความส่วนตัวมา: \"",
+    " ส่งข้อความใน ",
+
+    // Title for notification alert windows
+    "ข้อความใหม่",
+
+    // Settings section for selecting which kinds of notification methods should be used for incoming messages.
+    "แจ้งเตือนด้วย:",
+
+    // Options for the kinds of notification methods.
+    "หน้าต่างเตือน",
+    "เสียง",
+
+    // Settings option for keeping server/channel lists in memory when pressing the Back button, so they don't have to be reloaded every time.
+    "โหลดช่องค้างไว้",
+
+    // Text shown at the center of list screens when they are empty (no items).
+    // Note: in English, this is the same as the text shown when a channel view is empty ("Nothing to see here") but in some languages, that string was translated as something like "No messages", hence the need for a separate string for lists.
+    "ไม่มีอะไรอยู่ในนี้",
+
+    // Main body text for gateway disconnect prompt screen.
+    // This string is shown when "gateway auto reconnect" setting is enabled and 3 reconnect attempts have failed.
+    "ไม่สามารถเชื่อมต่อกับ gateway ได้ ต้องการลองอีกครั้งหรือไม่?",
+
+    // Softkey labels for sending an attachment as a reply to the selected message.
+    "อัพโหลดการตอบกลับ",
+    "ตอบกลับพร้อมไฟล์",
+
+    // Text shown in the reply form when a file is attached to the message that is currently being written. The name of the file is shown below this.
+    "ไฟล์ที่แนบ",
+
+    // Prefix and suffix for text shown in the notification alert window when the message has attachments.
+    // The whole text is shown as part of the message content and is in the form "(1 attachment)" or "(X attachments)"
+    "(",
+    " ไฟล์แนบ)",
+    " ไฟล์แนบ)",
+
+    // Settings section names/titles.
+    // "Language" title is defined above (see "Settings section for language options")
+    "การแสดงผล",
+    "รูปภาพ",
+    "ทั่วไป",
+    "การแจ้งเตือน",
+
+    // Settings option values shown below boolean (on/off, true/false) options in the settings menu.
+    // On large screens, these are instead shown on the right side of the options.
+    "ปิด",
+    "เปิด",
+
+    // Prefix for error message shown when an invalid value was entered into a textbox in the settings menu.
+    // This can occur if the given value is not a valid number, is less than 1, or is above the maximum value for that setting.
+    // The whole message is in the form of "Please enter a valid number between 1 and X"
+    // where X is the maximum value for that setting.
+    "กรุณาใส่จำนวนที่ถูกต้องระหว่าง 1 ถึง ",
+    "",
+
+    // Settings option for using nnproject's Pigler Notifications API (extension API for showing notifications in the notification panel on Symbian Belle) for message notifications. The name "Pigler" should not be translated.
+    "ใช้ Pigler API",
+
+    // Prefix for error messages related to Pigler Notifications API.
+    "ข้อผิดพลาด Pigler API: ",
+
+    // Error message shown when Pigler API support is not detected. This is shown every time on app startup if Pigler notifications are enabled in app settings, until either the option is disabled or Pigler support is installed on the device.
+    "ไม่สามารถเรียกใช้ Pigler Notifications API ได้ กรุณาติดตั้ง Pigler API จากเว็บ nnp.nnchan.ru/pna หรือปิดใช้งานการแจ้งเตือนผ่าน Pigler ในเมนูการตั้งค่า",
+
+    // Settings option for showing the scrollbar on the right side of the screen.
+    "แถบเลื่อน",
+
+    // Options for the "Show scroll bar" setting.
+    // "Off" (see "Settings option values shown below boolean") means the scroll bar is disabled, but content can still be scrolled by swiping anywhere on the screen.
+    // "Hidden" means the scroll bar is not shown until the user taps on the right edge of the screen. This is the default on most platforms.
+    // "Visible" means the scroll bar is always shown (decreasing the available horizontal screen space). This is the default on KEmulator.
+    "ซ่อน",
+    "แสดง",
+
+    // Main menu option for about/credits screen.
+    // Related to "Main menu items" above.
+    "เกี่ยวกับ",
+
+    // Title text for about screen.
+    "เกี่ยวกับ",
+
+    // Prefix for version line shown in the about screen. The app's version number is shown after this.
+    "รุ่น ",
+
+    // Heading shown in the about screen for developers.
+    "ผู้พัฒนา",
+
+    // Heading shown in the about screen for language translation authors. Shown below developers.
+    "ผู้แปล",
+
+    // Heading shown in the about screen for links to support groups (Discord server and Telegram group).
+    "กลุ่มแชทช่วยเหลือ",
+
+    // Lines shown in the about (credits) screen for what each developer (major contributor) did.
+    // The name of the person in question is shown above each line.
+    "ผู้พัฒนาหลัก",
+    "ระบบโหลดไฟล์ การเชื่อม Pigler API และตัวแจงส่วน JSON",
+    "ออกแบบแอนิเมชันหน้าจอโหลด ไอคอนในเมนู อิโมจิ และแปลภาษาอิตาลี",
+
+    // Lines shown in the about screen for which language(s) each person wrote translations for.
+    // Note: These are ordered alphabetically based on the person's name, not the language's name
+    "ภาษาเวียดนาม",
+    "ภาษาสวีเดน",
+    "ภาษาอินโดนีเซีย",
+    "ภาษาโปแลนด์",
+    "ภาษาสเปน",
+    "ภาษาโปรตุเกส (บราซิล)",
+    "ภาษาไทย",
+    "ภาษาโปรตุเกส",
+    "ภาษาจีนตัวเต็มและจีนกวางตุ้ง",
+    "ภาษายูเครน",
+    "ภาษาโรมาเนีย",
+    "ภาษาตุรกี",
+    "ภาษารัสเซีย",
+
+    // Softkey labels shown in notification alert window for opening/viewing the channel where the notification occurred.
+    "ดู",
+    "ดู",
+
+    // Settings option for automatically checking for updates on every startup of the app. If an update is found, a prompt is shown, which when confirmed, opens a browser to install the new version.
+    "อัพเดทอัตโนมัติ",
+
+    // Title for dialog box shown when an update was found.
+    "มีอัพเดทใหม่",
+
+    // Parts of the body text shown in the update dialog box. The appropriate version numbers are inserted after "Current: " and "Latest: ".
+    "มี Discord J2ME รุ่นใหม่พร้อมให้ใช้งานแล้ว ต้องการอัพเดทหรือไม่?\nรุ่นปัจจุบัน: ",
+    "\nรุ่นล่าสุด: ",
+
+    // Softkey labels for confirming an update in the update dialog box.
+    "อัพเดท",
+    "อัพเดท",
+
+    // Options for the "Auto update" setting.
+    // "Releases only" means the user is only notified for stable release versions, not betas/pre-release versions. "All versions" means the user is also notified for betas.
+    "รุ่นเสถียรเท่านั้น",
+    "ทุกรุ่น",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "ภาษาเยอรมัน",
+    "ภาษาโครเอเชีย",
+
+    // Units for attachment sizes.
+    " ไบต์",
+    " kB",
+    " MB",
+
+    // Softkey labels for opening the thread list of a channel in the channel list.
+    "กระทู้",
+    "ดูกระทู้",
+
+    // Softkey labels for entering a token in the login screen (if a token hasn't already been set). The long variant of the label is shown as the button text.
+    "ใส่",
+    "ใส่ token",
+
+    // Softkey labels for changing the token in the login screen (if a token has already been set). The long variant of the label is shown as the button text.
+    "เปลี่ยน",
+    "เปลี่ยน token",
+
+    // Option in notification settings for using Nokia UI API for notifications.
+    "ใช้ Nokia UI",
+
+    // Option in notification settings for using Nokia UI API for notifications. This variant of the option is shown on J2ME Loader, because J2ME Loader shows Nokia UI notifications as Android notifications in the notification panel.
+    "แจ้งเตือนผ่าน Android โดยตรง",
+
+    // Text shown in the red bar used for marking the last unread messages in the chat view.
+    "ใหม่",
+
+    // Prompt shown at the top of the image preview screen when selecting an attachment.
+    "อัพโหลดภาพนี้หรือไม่?",
+
+    // Settings option for enabling/disabling image previews when selecting a file in the native attachment file picker.
+    "แสดงตัวอย่างภาพเมื่อเลือกไฟล์",
+
+    // Header shown at the top of every forwarded message.
+    "ข้อความส่งต่อ:",
+
+    // Help texts shown in the login screen for how to open the token input text box.
+    "กดปุ่ม BlackBerry เพื่อใส่ token",
+    "กดปุ่ม BlackBerry เพื่อเปลี่ยน token",
+
+    // Error message shown when image previews are enabled in the native file picker, but there is not enough free RAM on the device to show a preview for the selected image.
+    "หน่วยความจำไม่เพียงพอที่จะแสดงตัวอย่างภาพ",
+
+    // Settings option for enabling or disabling emoji display in chats.
+    "แสดงอิโมจิ",
+
+    // Option for "Show emoji" setting where only standard emoji are shown. Custom emoji from servers are not shown, and are displayed as text instead.
+    "เฉพาะอิโมจิปกติ",
+
+    // Option for "Show emoji" setting where all emoji are shown.
+    "ทั้งหมด",
+
+    // Softkey labels for importing the token (from a file) in the login screen. The long variant of the label is shown as the button text.
+    "นำเข้า",
+    "นำเข้า token",
+
+    // Title text for the token import file picker screen.
+    "เลือกไฟล์ token",
+
+    // Text shown in loading screen when emoji data is being downloaded or updated.
+    "กำลังดาวน์โหลดอิโมจิ...",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "ภาษาฝรั่งเศส",
+    "ภาษาบัลแกเรีย",
+
+    // Settings option for toggling markdown text formatting support in chat (bold, italic, etc).
+    "การจัดรูปแบบข้อความ",
+
+    // Softkey labels for inserting an emoji in the "send message" screen.
+    "อิโมจิ",
+    "ใส่อิโมจิ",
+
+    // Title for emoji picker screen.
+    "เลือกอิโมจิ",
+
+    // Prompt shown when opening the emoji picker and the emoji images have not been downloaded onto the device.
+    "ดาวน์โหลดข้อมูลอิโมจิหรือไม่?",
+
+    // Indicator shown at the end of messages which have been edited. If possible, this should be translated the same way that it's translated in the official Discord clients.
+    "(ถูกแก้ไข)",
+
+    // Softkey command for inserting a '_' character in the token input screen. Some devices don't have a built-in way to insert a '_'.
+    "ขีดล่าง",
+    "ใส่ขีดล่าง",
+
+    // Related to "Lines shown in the about (credits) screen for what each developer" above.
+    "เสียงการแจ้งเตือน",
+
+    // Settings option for toggling vibration alert for notifications.
+    "การสั่น",
+
+    // Softkey command (short label and long label) for muting a channel/server/etc. or unmuting if it is already muted.
+    // For technical reasons it's easier to have one label for "mute/unmute" rather than separate "Mute" and "Unmute" labels that change dynamically.
+    // The short "Mute" label is also shown for unmuting. The long label can also be just "Mute" if "mute/unmute" doesn't make sense in your language.
+    "ปิดเตือน",
+    "ปิด/เปิดเตือน",
+
+    // Hotkey actions for instantly moving to the top or bottom of the chat view. Related to "Names of hotkey actions shown in the key mapper" above.
+    "เลื่อนไปบนสุด",
+    "เลื่อนไปล่างสุด",
+
+    // Settings option for toggling whether to send the typing indicator, i.e. show other people that you are typing when you select "Send message" or "Upload file".
+    "ส่งสถานะการพิมพ์",
+
+    // Softkey command labels for applying an attached audio file as the in-app notification sound. The long variant of the label is shown on the button in the attachment view screen.
+    "ใช้เป็น",
+    "ใช้เป็นเสียงแจ้งเตือน",
+
+    // Prompt shown when applying a new notification sound. The sound is played at the same time as the prompt appears.
+    "ต้องการใช้เสียงนี้เป็นเสียงแจ้งเตือนหรือไม่?",
+
+    // Softkey command for playing the notification sound again in the aforementioned prompt.
+    "เล่น",
+    "เล่นอีกครั้ง",
+
+    // Confirmation message shown when a new notification sound has been set.
+    "ตั้งเสียงแจ้งเตือนแล้ว",
+
+    // Title for data manager screen. Data manager screen is used for viewing memory usage of application data and deleting parts of the app data if needed.
+    "จัดการข้อมูล",
+
+    // Types of data shown in the data manager:
+
+    // Downloaded image data of default emojis (not custom server emojis)
+    "รูปอิโมจิ",
+    // Timestamps of last read messages for each channel, used for handling unread message indicators.
+    "ข้อความที่อ่านล่าสุด",
+    // Custom sound file applied as the notification sound via a message attachment.
+    "เสียงแจ้งเติอน",
+    // Translated string data for a downloaded language translation.
+    "ข้อมูลภาษา",
+
+    // Title shown in the prompt when deleting a type of app data.
+    "ลบ",
+
+    // Prompt shown when deleting a type of app data. The type (one of the four listed above) is shown below this text.
+    "ลบรายการนี้หรือไม่?\n",
+
+    // Title for dialog box shown when opening an URL on a device that does not support running an app at the same time as the browser.
+    "เปิดบราวเซอร์",
+
+    // Text shown in that dialog box.
+    "ต้องการเปิดบราวเซอร์หรือไม่? แอพจะถูกปิดหากเลือก ใช่",
+
+    // Settings option for enabling custom menu scrolling handler. When this is enabled, holding up or down on the d-pad will scroll through menus by one menu item every 50 milliseconds, which is faster than the default scrolling speed on most devices.
+    "เลือนแบบเร็ว",
+
+    // Error message shown when the notification sound failed to be played, usually because the device does not support the sound's file format.
+    "ไม่สามารถเล่นไฟล์เสียงได้ ไฟล์ที่เลือกอาจไม่รองรับ",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "ภาษาญี่ปุ่น",
+    "ภาษากาตาลา",
+    "ภาษาอารบิก",
+
+    // Theme option shown in settings for the theme that uses colors from the system's UI.
+    "ระบบ",
+
+    // Theme option shown in settings for the user-defined theme.
+    "กำหนดเอง",
+
+    // Title and description of the dialog that prompts for saving and applying the custom theme that is currently being previewed.
+    "รูปแบบสี",
+    "ต้องการใช้รูปแบบสีนี้หรือไม่?",
+
+    // Item shown in the data manager for the saved custom theme data.
+    "รูปแบบสี",
+
+    // Error message shown when opening the emoji picker but there is not enough free RAM on the device to load all the emojis.
+    "หน่วยความจำไม่เพียงพอที่จะแสดงตัวเลือกอิโมจิ",
+
+    // Error message shown when a HTTP request results in the error 502 (bad gateway), meaning the proxy is down.
+    "HTTP 502: เซิร์ฟเวอร์พร็อกซี่ไม่พร้อมให้บริการ กรุณาลองใหม่อีกครั้งในภายหลัง หรือติดต่อผู้พัฒนา",
+
+    // Error message shown when a HTTP request results in the error 302 (moved temporarily)
+    "HTTP 302: คำขอถูกเปลี่ยนเส้นทางโดยไม่คาดคิด กรุณาตรวจสอบการเชื่อมต่อของคุณ",
+
+    // Title and description for the dialog warning message shown when uploading a file for the first time. The user can select 'OK' to dismiss it once, or 'Hide' to never show it again.
+    "คำเตือน",
+    "บ่อยครั้ง Discord จะตรวจจับการอัพโหลดไฟล์จากแอพที่ไม่ใช่ของ Discord เองว่าเป็นการส่งสแปม โดยมักจะเกิดขึ้นกับบัญชีใหม่ที่ยังไม่ได้ตั้งการยืนยันตัวตนหลายขั้นตอน หรือยังไม่ยืนยันตัวตนด้วยเบอร์โทรศัพท์ หากดำเนินการต่อ ถือว่าคุณยอมรับความเสี่ยงนี้\nเลือก 'ซ่อน' หากไม่ต้องการเห็นคำเตือนนี้อีก",
+
+    // Softkey labels for dismissing the upload warning (above) and never showing it again.
+    "ซ่อน",
+    "ซ่อน",
+
+    // Dialog warning shown when sending direct message to someone in your DMs list who you've never messaged before.
+    "บ่อยครั้ง Discord จะตรวจจับการส่งข้อตวามส่วนตัวจากแอพที่ไม่ใช่ของ Discord เองว่าเป็นการส่งสแปม ขอแนะนำให้ข้อความแรกโดยใช้แอพของ Discord เอง ต้องการดำเนินการต่อหรือไม่?",
+
+    // Related to "Types of data shown in the data manager" above.
+    "เซิร์ฟเวอร์โปรด",
+    "เซิร์ฟเวอร์ที่บันทึกไว้",
+
+    // Title and description of dialog screen shown when the user has saved their server list.
+    "บันทึกเสร็จสิ้น",
+    "บันทึกรายการเซิร์ฟเวอร์ไว้ในแคชแล้ว",
+
+    // Related to "Types of data shown in the data manager" above.
+    "ชื่ออิโมจิ",
+
+    // Softkey command in login screen for opening the Discord J2ME setup guide web page.
+    // The long version of the label is used as the button label.
+    "คู่มือ",
+    "คู่มือการตั้งค่า",
+
+    // Option in login screen to use direct connection (proxyless) mode.
+    "เชื่อมต่อโดยตรง",
+
+    // Information text shown in login screen related to proxyless mode:
+    // This version of the text is shown if the device is known to support TLS 1.2.
+    "การเชื่อมต่อโดยตรงจะลดความเสี่ยงที่บัญชีจะถูกจำกัดการใช้งาน",
+
+    // This version of the text is shown otherwise. The text is split into three parts which are shown together. The middle one is a link to the nnproject TLS 1.2 page if using a Symbian device.
+    "การเชื่อมต่อโดยตรง (",
+    "ต้องใช้การเข้ารหัส TLS 1.2",
+    ") จะลดความเสี่ยงที่บัญชีจะถูกจำกัดการใช้งาน",
+
+    // Softkey command for opening the nnproject TLS 1.2 page.
+    "ติดตั้ง TLS",
+    "ติดตั้ง TLS",
+
+    // Text shown in bottom message bar.
+    "ส่งข้อความ",
+
+    // Text shown in bottom message bar. This version of the text includes the channel name after the text, like "Message #general". Shown if the screen is wide enough.
+    "ส่งข้อความไปยัง ",
+
+    // Error messages shown if the device does not support PATCH/DELETE HTTP methods, which are required to edit/delete messages respectively in proxyless mode.
+    // You should use the same term for "Direct connection" that you used above.
+    "อุปกรณ์ของคุณไม่รองรับการแก้ไขข้อความในโหมดการเชื่อมต่อโดยตรง\nคุณต้องการที่จะแก้ไขข้อความนี้ผ่านพร็อกซี่หรือไม่?\nเลือก 'ซ่อน' หากต้องการให้ใช้พร็อกซี่ทุกครั้ง",
+
+    "อุปกรณ์ของคุณไม่รองรับการลบข้อความในโหมดการเชื่อมต่อโดยตรง\nคุณต้องการที่จะลบข้อความนี้ผ่านพร็อกซี่หรือไม่?\nเลือก 'ซ่อน' หากต้องการให้ใช้พร็อกซี่ทุกครั้ง",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "ภาษาจีน (ตัวย่อ)",
+
+    // Item in settings menu for opening the time format configuration screen.
+    "รูปแบบเวลา",
+
+    // Title for time preview shown in the time format screen.
+    "ตัวอย่าง",
+
+    // Titles for sliders in the time format screen for changing the time offset.
+    "ค่าความต่างเวลา (ชั่วโมง)",
+    "ค่าความต่างเวลา (นาที)",
+
+    // Option in the time format screen for changing the time offset between negative and positive numbers.
+    "ค่าความต่างติดลบ",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "ภาษาฮังการี",
+
+    // Softkey commands for moving an item up or down by one position in a sortable list. Currently used for the favorite servers list.
+    "ขึ้น",
+    "เลื่อนขึ้น",
+    "ลง",
+    "เลื่อนลง",
+
+    // Warning dialog shown when "Direct connection" and "Use gateway" options are both enabled.
+    "การเชื่อมต่อโดยตรงถูกเปิดใช้งานอยู่ แต่การเชื่อมต่อไปยัง gateway จำเป็นต้องใช้พร็อกซี่ซึ่งอาจไม่ปลอดภัย คุณต้องการที่จะเชื่อมต่อไปยัง gateway หรือไม่?\nเลือก 'ซ่อน' หากต้องการให้เชื่อมต่อทุกครั้ง",
+
+    // Settings option for toggling the bar on the bottom of the screen for sending a message. Only available on touchscreen.
+    "แสดงแถบป้อนข้อความ",
+
+    // "Automatic" option value for settings. Currently used for the "Show message bar" setting. When that is set to "Auto", the message bar will be shown if the viewable screen area is taller than a square.
+    "อัตโนมัติ",
+
+    // Title for login screen (new version).
+    "ยินดีต้อนรับ",
+    
+    // Softkey commands for opening a link in the login screen.
+    "เปิด",
+    "เปิด",
+
+    // Text for the link shown in the login screen for reading more about Direct connection.
+    "อ่านเพิ่มเติม",
+
+    // Info text shown in the login screen after the Direct connection option and before the button for changing proxy URLs.
+    "แอพนี้สามารถใช้งานร่วมกับพร็อกซี่ได้เช่นกัน",
+
+    // Safety recommendation in the login screen, shown after the above string.
+    "ขอแนะนำให้จัดตั้งพร็อกซี่ส่วนตัวเพื่อความปลอดภัย ",
+
+    // Hint text shown after the above string on BlackBerry devices.
+    "กดปุ่ม BlackBerry เพื่อเปลี่ยน URL สำหรับการเชื่อมต่อ",
+
+    // Text label shown inside the button for changing the proxy connection URLs (on non-BlackBerry devices).
+    "URL สำหรับการเชื่อมต่อ",
+
+    // Explanation strings for the "Use gateway" option.
+    // This version of the string is shown on versions that support Direct connection.
+    "การใช้ gateway (สำหรับการแชทแบบเรียลไทม์) จะต้องใช้ร่วมกับพร็อกซี่",
+    // This string is shown on versions that don't support Direct connection.
+    "Gateway จะถูกใช้สำหรับการแชทแบบเรียลไทม์และฟีเจอร์บางอย่าง",
+
+    // Explanation string for the token settings.
+    "แอพนี้จำเป็นต้องใช้รหัส token เพื่อเข้าสู่ระบบ ",
+
+    // Explanation strings for other token entry methods.
+    // This version of the string is shown on devices that support FileConnection (file system access in Java).
+    "คุณสามารถนำเข้าไฟล์ข้อความที่มีรหัส token หรือใส่รหัส token เข้าไปในไฟล์ JAR ของแอพนี้เพื่อหลีกเลี่ยงการพิมพ์ผิด",
+    // This string is shown on devices that don't support FileConnection.
+    "คุณสามารถใส่รหัส token เข้าไปในไฟล์ JAR ของแอพนี้เพื่อหลีกเลี่ยงการพิมพ์ผิด",
+
+    // Error message shown when a HTTPS connection fails due to the app not being signed with a code-signing certificate.
+    // More user-friendly form of "java.lang.SecurityException"
+    "อุปกรณ์ของคุณต้องการให้แอพนี้มีใบรับรอง (signed) เพื่อใช้งานการเชื่อมต่อโดยตรง ดาวน์โหลดไฟล์ JAD ของแอพนี่ที่มีใบรับรองสำหรับอุปกรณ์ของคุณ หรือปิดใช้งานการเชื่อมต่อโดยตรง\nอ่านเพิ่มเติมที่ gtrxac.fi/j2me/proxyless (ข้อมูลเป็นภาษาอังกฤษ)",
+
+    // Related to "Lines shown in the about (credits) screen for what each developer" above.
+    "การรองรับการเชื่อมต่อโดยตรง",
+
+    // Settings option for toggling the custom background image on or off.
+    "ภาพพื้นหลัง",
+
+    // Settings option for selecting a new image file to be used as a custom background image.
+    "นำเข้าภาพพื้นหลัง",
+
+    // Title for the file picker screen for selecting a background image.
+    "เลือกภาพพื้นหลัง",
+
+    // Section in the settings menu for customizing notification and incoming/outgoing message sounds.
+    "เสียง",
+
+    // Title for the file picker screen for selecting a sound for notifications or incoming/outgoing messages.
+    "เลือกเสียง",
+
+    // Option in the sound settings to use a generic system notification tone (usually a beep).
+    "เสียงบี๊บ",
+
+    // Option in the sound settings to import a sound file from the device's storage.
+    "นำเข้าเสียง",
+
+    // Names of the different types of customizable sounds in the sound settings screen.
+    // Incoming and outgoing message sounds are played when a message is received or sent in the currently opened channel.
+    "แจ้งเตือน",
+    "ข้อความเข้า",
+    "ข้อความออก",
+
+    // Settings options for the different methods for resizing a custom background image to fit the screen.
+    "ตัดภาพ",
+    "ยืดภาพ",
+
+    // Setting for enabling or disabling the wipe transition animation when changing between screens.
+    "เอฟเฟกต์เปลี่ยนหน้าจอ",
+
+    // Related to "Types of data shown in the data manager" above.
+    "เสียงข้อความเข้า",
+    "เสียงข้อความออก",
+    "ภาพพื้นหลัง",
+
+    // Explanation of QR code login shown in the login screen.
+    "การเข้าสู่ระบบจะต้องใช้รหัส token โดยจะรับจากการสแกน QR code ผ่านแอพ Discord บน Android หรือ iOS",
+
+    // Softkey command labels for opening the QR login screen.
+    "แสดง QR",
+    "แสดงรหัส QR",
+
+    // Status messages shown in the QR login screen.
+    "กำลังเชื่อมต่อ...",
+    "กำลังแสดงรหัส QR...",
+    "การเชื่อมต่อถูกตัด กรุณาลองอีกครั้ง",
+
+    // First sentence of explanation of manual token entry in the login screen, shown below the QR login info. 
+    "คุณสามารถเลือกที่จะใส่รหัส token เองได้เช่นกัน ",
+
+    // Suffixes for the new style of "View (number) attachments" buttons, singular and plural.
+    // Now there are separate types of buttons for "View X files" and "View X images"
+    // "Images" are for any file types that are previewable as images (which also includes videos), "files" are for any other type of file.
+    " ไฟล์",
+    " ไฟล์",
+    " รูปภาพ",
+    " รูปภาพ",
+
+    // Description for the read state (unread indicator dots) synchronization feature. Shown in the login screen above the checkbox for "Sync unreads".
+    // This feature more specifically uses more network bandwidth, RAM, and storage, and also requires the gateway,
+    // but this string is kept relatively short so the login screen is not too cluttered.
+    "การซิงค์สถานะการอ่านจะใช้หน่วยความจำมากขึ้น",
+
+    // Label for the check box for toggling read state synchronization feature.
+    "ซิงค์สถานะการอ่าน",
+
+    // Softkey command labels for checking the status of HTTP-based QR login after the QR code has been scanned. If the check is successful, the token is received and the login is complete.
+    // This can also be translated as e.g. "Continue".
+    "ตรวจสอบ",
+    "ตรวจสอบ",
+
+    // Error message shown when the proxy server has not sent an authentication ID which is required for HTTP-based QR login.
+    "ไม่ได้รับข้อมูลการเข้าสู่ระบบ",
+
+    // Help text shown in the QR login screen when using HTTP-based QR login.
+    // "Check" should be pressed after the QR code is scanned on the Discord app on Android/iOS and the login is authorized by selecting the "Log in" button in the safety warning.
+    "เลือก 'ตรวจสอบ' หลังจากที่ยืนยันการเข้าสู่ระบบบนสมาร์ทโฟนของคุณ",
+
+    // Error messages shown when opening a notification and the server, server channel, or DM conversation was not found in the loaded server/DM lists.
+    "ไม่พบเซิร์ฟเวอร์ ",
+    "ไม่พบช่อง",
+    "ไม่พบการสนทนา",
+
+    // Help text shown after the "Server not found" error.
+    "หากคุณเพิ่งเข้าร่วมเซิร์ฟเวอร์นี้ คุณอาจต้องรอให้รายการเซิร์ฟเวอร์ทำการอัพเดทก่อน",
+
+    // Error messages shown during password login.
+    "อีเมล์หรือรหัสผ่านไม่ถูกต้อง",
+    "บัญชีนี้ไม่ได้เปิดใช้งานการยืนยันตัวตนหลายขั้นตอน",
+    "บัญชีนี้ไม่ได้เปิดใช้งานการยืนยันตัวตนหลายขั้นตอนผ่านแอพยืนยันตัวตน",
+
+    // Header of error messages shown during password login.
+    "การเข้าสู่ระบบไม่สำเร็จ: ",
+
+    // Header of the response sent by the server (for debugging purposes) during password login.
+    "\nข้อความตอบสนอง:\n",
+
+    // Softkey labels used for starting password login. Shown in the login screen. The long variant of the softkey label is shown as the button text.
+    "รหัสผ่าน",
+    "เข้าสู่ระบบด้วยรหัสผ่าน",
+
+    // Warning shown when starting password login but Direct connection isn't enabled.
+    "การเข้าสู่ระบบด้วยรหัสผ่านจำเป็นต้องใช้การเชื่อมต่อโดยตรง คุณต้องการเปิดใช้งานการเชื่อมต่อโดยตรงและดำเนินการต่อหรือไม่?",
+
+    // Error message shown when a server error response contains a CAPTCHA request. Tips for circumventing the CAPTCHA are shown below.
+    "ตรวจพอการร้องขอ CAPTCHA ",
+    "โปรดลองทำตามขั้นตอนดังนี้:",
+    
+    // Tips for circumventing the CAPTCHA:
+
+    // (shown when the current build of the app doesn't support proxyless)
+    "ติดตั้งแอพเวอร์ชั่นที่รองรับการเชื่อมต่อโดยตรง",
+    // (shown when proxyless disabled and not in password login screen)
+    "เปิดใช้งานการเชื่อมต่อโดยตรง",
+    // (shown when in password login screen)
+    "เปิดใช้งานการยืนยันตัวตนหลายขั้นตอน",
+    "เข้าสู่ระบบผ่านแอพของ Discord เอง บนอุปกรณือื่นที่ใช้ที่อยู่ IP เดียวกัน (เครื่อข่าย Wi-Fi หรือข้อมูลมือถือผ่านซิมเดียวกัน)",
+    // (shown when not proxyless)
+    "ลองใช้เซิร์ฟเวอร์พร็อกซี่อื่น หรือใช้เซิร์ฟเวอร์พร็อกซี่ของตัวเอง",
+    // (shown always)
+    "ลองใช้บัญชีอื่น",
+
+    // Header text shown in the password login screen.
+    "ในการใช้งานการเข้าสู่ระบบด้วยรหัสผ่าน บัญชีของคุณจะต้องเปิดใช้งานการยืนยันตัวตนหลายขั้นตอน",
+
+    // Text field labels shown in the password login screen.
+    "อีเมล์",
+    "รหัสผ่าน",
+    "รหัสยืนยันตัวตน",
+
+    // Status messages showing the progress of password login.
+    "กำลังส่งคำขอเข้าสู่ระบบ...",
+    "กำลังส่งรหัสยืนยันตัวตน...",
+
+    // Request for the 2-factor authentication (TOTP) code.
+    "ใส่รหัส 6 หลักจากแอพยืนยันตัวตน (เช่น Google Authenticator).",
+
+    // Softkey labels for the button used to continue password login after the authentication code was entered.
+    "ทำต่อ",
+    "ทำต่อ",
+
+    // Error messages shown when trying to start password login without an email or password specified.
+    "กรุณาใส่ที่อยู่อีเมล์ให้ถูกต้อง",
+    "กรุณาใส่รหัสผ่าน",
+
+    // Another tip for circumventing the login CAPTCHA.
+    // (shown when in password login screen)
+    "หากอุปกรณ์นี้รองรับการเชื่อมต่อ Wi-Fi ให้เชื่อมต่อเครือข่าย Wi-Fi เดียวกันกับเครื่องอื่นที่ใช้ Discord",
+
+    // Error message shown when the authentication code is in an invalid format.
+    "กรุณาใส่รหัสยืนยันตัวตนให้ถูกต้องในรูปแบบ '123456'",
+
+    // Progress message shown in the password login screen during the beginning, right after entering the password and email.
+    "กำลังเริ่มการเข้าสู่ระบบ...",
+
+    // Text shown before the latest update's changelog in the update dialog screen.
+    "\n\nมีอะไรใหม่\n",
+
+    // Suffixes of attachment indicators in notification previews.
+    // For example a notification could say
+    //   User sent you a direct message: "Check this out (2 images) (1 file)"
+    // "Images" are for any file types that are previewable as images (which also includes videos), "files" are for any other type of file.
+    " ไฟล์)",
+    " ไฟล์)",
+    " รูปภาพ)",
+    " รูปภาพ)",
+
+    // Title for connection selection screen.
+    "Connection",
+
+    // Option in the connection selection screen to use the device's standard connectivity to go online.
+    "Cellular/Wi-Fi",
+
+    // Option in the connection selection screen to search for devices to use Bluetooth tethering via BlueWAP Server app.
+    "Bluetooth search",
+
+    // Option in the connection selection screen to show an explanation of BT tethering.
+    "Help",
+
+    // Line shown in the connection screen when a device search ended with no results.
+    "No devices found",
+
+    // Text shown in a separate dialog screen when a device search ended with no results.
+    "No devices found. Make sure the server device is set to visible, then try again.",
+
+    // Line shown in the connection screen when a device search ended with at least one result.
+    "Search completed",
+
+    // Title for connection help dialog.
+    "Help",
+
+    // Lines shown in the connection help screen (separate dialog). These are formatted using bullet points.
+    "Select 'Bluetooth search' to tether to a device running BlueWAP Server.",
+    "Use Direct connection if your server device supports TLS 1.2 (e.g. Android 5+).",
+    "Get BlueWAP Server: github.com/gtrxAC/BlueWAP",
+
+    // Lines shown in the connection screen when searching for devices or when connecting to a found device.
+    "Searching...",
+    "Connecting..."
+]

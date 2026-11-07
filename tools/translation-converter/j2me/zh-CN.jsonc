@@ -1,0 +1,1201 @@
+[
+    // Translation notes:
+    // - Any line that begins with a "//" is a comment and is ignored.
+    //   In this file, comments are used for explaining each string.
+    // - Write your translated string inside the two quotation marks.
+    // - If you need to use a quotation mark inside any of your translated
+    //   strings, write it as \" instead.
+    // - If the original string has any special formatting
+    //   (e.g. space at the beginning or end), keep the formatting the same.
+    // - If you want the English text to be shown for a specific string,
+    //   replace the string with null (without any quotation marks).
+    // - For any Discord-specific terminology (e.g. servers), use the same
+    //   translated term that Discord officially uses for your language.
+
+    // Notes about softkey command labels:
+    // - Each softkey label has two variations, a short and a long one.
+    // - In this translation file, the short labels are listed above the long ones.
+    // - Short labels are used in places where there is limited screen space.
+    // - Keep short labels as short as possible, ideally below 10 characters.
+    //   If needed, you may use abbreviations.
+    // - If a long label is short enough to where it could be used as a
+    //   short label, use the same string for both labels.
+
+    // Placeholder file name shown when the name of an attachment in the attachment view screen could not be loaded.
+    "未命名文件",
+
+    // Title text for the attachment picker (native file picker) screen.
+    "选择附件",
+
+    // Softkey labels for going back to the previous screen.
+    "返回",
+    "返回",
+
+    // Softkey label for closing a menu.
+    // Currently used in the attachment picker for closing the whole picker (because there is also a "Back" softkey for going back one directory)
+    "关闭",
+    "关闭",
+
+    // Title text for attachment view screen.
+    "附件",
+
+    // Softkey labels for refetching contents of channel view or attachment view.
+    "刷新",
+    "刷新",
+
+    // Softkey labels used in channel or DM list for marking the selected channel or DM as read.
+    "标记为已读",
+    "标记为已读",
+
+    // Softkey labels used in channel and DM lists for marking every DM or every channel in the currently shown server as read.
+    "全部标记为已读",
+    "全部标记为已读",
+
+    // Generic "Select" softkey labels.
+    "选择",
+    "选择",
+
+    // Softkey labels for sending a message in the currently open channel.
+    "发送",
+    "发送消息",
+
+    // Softkey labels for sending a reply to the selected message.
+    "回复",
+    "回复",
+
+    // Softkey labels for sending an attachment in the currently open channel.
+    "上传",
+    "上传文件",
+
+    // Softkey labels for copying the text content of the selected message.
+    "复制",
+    "复制内容",
+
+    // Softkey labels for editing the selected message.
+    "编辑",
+    "编辑",
+
+    // Softkey labels for deleting the selected message.
+    "删除",
+    "删除",
+
+    // Softkey labels for selecting an URL in the selected message. This opens a screen where each URL found in the message is listed, and one can be selected to be opened in the device's browser.
+    "打开链接",
+    "打开链接",
+
+    // Channel view title suffix when reading older messages.
+    "（旧）",
+
+    // Text shown at the center of the channel view when it is empty (no messages).
+    "这里什么都没有",
+
+    // Channel view banner text shown when reading older messages and a new message arrives via the gateway.
+    "刷新以查看新消息",
+
+    // Channel view banner text shown when a gateway disconnect occurred and an automatic reconnect is in progress.
+    "重新连接中",
+
+    // Channel view banner shown when a message is being sent by the client.
+    "正在发送消息",
+
+    // Channel view banner shown when a message is being edited by the client.
+    "正在编辑消息",
+
+    // Channel view banner shown when a message is being deleted by the client.
+    "正在删除消息",
+
+    // Channel view banner shown when messages are being loaded, e.g. during a refresh or after a message was sent by the client.
+    "正在加载消息",
+
+    // Suffix for channel view banner text when one person is typing.
+    // Example: "aa is typing"
+    " 正在输入",
+
+    // Suffix for channel view banner text when two or three people are typing.
+    // Example: "aa, bb, cc are typing"
+    " 正在输入",
+
+    // Suffix for channel view banner text when more than three people are typing.
+    // Example: "4 people are typing"
+    " 人正在输入",
+
+    // Comma separator used to separate usernames in the channel view banner text shown when people are typing.
+    "、",
+
+    // Error messages shown when trying to upload a file, delete a message, or edit a message, and the current proxy server is a direct HTTPS-HTTP proxy (and not a Discord J2ME specific proxy)
+    "此代理不支持文件上传",
+    "此代理不支持删除消息",
+    "此代理不支持编辑消息",
+
+    // Error message shown when trying to open the native file picker and the device does not support the J2ME FileConnection API.
+    "不支持 FileConnection",
+
+    // Button labels for navigating between pages of messages in the channel view. Try to keep these as long as (or shorter than) the English strings.
+    // In the old channel view, these are shown as softkey labels (these strings are short and long variations of each)
+    "更早",
+    "查看更早的消息",
+    "更新",
+    "查看更新的消息",
+
+    // Parts of the button label for viewing attachments of a message.
+    // Examples: "View 1 attachment", "View 2 attachments"
+    "查看 ",
+    " 个附件",
+    " 个附件",
+
+    // Title for confirmation screen shown when deleting a message.
+    "删除",
+
+    // Body text for confirmation screen shown when deleting a message.
+    "删除此消息？",
+
+    // Generic softkey labels.
+    "是",
+    "是",
+    "否",
+    "否",
+    "确定",
+    "确定",
+
+    // Placeholder name shown when fetching the name of an item (e.g. message author or DM) failed.
+    "（未知）",
+
+    // Placeholder shown when the recipient message of a reply does not have any text content.
+    "（无内容）",
+
+    // Placeholder message content shown when a message does not have any content that is supported by Discord J2ME.
+    "（不支持的消息）",
+
+    // Message content shown for a message that has been deleted.
+    "（消息已删除）",
+
+    // Title text for direct message search screen.
+    "搜索私信",
+
+    // Guide text for text field in direct message search and "insert mention" screens.
+    "输入用户名",
+
+    // Error message shown when the searched user was not found in the direct messages list. Discord J2ME cannot initiate DM conversations based on only a username, so this message asks the user to use another client.
+    "未找到用户。请尝试从其他客户端创建私信。",
+
+    // Title text for direct message list.
+    "私信",
+
+    // Generic "Search" softkey label. Currently used for searching for usernames in direct messages and when inserting a mention/ping.
+    "搜索",
+    "搜索",
+
+    // Title text shown for all error message screens.
+    "错误",
+
+    // Title text shown for guild (server) selector.
+    "服务器",
+
+    // Title text shown for favorite servers list.
+    "收藏夹",
+
+    // Generic "Remove" softkey command. Currently used for removing a server from the favorites list.
+    "移除",
+    "移除",
+
+    // Softkey command for adding a server to the favorites list.
+    "收藏",
+    "添加到收藏夹",
+
+    // Text shown when the gateway disconnects due to an error with the heartbeat thread. As this error message is quite technical, you may simplify/generalize it to, for example, "connection error".
+    "心跳线程错误: ",
+
+    // Error message shown when the supplied authentication token is invalid (HTTP Unauthorized).
+    "请检查您的 Token 是否正确",
+
+    // Prefix of error message shown when the HTTP response has an error code.
+    // The full message consists of this string and the code itself,
+    // e.g. HTTP error 500
+    "HTTP 错误 ",
+
+    // Error message shown when trying to load attachments and the CDN URL hasn't been set (is empty).
+    "CDN URL 尚未定义。附件不可用。",
+
+    // Parentheses. Don't change these unless your language uses a different writing system where a different type of parentheses is normally used.
+    "（",
+    "）",
+
+    // Softkey labels for showing a text attachment's contents within the app.
+    "显示",
+    "显示为文本",
+
+    // Softkey labels for showing an attachment in the device's built-in web browser.
+    "打开",
+    "在浏览器中打开",
+
+    // Generic "Loading..." text shown in loading screen and in "Insert mention" screen.
+    "加载中...",
+
+    // Loading screen text shown when an attachment is being sent.
+    "发送中...",
+
+    // Error message prefix shown when an error occurs while uploading an attachment.
+    "发送文件时出错：",
+
+    // Generic "Skip" softkey label. Currently used for skipping an action in the key mapper.
+    "跳过",
+    "跳过",
+
+    // Key press prompt shown in hotkey mapper.
+    "按下要使用的按键：",
+
+    // Names of hotkey actions shown in the key mapper.
+    // These are shown after the "Press the key to use for:" string.
+    // "going back" only applies to the chat view.
+    "发送消息",
+    "回复消息",
+    "复制消息内容",
+    "刷新消息",
+    "返回",
+
+    // Error message prefix shown when a key has been mapped to an action and the user tried to map the same key to another action. The name of the already mapped action (see above) is written after this prefix.
+    "此按键已映射到：",
+
+    // Title text shown in login screen.
+    "登录",
+
+    // Proxy server warning message shown at the top of the login screen.
+    "仅使用您信任的代理！",
+
+    // Help message for finding your token. Shown in login screen above the token field.
+    "Token 可以在浏览器的开发者工具中找到（在线查找帮助）。建议使用小号。",
+
+    // "Use Wi-Fi" option shown in login screen on BlackBerry devices.
+    "使用 Wi-Fi",
+
+    // Labels of text fields shown in the login screen.
+    // You don't need to use these acronyms if they don't make sense in your language. Translations like "Server URL" and "Image server URL" are acceptable too.
+    "API 地址",
+    "CDN 地址",
+    "网关地址",
+    "Token",
+
+    // Softkey label for confirming the login options in the login screen.
+    "登录",
+    "登录",
+
+    // Softkey command for exiting the application.
+    "退出",
+    "退出",
+
+    // "Use gateway" option shown in login screen.
+    "使用网关",
+
+    // Label for radio button field for token sending options.
+    "发送 Token 为",
+
+    // Token sending options.
+    "标头（默认）",
+    "JSON",
+    "查询参数",
+
+    // Error messages shown when trying to login and the token or API URL fields are empty.
+    "请输入您的 Token",
+    "请指定 API 地址",
+
+    // Main menu items.
+    // "Log out" brings you back to the login screen where you enter your token and other login settings.
+    "服务器",
+    "收藏夹",
+    "私信",
+    "设置",
+    "登出",
+
+    // Title text shown in "Insert mention" screen (for adding a ping when writing a message).
+    "插入提及",
+
+    // Label shown for username search results in "Insert mention" screen. Shown if more than one user matches the username query.
+    "搜索结果",
+
+    // Message shown when the username query resulted in no matches in the "Insert mention" screen.
+    "未找到结果",
+
+    // Error message shown when selecting "Insert" in the "Insert mention" screen and none of the search results (radio buttons) were picked.
+    "未选择用户",
+
+    // Prefix and suffix of status message shown when a user has been added to a group DM. The whole message is in the form "added X to the group"
+    "已将 ",
+    " 添加到群组",
+
+    // Status message shown when a user has left a group DM.
+    "已离开群组",
+
+    // Prefix and suffix of status message shown when a user has removed another user from a group DM. The whole message is in the form "removed X from the group".
+    "已将 ",
+    " 从群组中移除",
+
+    // Status messages.
+    "发起了通话",
+    "更改了群组名称",
+    "更改了群组图标",
+    "置顶了一条消息",
+    "加入了服务器",
+    "提升了服务器",
+
+    // Prefix of status message shown when a user has boosted the server and the server has reached a certain boosting level. The level is appended to the end of this string, in the form "boosted the server to level X".
+    "提升了服务器至等级 ",
+
+    // Prefix of message content when the message is a sticker.
+    // The whole message is in the form of "(sticker: Name)"
+    "（贴纸：",
+
+    // Placeholder name for a sticker when the sticker's name could not be fetched.
+    "未知",
+
+    // Message timestamp hour-minute separator, day-month separator, and AM/PM indicators.
+    // Note: order of day and month cannot be changed currently
+    ":",
+    "/",
+    "上午",
+    "下午",
+
+    // Softkey labels for inserting a mention/ping in the "send message" screen.
+    "提及",
+    "插入提及",
+
+    // Prefixes of title text for "send message" screen.
+    // The full title is in the form of "Send message (@user)" or "Send message (#channel)".
+    "发送消息（@",
+    "发送消息（#",
+
+    // Error message shown when trying to insert a mention into a message and the gateway connection is not active.
+    "需要活动的网关连接",
+
+    // Title text for "copy message content" screen.
+    "复制消息",
+
+    // Title text for "edit message content" screen.
+    "编辑消息",
+
+    // Title text for gateway disconnect prompt screen.
+    "已断开连接",
+
+    // Main body text for gateway disconnect prompt screen.
+    "网关错误。是否要重新连接？",
+
+    // Top label for disconnection message shown in gateway disconnect prompt screen. The disconnection message is either a message sent by the Discord gateway (such as "requesting client reconnect") or a Java exception.
+    "消息",
+
+    // Prefix for top body text shown in the reply form. The whole top text is in the form "Replying to @user". The contents of the recipient message are shown below this.
+    "回复给 ",
+
+    // Top label for the message entry box in the reply form.
+    "您的消息：",
+
+    // Checkbox for selecting whether to mention/ping the recipient. Shown in the reply form.
+    "提及作者",
+
+    // Title text for settings menu.
+    "设置",
+
+    // Settings screen heading for themes section.
+    "主题",
+
+    // Theme options.
+    "深色",
+    "浅色",
+    "黑色",
+
+    // Settings screen heading for miscellaneous user interface related settings.
+    "用户界面",
+
+    // Settings option for enabling the old channel view user interface (from version 1.1 and below).
+    // This is no longer used, so keep it as null.
+    null,
+
+    // Settings option for using 12-hour time format in timestamps.
+    "12小时制",
+
+    // Settings option for using the Java-based file picker for sending attachments. If disabled, the web-based file picker is used.
+    "原生文件选择器",
+
+    // Settings option for automatically reconnecting to the gateway if the connection closes.
+    "网关自动重连",
+
+    // Settings option for enabling icons in server and direct message lists.
+    "服务器/私信图标",
+
+    // Settings option for enabling nickname role colors.
+    "名称颜色",
+
+    // Settings screen heading for message author font size.
+    "消息作者字体",
+
+    // Font size options.
+    "小",
+    "中",
+    "大",
+
+    // Settings screen heading for message content font size.
+    "消息内容字体",
+
+    // Settings screen heading for message load count. This is the amount of messages that are loaded and shown at a time.
+    "消息加载数量",
+
+    // Settings screen heading for selecting attachment file format.
+    "附件格式",
+
+    // Settings screen heading for maximum attachment size in pixels.
+    "最大附件大小（像素）",
+
+    // Settings screen heading for profile picture shape.
+    // Note: The word "avatar" was used here because "profile picture shape" is too long to fit on one row on some phones, and I didn't want to shorten it as "PFP".
+    "头像形状",
+
+    // Settings options for profile picture shape. "Circle (HQ)" is circle but with anti-aliasing and smoothing enabled.
+    "方形",
+    "圆形",
+    "圆形（高质量）",
+
+    // Settings section for profile picture resolution.
+    "头像分辨率",
+
+    // Settings options for profile picture resolution. Placeholder means the PFPs won't get downloaded, but instead a placeholder (username's initials) is shown.
+    "仅占位符",
+
+    // Resolution options. Used for profile picture resolution and menu icon resolution.
+    "关闭",
+    "16 像素",
+    "32 像素",
+
+    // Settings section for menu icon size.
+    "菜单图标大小（像素）",
+
+    // Settings section for controlling the display of reply messages.
+    "显示回复为",
+
+    // Settings option to show replies as only the recipient (in the form "Author -> Recipient").
+    "仅接收者",
+
+    // Settings option to show replies with the whole recipient message.
+    "完整消息",
+
+    // Settings section for hotkey action management.
+    "快捷键",
+
+    // Settings option to use "default" hotkeys. When enabled, the J2ME game actions (ABCD) are used for hotkey actions, instead of user-defined key bindings. I named it "default" due to the lack of a better term for people who aren't familiar with J2ME development.
+    "默认快捷键",
+
+    // Softkey label for opening the key remapper in the settings menu. The long variant of the label is shown as the button text.
+    "映射按键",
+    "重新映射快捷键",
+
+    // Generic softkey labels. Currently used in settings menu.
+    "保存",
+    "保存",
+    "取消",
+    "取消",
+
+    // Error message shown when trying to open an URL (e.g. attachment)from the app, but the phone does not support opening URLs while keeping the app running in the background.
+   "必须先关闭应用程序才能打开 URL。",
+
+    // Prefix of error message shown when an error occurs when trying to open an URL.
+    "无法打开网址（",
+
+    // Suffix of error message shown when an error occurs when trying to open an URL. The actual URL is shown after this message.
+    "）\n\n 您可以尝试手动将网址复制到设备浏览器中：",
+
+    // Title text for URL list screen ('Open URL' option in channel view).
+    "选择网址",
+
+    // Softkey labels for inserting a mention in the "Insert mention" screen.
+    "插入",
+    "插入",
+
+    // Title for language selection screen.
+    "语言",
+
+    // Settings section for language options.
+    "语言",
+
+    // Softkey labels for opening the language selection menu in the settings menu. The long variant of the label is shown as the button text.
+    "语言",
+    "设置语言",
+
+    // Softkey commands for toggling fullscreen mode in the chat view.
+    "全屏",
+    "切换全屏",
+
+    // Hotkey action for toggling fullscreen mode in the chat view. Shown in the key mapper.
+    // Related to "Names of hotkey actions shown in the key mapper" above.
+    "切换全屏",
+
+    // Settings option for enabling fullscreen mode by default in the chat view.
+    "全屏模式",
+
+    // Settings section for selecting which kinds of messages notifications should be shown for.
+    "显示通知",
+
+    // Options for the kinds of messages that notifications should be shown for.
+    "所有消息",
+    "提及",
+    "私信",
+
+    // Text shown in notification alert windows. This is in the form of:
+    // User sent you a direct message: "message content"
+    // User sent a message in Server Name #channel: "message content"
+    " 向您发送了信息：\"",
+    " 发送了一条信息在 ",
+
+    // Title for notification alert windows
+    "新消息",
+
+    // Settings section for selecting which kinds of notification methods should be used for incoming messages.
+    "通知方式：",
+
+    // Options for the kinds of notification methods.
+    "弹窗",
+    "声音",
+
+    // Settings option for keeping server/channel lists in memory when pressing the Back button, so they don't have to be reloaded every time.
+    "保持频道加载",
+
+    // Text shown at the center of list screens when they are empty (no items).
+    // Note: in English, this is the same as the text shown when a channel view is empty ("Nothing to see here") but in some languages, that string was translated as something like "No messages", hence the need for a separate string for lists.
+    "这里什么都没有",
+
+    // Main body text for gateway disconnect prompt screen.
+    // This string is shown when "gateway auto reconnect" setting is enabled and 3 reconnect attempts have failed.
+    "无法连接到网关。是否重试？",
+
+    // Softkey labels for sending an attachment as a reply to the selected message.
+    "回复上传",
+    "用文件回复",
+
+    // Text shown in the reply form when a file is attached to the message that is currently being written. The name of the file is shown below this.
+    "附加文件",
+
+    // Prefix and suffix for text shown in the notification alert window when the message has attachments.
+    // The whole text is shown as part of the message content and is in the form "(1 attachment)" or "(X attachments)"
+    "（",
+    " 个附件）",
+    " 个附件）",
+
+    // Settings section names/titles.
+    // "Language" title is defined above (see "Settings section for language options")
+    // "Behaviour" section is for miscellaneous options that don't fit anywhere else (e.g. message load count, auto gateway reconnect)
+    "外观",
+    "图像",
+    "行为",
+    "通知",
+
+    // Settings option values shown below boolean (on/off, true/false) options in the settings menu.
+    // On large screens, these are instead shown on the right side of the options.
+    "关闭",
+    "开启",
+
+    // Prefix and suffix for error message shown when an invalid value was entered into a textbox in the settings menu.
+    // This can occur if the given value is not a valid number, is less than 1, or is above the maximum value for that setting.
+    // The whole message is in the form of "Please enter a valid number between 1 and X"
+    // where X is the maximum value for that setting.
+    // In English, the suffix is not needed, so it's an empty string, "".
+    // If the "X" needs to be in the middle of the sentence in your language, use the suffix to write what goes after the "X".
+    "请输入1到 ",
+    " 之间的有效数字",
+
+    // Settings option for using nnproject's Pigler Notifications API (extension API for showing notifications in the notification panel on Symbian Belle) for message notifications. The name "Pigler" should not be translated.
+    "Pigler API",
+
+    // Prefix for error messages related to Pigler Notifications API.
+    "Pigler API 错误: ",
+
+    // Error message shown when Pigler API support is not detected. This is shown every time on app startup if Pigler notifications are enabled in app settings, until either the option is disabled or Pigler support is installed on the device.
+    "不支持 Pigler 通知 API。请从 nnp.nnchan.ru/pna 安装 Pigler API 或在设置中禁用 Pigler 通知。",
+
+    // Settings option for showing the scrollbar on the right side of the screen.
+    "滚动条",
+
+    // Options for the "Show scroll bar" setting.
+    // "Off" (see "Settings option values shown below boolean") means the scroll bar is disabled, but content can still be scrolled by swiping anywhere on the screen.
+    // "Hidden" means the scroll bar is not shown until the user taps on the right edge of the screen. This is the default on most platforms.
+    // "Visible" means the scroll bar is always shown (decreasing the available horizontal screen space). This is the default on KEmulator.
+    "隐藏",
+    "可见",
+
+    // Main menu option for about/credits screen.
+    // Related to "Main menu items" above.
+    "关于",
+
+    // Title text for about screen.
+    "关于",
+
+    // Prefix for version line shown in the about screen. The app's version number is shown after this.
+    "版本 ",
+
+    // Heading shown in the about screen for developers.
+    "开发者",
+
+    // Heading shown in the about screen for language translation authors. Shown below developers.
+    "翻译者",
+
+    // Heading shown in the about screen for links to support groups (Discord server and Telegram group).
+    "支持",
+
+    // Lines shown in the about (credits) screen for what each developer (major contributor) did.
+    // The name of the person in question is shown above each line.
+    "首席开发者",
+    "附件加载、Pigler API 集成、JSON 解析器",
+    "加载动画、菜单图标、表情符号、意大利语翻译",
+
+    // Lines shown in the about screen for which language(s) each person wrote translations for.
+    // Note: These are ordered alphabetically based on the person's name, not the language's name
+    "越南语",
+    "瑞典语",
+    "印尼语",
+    "波兰语",
+    "西班牙语",
+    "葡萄牙语（巴西）",
+    "泰语",
+    "葡萄牙语",
+    "繁体中文（台湾）和繁体中文（香港）",
+    "乌克兰语",
+    "罗马尼亚语",
+    "土耳其语",
+    "俄语",
+
+    // Softkey labels shown in notification alert window for opening/viewing the channel where the notification occurred.
+    "查看",
+    "查看",
+
+    // Settings option for automatically checking for updates on every startup of the app. If an update is found, a prompt is shown, which when confirmed, opens a browser to install the new version.
+    "自动更新",
+
+    // Title for dialog box shown when an update was found.
+    "有可用更新",
+
+    // Parts of the body text shown in the update dialog box. The appropriate version numbers are inserted after "Current: " and "Latest: ".
+    "有新的 Discord J2ME 版本可用。是否更新？\n当前版本：",
+    "\n最新版本：",
+
+    // Softkey labels for confirming an update in the update dialog box.
+    "更新",
+    "更新",
+
+    // Options for the "Auto update" setting.
+    // "Releases only" means the user is only notified for stable release versions, not betas/pre-release versions. "All versions" means the user is also notified for betas.
+    "仅正式版",
+    "所有版本",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "德语",
+    "克罗地亚语",
+
+    // Units for attachment sizes.
+    " 字节",
+    " KB",
+    " MB",
+
+    // Softkey labels for opening the thread list of a channel in the channel list.
+    "线程",
+    "查看线程",
+
+    // Softkey labels for entering a token in the login screen (if a token hasn't already been set). The long variant of the label is shown as the button text.
+    "设置",
+    "设置 Token",
+
+    // Softkey labels for changing the token in the login screen (if a token has already been set). The long variant of the label is shown as the button text.
+    "更改",
+    "更改 Token",
+
+    // Option in notification settings for using Nokia UI API for notifications.
+    "Nokia UI",
+
+    // Option in notification settings for using Nokia UI API for notifications. This variant of the option is shown on J2ME Loader, because J2ME Loader shows Nokia UI notifications as Android notifications in the notification panel.
+    "Android 通知",
+
+    // Text shown in the red bar used for marking the last unread messages in the chat view.
+    "新",
+
+    // Prompt shown at the top of the image preview screen when selecting an attachment.
+    "上传这张图片？",
+
+    // Settings option for enabling/disabling image previews when selecting a file in the native attachment file picker.
+    "文件选择器预览",
+
+    // Header shown at the top of every forwarded message.
+    "转发消息：",
+
+    // Help texts shown in the login screen for how to open the token input text box.
+    "要设置您的 Token，请按 BlackBerry 键。",
+    "要更改您的 Token，请按 BlackBerry 键。",
+
+    // Error message shown when image previews are enabled in the native file picker, but there is not enough free RAM on the device to show a preview for the selected image.
+    "内存不足，无法显示图片预览",
+
+    // Settings option for enabling or disabling emoji display in chats.
+    "显示表情符号",
+
+    // Option for "Show emoji" setting where only standard emoji are shown. Custom emoji from servers are not shown, and are displayed as text instead.
+    "仅默认",
+
+    // Option for "Show emoji" setting where all emoji are shown.
+    "全部",
+
+    // Softkey labels for importing the token (from a file) in the login screen. The long variant of the label is shown as the button text.
+    "导入",
+    "导入 Token",
+
+    // Title text for the token import file picker screen.
+    "选择 Token 文件",
+
+    // Text shown in loading screen when emoji data is being downloaded or updated.
+    "正在下载表情符号...",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "法语",
+    "保加利亚语",
+
+    // Settings option for toggling markdown text formatting support in chat (bold, italic, etc).
+    "文本格式化",
+
+    // Softkey labels for inserting an emoji in the "send message" screen.
+    "表情符号",
+    "插入表情符号",
+
+    // Title for emoji picker screen.
+    "选择表情符号",
+
+    // Prompt shown when opening the emoji picker and the emoji images have not been downloaded onto the device.
+    "下载表情符号数据？",
+
+    // Indicator shown at the end of messages which have been edited. If possible, this should be translated the same way that it's translated in the official Discord clients.
+    "（已编辑）",
+
+    // Softkey command for inserting a '_' character in the token input screen. Some devices don't have a built-in way to insert a '_'.
+    "下划线",
+    "插入下划线",
+
+    // Related to "Lines shown in the about (credits) screen for what each developer" above.
+    "通知声音",
+
+    // Settings option for toggling vibration alert for notifications.
+    "震动",
+
+    // Softkey command (short label and long label) for muting a channel/server/etc. or unmuting if it is already muted.
+    // For technical reasons it's easier to have one label for "mute/unmute" rather than separate "Mute" and "Unmute" labels that change dynamically.
+    // The short "Mute" label is also shown for unmuting. The long label can also be just "Mute" if "mute/unmute" doesn't make sense in your language.
+    "静音",
+    "静音/取消静音",
+
+    // Hotkey actions for instantly moving to the top or bottom of the chat view. Related to "Names of hotkey actions shown in the key mapper" above.
+    "滚动到顶部",
+    "滚动到底部",
+
+    // Settings option for toggling whether to send the typing indicator, i.e. show other people that you are typing when you select "Send message" or "Upload file".
+    "发送输入指示器",
+
+    // Softkey command labels for applying an attached audio file as the in-app notification sound. The long variant of the label is shown on the button in the attachment view screen.
+    "用作",
+    "用作通知声音",
+
+    // Prompt shown when applying a new notification sound. The sound is played at the same time as the prompt appears.
+    "将此设为通知声音？",
+
+    // Softkey command for playing the notification sound again in the aforementioned prompt.
+    "播放",
+    "再次播放",
+
+    // Confirmation message shown when a new notification sound has been set.
+    "通知声音已应用！",
+
+    // Title for data manager screen. Data manager screen is used for viewing memory usage of application data and deleting parts of the app data if needed.
+    "管理数据",
+
+    // Types of data shown in the data manager:
+
+    // Downloaded image data of default emojis (not custom server emojis)
+    "表情符号图片",
+    // Timestamps of last read messages for each channel, used for handling unread message indicators.
+    "最后阅读消息",
+    // Custom sound file applied as the notification sound via a message attachment.
+    "通知声音",
+    // Translated string data for a downloaded language translation.
+    "语言数据",
+
+    // Title shown in the prompt when deleting a type of app data.
+    "删除",
+
+    // Prompt shown when deleting a type of app data. The type (one of the four listed above) is shown below this text.
+    "删除此项？\n",
+
+    // Title for dialog box shown when opening an URL on a device that does not support running an app at the same time as the browser.
+    "打开浏览器",
+
+    // Text shown in that dialog box.
+    "是否要打开网页浏览器？应用程序将被关闭。",
+
+    // Settings option for enabling custom menu scrolling handler. When this is enabled, holding up or down on the d-pad will scroll through menus by one menu item every 50 milliseconds, which is faster than the default scrolling speed on most devices.
+    "快速滚动",
+
+    // Error message shown when the notification sound failed to be played, usually because the device does not support the sound's file format.
+    "播放声音失败。可能不支持该文件类型。",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "日语",
+    "加泰罗尼亚语",
+    "阿拉伯语",
+
+    // Theme option shown in settings for the theme that uses colors from the system's UI.
+    "系统",
+
+    // Theme option shown in settings for the user-defined theme.
+    "自定义",
+
+    // Title and description of the dialog that prompts for saving and applying the custom theme that is currently being previewed.
+    "主题",
+    "是否应用此主题？",
+
+    // Item shown in the data manager for the saved custom theme data.
+    "主题",
+
+    // Error message shown when opening the emoji picker but there is not enough free RAM on the device to load all the emojis.
+    "内存不足，无法显示表情符号选择器",
+
+    // Error message shown when a HTTP request results in the error 502 (bad gateway), meaning the proxy is down.
+    "HTTP 502: 代理服务器当前不可用。请稍后再试或联系开发者。",
+
+    // Error message shown when a HTTP request results in the error 302 (moved temporarily)
+    "HTTP 302: 请求被意外重定向。请检查您的连接。",
+
+    // Title and description for the dialog warning message shown when uploading a file for the first time. The user can select 'OK' to dismiss it once, or 'Hide' to never show it again.
+    "警告",
+    "据知 Discord 会将第三方客户端的上传标记为垃圾邮件。这通常发生在没有双重验证或验证手机号码的新账户上。继续操作风险自负。\n如果不想再看到此提示，请选择'隐藏'。",
+
+    // Softkey labels for dismissing the upload warning (above) and never showing it again.
+    "隐藏",
+    "隐藏",
+
+    // Dialog warning shown when sending direct message to someone in your DMs list who you've never messaged before.
+    "据知 Discord 会将来自第三方客户端的新私信标记为垃圾邮件。建议从官方客户端发送第一条消息。是否继续？",
+
+    // Related to "Types of data shown in the data manager" above.
+    "收藏服务器",
+    "已保存服务器",
+
+    // Title and description of dialog screen shown when the user has saved their server list.
+    "已保存",
+    "服务器列表已保存到缓存！",
+
+    // Related to "Types of data shown in the data manager" above.
+    "表情符号名称",
+
+    // Softkey command in login screen for opening the Discord J2ME setup guide web page.
+    // The long version of the label is used as the button label.
+    "指南",
+    "设置指南",
+
+    // Option in login screen to use direct connection (proxyless) mode.
+    "直连",
+
+    // Information text shown in login screen related to proxyless mode:
+    // This version of the text is shown if the device is known to support TLS 1.2.
+    "可无需代理直接连接，降低账户受限风险。",
+
+    // This version of the text is shown otherwise. The text is split into three parts which are shown together. The middle one is a link to the nnproject TLS 1.2 page if using a Symbian device.
+    "直连（",
+    "需要 TLS 1.2",
+    "）降低了账户受限的风险。",
+
+    // Softkey command for opening the nnproject TLS 1.2 page.
+    "获取 TLS",
+    "获取 TLS",
+
+    // Text shown in bottom message bar.
+    "消息",
+
+    // Text shown in bottom message bar. This version of the text includes the channel name after the text, like "Message #general". Shown if the screen is wide enough.
+    "消息 ",
+
+    // Error messages shown if the device does not support PATCH/DELETE HTTP methods, which are required to edit/delete messages respectively in proxyless mode.
+    // You should use the same term for "Direct connection" that you used above.
+    "您的设备不支持在直连模式下编辑消息。\n是否要通过代理编辑此消息？\n选择'隐藏'始终使用代理。",
+
+    "您的设备不支持在直连模式下删除消息。\n是否要通过代理删除此消息？\n选择'隐藏'始终使用代理。",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "简体中文",
+
+    // Item in settings menu for opening the time format configuration screen.
+    "时间格式",
+
+    // Title for time preview shown in the time format screen.
+    "预览",
+
+    // Titles for sliders in the time format screen for changing the time offset.
+    "时间偏移（小时）",
+    "时间偏移（分钟）",
+
+    // Option in the time format screen for changing the time offset between negative and positive numbers.
+    "负偏移",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "匈牙利语",
+
+    // Softkey commands for moving an item up or down by one position in a sortable list. Currently used for the favorite servers list.
+    "上移",
+    "上移",
+    "下移",
+    "下移",
+
+    // Warning dialog shown when "Direct connection" and "Use gateway" options are both enabled.
+    "已启用直接连接，但连接到网关需要使用代理，这可能不安全。您想连接到网关吗？\n选择“隐藏”以始终连接。",
+
+    // Settings option for toggling the bar on the bottom of the screen for sending a message. Only available on touchscreen.
+    "显示消息栏",
+
+    // "Automatic" option value for settings. Currently used for the "Show message bar" setting. When that is set to "Auto", the message bar will be shown if the viewable screen area is taller than a square.
+    "自动",
+
+    // Title for login screen (new version).
+    "欢迎",
+
+    // Softkey commands for opening a link in the login screen.
+    "打开",
+    "打开",
+
+    // Text for the link shown in the login screen for reading more about Direct connection.
+    "了解更多",
+
+    // Info text shown in the login screen after the Direct connection option and before the button for changing proxy URLs.
+    "该应用程序也可通过代理服务器使用。",
+
+    // Safety recommendation in the login screen, shown after the above string.
+    "建议您自行托管代理服务器。",
+
+    // Hint text shown after the above string on BlackBerry devices.
+    "要编辑您的连接网址，请按 BlackBerry 键。",
+
+    // Text label shown inside the button for changing the proxy connection URLs (on non-BlackBerry devices).
+    "连接 URL",
+
+    // Explanation strings for the "Use gateway" option.
+    // This version of the string is shown on versions that support Direct connection.
+    "网关 (即时通讯) 需要使用代理服务器。",
+    // This string is shown on versions that don't support Direct connection.
+    "该网关用于实时聊天及其他特定功能。",
+
+    // Explanation string for the token settings.
+    "该应用程序需要 Token 才能登录。",
+
+    // Explanation strings for other token entry methods.
+    // This version of the string is shown on devices that support FileConnection (file system access in Java).
+    "为避免输入错误，您可以从文本文件导入 Token 或将其插入 JAR 文件。",
+    // This string is shown on devices that don't support FileConnection.
+    "为避免输入错误，可将 Token 插入 JAR 文件中。",
+
+    // Error message shown when a HTTPS connection fails due to the app not being signed with a code-signing certificate.
+    // More user-friendly form of "java.lang.SecurityException"
+    "您的设备需要应用程序经过签名才能使用直接连接功能。请下载适用于您设备的签名版JAD文件，或禁用直接连接功能。\n更多详情请访问：gtrxac.fi/j2me/proxyless",
+
+    // Related to "Lines shown in the about (credits) screen for what each developer" above.
+    "直连支持",
+
+    // Settings option for toggling the custom background image on or off.
+    "壁纸",
+
+    // Settings option for selecting a new image file to be used as a custom background image.
+    "导入壁纸",
+
+    // Title for the file picker screen for selecting a background image.
+    "选择壁纸",
+
+    // Section in the settings menu for customizing notification and incoming/outgoing message sounds.
+    "声音",
+
+    // Title for the file picker screen for selecting a sound for notifications or incoming/outgoing messages.
+    "选择声音",
+
+    // Option in the sound settings to use a generic system notification tone (usually a beep).
+    "Beep",
+
+    // Option in the sound settings to import a sound file from the device's storage.
+    "导入声音",
+
+    // Names of the different types of customizable sounds in the sound settings screen.
+    // Incoming and outgoing message sounds are played when a message is received or sent in the currently opened channel.
+    "通知",
+    "新消息",
+    "外发消息",
+
+    // Settings options for the different methods for resizing a custom background image to fit the screen.
+    "裁剪",
+    "拉伸",
+
+    // Setting for enabling or disabling the wipe transition animation when changing between screens.
+    "屏幕切换动画",
+
+    // Related to "Types of data shown in the data manager" above.
+    "呼入铃声",
+    "呼出铃声",
+    "壁纸",
+
+    // Explanation of QR code login shown in the login screen.
+    "登录需要身份验证 Token，您可以使用 Discord 手机应用扫描二维码来获取。",
+
+    // Softkey command labels for opening the QR login screen.
+    "获取二维码",
+    "获取二维码",
+
+    // Status messages shown in the QR login screen.
+    "正在连接...",
+    "正在获取二维码...",
+    "已断开连接，请重试",
+
+    // First sentence of explanation of manual token entry in the login screen, shown below the QR login info.
+    "您也可以手动输入您的 Token。",
+
+    // Suffixes for the new style of "View (number) attachments" buttons, singular and plural.
+    // Now there are separate types of buttons for "View X files" and "View X images"
+    // "Images" are for any file types that are previewable as images (which also includes videos), "files" are for any other type of file.
+    " 个文件",
+    " 个文件",
+    " 张图片",
+    " 张图片",
+
+    // Description for the read state (unread indicator dots) synchronization feature. Shown in the login screen above the checkbox for "Sync unreads".
+    // This feature more specifically uses more network bandwidth, RAM, and storage, and also requires the gateway,
+    // but this string is kept relatively short so the login screen is not too cluttered.
+    "与官方客户端同步未读标记会占用更多内存。",
+
+    // Label for the check box for toggling read state synchronization feature.
+    "同步未读状态",
+
+    // Softkey command labels for checking the status of HTTP-based QR login after the QR code has been scanned. If the check is successful, the token is received and the login is complete.
+    // This can also be translated as e.g. "Continue".
+    "检查",
+    "检查",
+
+    // Error message shown when the proxy server has not sent an authentication ID which is required for HTTP-based QR login.
+    "未收到登录会话",
+
+    // Help text shown in the QR login screen when using HTTP-based QR login.
+    // "Check" should be pressed after the QR code is scanned on the Discord app on Android/iOS and the login is authorized by selecting the "Log in" button in the safety warning.
+    "在您的智能手机上授权登录后，请选择“确认”。",
+
+    // Error messages shown when opening a notification and the server, server channel, or DM conversation was not found in the loaded server/DM lists.
+    "Server not found. ",
+    "Channel not found",
+    "Conversation not found",
+
+    // Help text shown after the "Server not found" error.
+    "If you recently joined this server, you may have to wait a few days for the server list to update.",
+
+    // Error messages shown during password login.
+    "Incorrect email or password",
+    "Multi-factor authentication is not enabled for this account.",
+    "Multi-factor authentication via authenticator app is not enabled for this account.",
+
+    // Header of error messages shown during password login.
+    "Login failed: ",
+
+    // Header of the response sent by the server (for debugging purposes) during password login.
+    "\nResponse:\n",
+
+    // Softkey labels used for starting password login. Shown in the login screen. The long variant of the softkey label is shown as the button text.
+    "Password",
+    "Password login",
+
+    // Warning shown when starting password login but Direct connection isn't enabled.
+    "Logging in with password requires Direct connection. Do you want to enable Direct connection and continue?",
+
+    // Error message shown when a server error response contains a CAPTCHA request. Tips for circumventing the CAPTCHA are shown below.
+    "A CAPTCHA was received. ",
+    "Please try the following:",
+    
+    // Tips for circumventing the CAPTCHA:
+
+    // (shown when the current build of the app doesn't support proxyless)
+    "Install a build of the app that supports Direct connection",
+    // (shown when proxyless disabled and not in password login screen)
+    "Enable Direct connection",
+    // (shown when in password login screen)
+    "Enable multi-factor authentication (authenticator app) on your account",
+    "Log in to an official client on another device with the same IP address (same Wi-Fi or SIM)",
+    // (shown when not proxyless)
+    "Try a different proxy server or host your own proxy",
+    // (shown always)
+    "Try a different account",
+
+    // Header text shown in the password login screen.
+    "To use password login, you must have multi-factor authentication (authenticator app) enabled on your account.",
+
+    // Text field labels shown in the password login screen.
+    "Email",
+    "Password",
+    "Authentication code",
+
+    // Status messages showing the progress of password login.
+    "Sending login request...",
+    "Sending authentication code...",
+
+    // Request for the 2-factor authentication (TOTP) code.
+    "Enter the 6-digit code from your authenticator app (e.g. Google Authenticator).",
+
+    // Softkey labels for the button used to continue password login after the authentication code was entered.
+    "Continue",
+    "Continue",
+
+    // Error messages shown when trying to start password login without an email or password specified.
+    "Please enter a valid email address",
+    "Please enter your password",
+
+    // Another tip for circumventing the login CAPTCHA.
+    // (shown when in password login screen)
+    "If this device supports Wi-Fi, connect to the same Wi-Fi that you normally use for Discord",
+
+    // Error message shown when the authentication code is in an invalid format.
+    "Please enter a valid authentication code in the format '123456'",
+
+    // Progress message shown in the password login screen during the beginning, right after entering the password and email.
+    "Initiating login...",
+
+    // Text shown before the latest update's changelog in the update dialog screen.
+    "\n\nWhat's new?\n",
+
+    // Suffixes of attachment indicators in notification previews.
+    // For example a notification could say
+    //   User sent you a direct message: "Check this out (2 images) (1 file)"
+    // "Images" are for any file types that are previewable as images (which also includes videos), "files" are for any other type of file.
+    " file)",
+    " files)",
+    " image)",
+    " images)",
+
+    // Title for connection selection screen.
+    "Connection",
+
+    // Option in the connection selection screen to use the device's standard connectivity to go online.
+    "Cellular/Wi-Fi",
+
+    // Option in the connection selection screen to search for devices to use Bluetooth tethering via BlueWAP Server app.
+    "Bluetooth search",
+
+    // Option in the connection selection screen to show an explanation of BT tethering.
+    "Help",
+
+    // Line shown in the connection screen when a device search ended with no results.
+    "No devices found",
+
+    // Text shown in a separate dialog screen when a device search ended with no results.
+    "No devices found. Make sure the server device is set to visible, then try again.",
+
+    // Line shown in the connection screen when a device search ended with at least one result.
+    "Search completed",
+
+    // Title for connection help dialog.
+    "Help",
+
+    // Lines shown in the connection help screen (separate dialog). These are formatted using bullet points.
+    "Select 'Bluetooth search' to tether to a device running BlueWAP Server.",
+    "Use Direct connection if your server device supports TLS 1.2 (e.g. Android 5+).",
+    "Get BlueWAP Server: github.com/gtrxAC/BlueWAP",
+
+    // Lines shown in the connection screen when searching for devices or when connecting to a found device.
+    "Searching...",
+    "Connecting..."
+]

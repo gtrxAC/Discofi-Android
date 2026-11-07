@@ -1,0 +1,766 @@
+[
+    "Файл без име",
+    "Избери прикачен файл",
+    "Назад",
+    "Назад",
+    "Затвори",
+    "Затвори",
+    "Прикачени файлове",
+    "Обнови",
+    "Обнови",
+    "Маркирай като прочетено",
+    "Маркирай като прочетено",
+    "Маркирай всички като прочетени",
+    "Маркирай всички като прочетени",
+    "Избери",
+    "Избери",
+    "Изпрати",
+    "Изпрати съобщение",
+    "Отговори",
+    "Отговори",
+    "Качи",
+    "Качи файл",
+    "Копирай",
+    "Копирай съдържание",
+    "Редактирай",
+    "Редактирай",
+    "Изтрий",
+    "Изтрий",
+    "Отвори URL",
+    "Отвори URL",
+    " (Старо)",
+    "Тук няма нищо",
+    "Обнови за да видиш нови съобщения",
+    "Свързване отново",
+    "Изпращане на съобщение",
+    "Редактиране на съобщение",
+    "Изтриване на съобщение",
+    "Зареждане на съобщения",
+    " пише",
+    " пишат",
+    " човека пишат",
+    ", ",
+    "Това прокси не поддържа качване на файлове",
+    "Това прокси не поддържа изтриване на съобщения",
+    "Това прокси не поддържа редактиране на съобщения",
+    "FileConnection не се поддържа",
+    "По-старо",
+    "Виж по-стари съобщения",
+    "По-ново",
+    "Виж по-нови съобщения",
+    "Виж ",
+    " прикачен файл",
+    " прикачени файлове",
+    "Изтий",
+    "Сигурни ли сте, че искате да изтриете това съобщение?",
+    "Да",
+    "Да",
+    "Не",
+    "Не",
+    "Добре",
+    "Добре",
+    "(неизвестно)",
+    "(няма съдърание)",
+    "(съобщението не се поддържа)",
+    "(съобщението е изтрито)",
+    "Потърси в личните съобщения",
+    "Напиши потребителското име",
+    "Потребителят не бе намерен. Пробвай се да започнеш личните съобщения от друг клиент.",
+    "Лично съобщение",
+    "Потърси",
+    "Потърси",
+    "Грешка",
+    "Сървъри",
+    "Любими",
+    "Премахни",
+    "Премахни",
+    "Любим",
+    "Добави в любимитте",
+    "Heartbeat thread грешка: ",
+    "Провери си token-а",
+    "HTTP грешка ",
+    "Няма зададен CDN URL. Прикачените файлове не са налични.",
+    " (",
+    ")",
+    "Покажи",
+    "Покажи като текст",
+    "Отвори",
+    "Отвори в браузър",
+    "Зареждане...",
+    "Изпращане...",
+    "Грешка по врема на изпращане на файл: ",
+    "Пропусни",
+    "Пропусни",
+    "Натиснете копчето, което искате да изолзвате за:",
+    "Изпращане на съобщение",
+    "Отговаряне на съобщние",
+    "Копиране на съдържанието в съобщението",
+    "обновяване на съобщения",
+    "връщане назад",
+    "Това копче вече е зададено за ",
+    "Вход",
+    "Използвайте само доверени проксита!",
+    "Token-ът може да бъде намерен от инструментите за разработка на уеб браузера ви (вижте онлайн как става това). Препоръчва се да се използва алтернативен акаунт.",
+    "Използвай Wi-Fi",
+    "API URL",
+    "CDN URL",
+    "URL адрес на Шлюз",
+    "Token",
+    "Вход",
+    "Вход",
+    "Излез",
+    "Излез",
+    "Използвай шлюз",
+    "Изпрати token-а като",
+    "Header (под подразбиране)",
+    "JSON",
+    "Query parameter",
+    "Моля въведете вашия token",
+    "Моля въведете URL адреса на API",
+    "Сървъри",
+    "Любими",
+    "Лични съобщения",
+    "Настройки",
+    "Изход",
+    "Вмъкнете споменаване",
+    "Резултати от търсенето",
+    "Няма намерени резултати",
+    "Няма избран потребител",
+    "добави ",
+    " към групата",
+    "излезна от групата",
+    "премахна ",
+    " от групата",
+    "започна обаждане",
+    "преименува групата",
+    "промени снимката на групата",
+    "закачи съобщение",
+    "се присъедини в сървъра",
+    "буустна сървъра",
+    "буустна сервъра до ниво ",
+    "(sticker: ",
+    "неизвестно",
+    ":",
+    "/",
+    "A",
+    "P",
+    "Спомени",
+    "Вмъкни споменаване",
+    "Изпрати съобщение (@",
+    "Изпрати съобщение (#",
+    "Изисква активна връзка със шлюза",
+    "Копирай съобщение",
+    "Редактирай съобщение",
+    "Връската е прекъсната",
+    "Грешка със шлюза. Искаш ли да се свържеш отново?",
+    "Съобщение",
+    "Отговор на ",
+    "Вашето съобщение:",
+    "Споменете автора",
+    "Настройки",
+    "Тема",
+    "Тъмна",
+    "Светла",
+    "Черна",
+    "Потребителски интерфейс",
+    null,
+    "12-часово време",
+    "Вграден инструмент за избиране на файлове",
+    "Автоматично повторно сързване към шлюз",
+    "Сървър/ЛС снимки",
+    "Цвят на имената",
+    "Шрифт на автора на съобщението",
+    "Малък",
+    "Среден",
+    "Голям",
+    "Шрифт на съдържанието на съобщението",
+    "Колко съобщения да се заредят",
+    "Формат на прикачените файлове",
+    "Максимален размер на прикачените файлове (px)",
+    "Форма на профилните снимки",
+    "Квадрат",
+    "Кръг",
+    "Кръг (HQ)",
+    "Резолюция на профилите снимки",
+    "Поставено е временно",
+    "Изкл.",
+    "16 px",
+    "32 px",
+    "Размер на иконите в менюто (px)",
+    "Покажи отговорите като",
+    "Само получател",
+    "Цяло съобщение",
+    "Бързи клавиши",
+    "Бързи клавиши по подразбиране",
+    "Задаване на клавиши",
+    "Remap hotkeys",
+    "Запази",
+    "Запази",
+    "Отмяна",
+    "Отмяна",
+    "Това приложение трябва да бъде затворено преди URL адреса може да бъде отворен.",
+    "URL адресът не можа да се отвори (",
+    ")\n\nМоже да се опитате ръчно да поставите URL адреса във вашия браузър: ",
+    "Избери URL адрес",
+    "Вмъкни",
+    "Вмъкни",
+    "Език",
+    "Език",
+    "Език",
+    "Изберете език",
+    "Цял екран",
+    "Минете на цял екран",
+    "минаване на цял екран",
+    "Режим на цял екран",
+    "Покази известията за",
+    "Всички съобщения",
+    "Споменавания",
+    "Лични съобщения",
+    " ви изпрати лично съобщение: \"",
+    " изпрати съобщение в ",
+    "Ново съобщение",
+    "Извести ме с/ъс:",
+    "Прозорец за предупреждение",
+    "Звук",
+    "Дръж каналите заредени",
+    "Тук няма нищо",
+    "Не може да се свърже със шлюза. Искате ли да опитате отново?",
+    "Качи отговор",
+    "Отговори с файл",
+    "Прикачен файл",
+    "(",
+    " прикачен файл)",
+    " прикачени файлове)",
+    "Външен вид",
+    "Изображения",
+    "Поведение",
+    "Известия",
+    "Изкл.",
+    "Вкл.",
+    "Моля въведете валиден номер между 1 и ",
+    "",
+    "Pigler API",
+    "Грешка с Pigler API: ",
+    "Pigler API за известия не се поддържа. Моля инсталирайте Pigler API от nnp.nnchan.ru/pna или изклюяете Pigler известия от настройките.",
+    "Лента за превъртане",
+    "Скрито",
+    "Показано",
+    "За",
+    "За",
+    "Версия ",
+    "Раработчици",
+    "Преводачи",
+    "Поддръжка",
+    "Главен разработчик",
+    "Зареждане на прикачени файлове, Интеграция с Pigler API, JSON анализтор",
+    "Анимация за зареждане, Икони на менюто, Емотикони, Италиански превод",
+    "Виетнамски",
+    "Шведски",
+    "Индонезийски",
+    "Полски",
+    "Испански",
+    "Португалски (Бразилия)",
+    "Тайландски",
+    "Португалски",
+    "Китайски (Традиционен) и Кантонски",
+    "Украински",
+    "Ромънски",
+    "Турски",
+    "Руски",
+    "Виж",
+    "Виж",
+    "Автоматична актуализация",
+    "Има налична актуализация.",
+    "Нова версия на Discord J2ME е налична. Изкаш ли да актуализираш?\nСегашна: ",
+    "\nНай-нова: ",
+    "Актуализирай",
+    "Актуализирай",
+    "Releases only",
+    "Всички версии",
+    "Немски",
+    "Хърватски",
+    " байта",
+    " kB",
+    " MB",
+    "Теми",
+    "Виж темите",
+    "Задай",
+    "Задай token",
+    "Промени",
+    "Смени token",
+    "Nokia UI",
+    "Android известия",
+    "Ново",
+    "Сигурен ли си, че искаш да изпратиш това изображение?",
+    "Предварителен преглед на файлове",
+    "Препратено съобщение:",
+    "За да зададете вашия token, натиснете копчето BlackBerry.",
+    "За да смените вашия token, натиснете копчето BlackBerry.",
+    "Няма достатъчно памет за да покаже изображението.",
+    "Покажи емотикони",
+    "Само под разбиране",
+    "Всички",
+
+    // Softkey labels for importing the token (from a file) in the login screen. The long variant of the label is shown as the button text.
+    "Import",
+    "Import token",
+
+    // Title text for the token import file picker screen.
+    "Select token file",
+
+    // Text shown in loading screen when emoji data is being downloaded or updated.
+    "Downloading emoji...",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "French",
+    "Bulgarian",
+
+    // Settings option for toggling markdown text formatting support in chat (bold, italic, etc).
+    "Text formatting",
+
+    // Softkey labels for inserting an emoji in the "send message" screen.
+    "Emoji",
+    "Insert emoji",
+
+    // Title for emoji picker screen.
+    "Select emoji",
+
+    // Prompt shown when opening the emoji picker and the emoji images have not been downloaded onto the device.
+    "Download emoji data?",
+
+    // Indicator shown at the end of messages which have been edited. If possible, this should be translated the same way that it's translated in the official Discord clients.
+    "(edited)",
+
+    // Softkey command for inserting a '_' character in the token input screen. Some devices don't have a built-in way to insert a '_'.
+    "Underscore",
+    "Insert underscore",
+
+    // Related to "Lines shown in the about (credits) screen for what each developer" above.
+    "Notification sound",
+
+    // Settings option for toggling vibration alert for notifications.
+    "Vibration",
+
+    // Softkey command (short label and long label) for muting a channel/server/etc. or unmuting if it is already muted.
+    // For technical reasons it's easier to have one label for "mute/unmute" rather than separate "Mute" and "Unmute" labels that change dynamically.
+    // The short "Mute" label is also shown for unmuting. The long label can also be just "Mute" if "mute/unmute" doesn't make sense in your language.
+    "Mute",
+    "Mute/Unmute",
+
+    // Hotkey actions for instantly moving to the top or bottom of the chat view. Related to "Names of hotkey actions shown in the key mapper" above.
+    "scrolling to top",
+    "scrolling to bottom",
+
+    // Settings option for toggling whether to send the typing indicator, i.e. show other people that you are typing when you select "Send message" or "Upload file".
+    "Send typing indicator",
+
+    // Softkey command labels for applying an attached audio file as the in-app notification sound. The long variant of the label is shown on the button in the attachment view screen.
+    "Use as",
+    "Use as notif. sound",
+
+    // Prompt shown when applying a new notification sound. The sound is played at the same time as the prompt appears.
+    "Apply this as the notification sound?",
+
+    // Softkey command for playing the notification sound again in the aforementioned prompt.
+    "Play",
+    "Play again",
+
+    // Confirmation message shown when a new notification sound has been set.
+    "Notification sound applied!",
+
+    // Title for data manager screen. Data manager screen is used for viewing memory usage of application data and deleting parts of the app data if needed.
+    "Manage data",
+
+    // Types of data shown in the data manager:
+
+    // Downloaded image data of default emojis (not custom server emojis)
+    "Emoji images",
+    // Timestamps of last read messages for each channel, used for handling unread message indicators.
+    "Last read messages",
+    // Custom sound file applied as the notification sound via a message attachment.
+    "Notification sound",
+    // Translated string data for a downloaded language translation.
+    "Language data",
+
+    // Title shown in the prompt when deleting a type of app data.
+    "Delete",
+
+    // Prompt shown when deleting a type of app data. The type (one of the four listed above) is shown below this text.
+    "Delete this item?\n",
+
+    // Title for dialog box shown when opening an URL on a device that does not support running an app at the same time as the browser.
+    "Open browser",
+
+    // Text shown in that dialog box.
+    "Do you want to open the web browser? The app will be closed.",
+
+    // Settings option for enabling custom menu scrolling handler. When this is enabled, holding up or down on the d-pad will scroll through menus by one menu item every 50 milliseconds, which is faster than the default scrolling speed on most devices.
+    "Fast scrolling",
+
+    // Error message shown when the notification sound failed to be played, usually because the device does not support the sound's file format.
+    "Failed to play sound. The file type may be unsupported.",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "Japanese",
+    "Каталонски",
+    "Arabic",
+
+    // Theme option shown in settings for the theme that uses colors from the system's UI.
+    "System",
+
+    // Theme option shown in settings for the user-defined theme.
+    "Custom",
+
+    // Title and description of the dialog that prompts for saving and applying the custom theme that is currently being previewed.
+    "Theme",
+    "Do you want to apply this theme?",
+
+    // Item shown in the data manager for the saved custom theme data.
+    "Theme",
+
+    // Error message shown when opening the emoji picker but there is not enough free RAM on the device to load all the emojis.
+    "Not enough memory to show emoji picker",
+
+    // Error message shown when a HTTP request results in the error 502 (bad gateway), meaning the proxy is down.
+    "HTTP 502: The proxy server is currently unavailable. Please try again later or contact the developers.",
+
+    // Error message shown when a HTTP request results in the error 302 (moved temporarily)
+    "HTTP 302: The request was unexpectedly redirected. Please check your connection.",
+
+    // Title and description for the dialog warning message shown when uploading a file for the first time. The user can select 'OK' to dismiss it once, or 'Hide' to never show it again.
+    "Warning",
+    "Discord is known to flag uploads from 3rd-party clients as spam. This often happens on new accounts without 2FA or a verified phone number. Continue at your own risk.\nSelect 'Hide' if you don't want to see this again.",
+
+    // Softkey labels for dismissing the upload warning (above) and never showing it again.
+    "Hide",
+    "Hide",
+
+    // Dialog warning shown when sending direct message to someone in your DMs list who you've never messaged before.
+    "Discord is known to flag new direct messages from 3rd-party clients as spam. It is recommended to send your first message from an official client. Do you want to continue?",
+
+    // Related to "Types of data shown in the data manager" above.
+    "Favourite servers",
+    "Saved servers",
+
+    // Title and description of dialog screen shown when the user has saved their server list.
+    "Saved",
+    "Server list saved to cache!",
+
+    // Related to "Types of data shown in the data manager" above.
+    "Emoji names",
+
+    // Softkey command in login screen for opening the Discord J2ME setup guide web page.
+    // The long version of the label is used as the button label.
+    "Guide",
+    "Setup guide",
+
+    // Option in login screen to use direct connection (proxyless) mode.
+    "Direct connection",
+
+    // Information text shown in login screen related to proxyless mode:
+    // This version of the text is shown if the device is known to support TLS 1.2.
+    "Direct connection reduces the risk of an account restriction.",
+
+    // This version of the text is shown otherwise. The text is split into three parts which are shown together. The middle one is a link to the nnproject TLS 1.2 page if using a Symbian device.
+    "Direct connection (",
+    "requires TLS 1.2",
+    ") reduces the risk of an account restriction.",
+
+    // Softkey command for opening the nnproject TLS 1.2 page.
+    "Get TLS",
+    "Get TLS",
+
+    // Text shown in bottom message bar.
+    "Message",
+
+    // Text shown in bottom message bar. This version of the text includes the channel name after the text, like "Message #general". Shown if the screen is wide enough.
+    "Message ",
+
+    // Error messages shown if the device does not support PATCH/DELETE HTTP methods, which are required to edit/delete messages respectively in proxyless mode.
+    // You should use the same term for "Direct connection" that you used above.
+    "Your device does not support editing messages in Direct connection mode.\nDo you want to edit this message via the proxy?\nSelect 'Hide' to always use the proxy.",
+
+    "Your device does not support deleting messages in Direct connection mode.\nDo you want to delete this message via the proxy?\nSelect 'Hide' to always use the proxy.",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "Chinese (Simplified)",
+
+    // Item in settings menu for opening the time format configuration screen.
+    "Time format",
+
+    // Title for time preview shown in the time format screen.
+    "Preview",
+
+    // Titles for sliders in the time format screen for changing the time offset.
+    "Time offset (hours)",
+    "Time offset (minutes)",
+
+    // Option in the time format screen for changing the time offset between negative and positive numbers.
+    "Negative offset",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "Hungarian",
+
+    // Softkey commands for moving an item up or down by one position in a sortable list. Currently used for the favorite servers list.
+    "Up",
+    "Move up",
+    "Down",
+    "Move down",
+
+    // Warning dialog shown when "Direct connection" and "Use gateway" options are both enabled.
+    "Direct connection is enabled, but connecting to the gateway requires using the proxy, which may be unsafe. Do you want to connect to the gateway?\nSelect 'Hide' to always connect.",
+
+    // Settings option for toggling the bar on the bottom of the screen for sending a message. Only available on touchscreen.
+    "Show message bar",
+
+    // "Automatic" option value for settings. Currently used for the "Show message bar" setting. When that is set to "Auto", the message bar will be shown if the viewable screen area is taller than a square.
+    "Auto",
+
+    // Title for login screen (new version).
+    "Welcome",
+    
+    // Softkey commands for opening a link in the login screen.
+    "Open",
+    "Open",
+
+    // Text for the link shown in the login screen for reading more about Direct connection.
+    "Learn more",
+
+    // Info text shown in the login screen after the Direct connection option and before the button for changing proxy URLs.
+    "The app can also be used with a proxy server. ",
+
+    // Safety recommendation in the login screen, shown after the above string.
+    "It is recommended to host your own proxy. ",
+
+    // Hint text shown after the above string on BlackBerry devices.
+    "To edit your connection URLs, press the BlackBerry key.",
+
+    // Text label shown inside the button for changing the proxy connection URLs (on non-BlackBerry devices).
+    "Connection URLs",
+
+    // Explanation strings for the "Use gateway" option.
+    // This version of the string is shown on versions that support Direct connection.
+    "Gateway (real-time chat) requires the use of a proxy server.",
+    // This string is shown on versions that don't support Direct connection.
+    "The gateway is used for real-time chat and certain other features.",
+
+    // Explanation string for the token settings.
+    "The app requires a token for logging in. ",
+
+    // Explanation strings for other token entry methods.
+    // This version of the string is shown on devices that support FileConnection (file system access in Java).
+    "To avoid typing errors, you can import the token from a text file or insert it into the JAR file.",
+    // This string is shown on devices that don't support FileConnection.
+    "To avoid typing errors, you can insert the token into the JAR file.",
+
+    // Error message shown when a HTTPS connection fails due to the app not being signed with a code-signing certificate.
+    // More user-friendly form of "java.lang.SecurityException"
+    "Your device requires the app to be signed to use Direct connection. Download a signed JAD of the app suitable for your device, or disable Direct connection.\nRead more at gtrxac.fi/j2me/proxyless",
+
+    // Related to "Lines shown in the about (credits) screen for what each developer" above.
+    "Direct connection support",
+
+    // Settings option for toggling the custom background image on or off.
+    "Wallpaper",
+
+    // Settings option for selecting a new image file to be used as a custom background image.
+    "Import wallpaper",
+
+    // Title for the file picker screen for selecting a background image.
+    "Select wallpaper",
+
+    // Section in the settings menu for customizing notification and incoming/outgoing message sounds.
+    "Sounds",
+
+    // Title for the file picker screen for selecting a sound for notifications or incoming/outgoing messages.
+    "Select sound",
+
+    // Option in the sound settings to use a generic system notification tone (usually a beep).
+    "Beep",
+
+    // Option in the sound settings to import a sound file from the device's storage.
+    "Import sound",
+
+    // Names of the different types of customizable sounds in the sound settings screen.
+    // Incoming and outgoing message sounds are played when a message is received or sent in the currently opened channel.
+    "Notification",
+    "Incoming message",
+    "Outgoing message",
+
+    // Settings options for the different methods for resizing a custom background image to fit the screen.
+    "Crop",
+    "Stretch",
+
+    // Setting for enabling or disabling the wipe transition animation when changing between screens.
+    "Screen transition",
+
+    // Related to "Types of data shown in the data manager" above.
+    "Incoming sound",
+    "Outgoing sound",
+    "Wallpaper",
+
+    // Explanation of QR code login shown in the login screen.
+    "To log in, an authentication token is required, which can be retrieved by scanning a QR code with the Discord mobile app.",
+
+    // Softkey command labels for opening the QR login screen.
+    "Get QR",
+    "Get QR code",
+
+    // Status messages shown in the QR login screen.
+    "Connecting...",
+    "Retrieving QR code...",
+    "Disconnected, please try again",
+
+    // First sentence of explanation of manual token entry in the login screen, shown below the QR login info. 
+    "You can also manually enter your token. ",
+
+    // Suffixes for the new style of "View (number) attachments" buttons, singular and plural.
+    // Now there are separate types of buttons for "View X files" and "View X images"
+    // "Images" are for any file types that are previewable as images (which also includes videos), "files" are for any other type of file.
+    " file",
+    " files",
+    " image",
+    " images",
+
+    // Description for the read state (unread indicator dots) synchronization feature. Shown in the login screen above the checkbox for "Sync unreads".
+    // This feature more specifically uses more network bandwidth, RAM, and storage, and also requires the gateway,
+    // but this string is kept relatively short so the login screen is not too cluttered.
+    "Syncing unread indicators with official clients requires more memory.",
+
+    // Label for the check box for toggling read state synchronization feature.
+    "Sync unreads",
+    
+    // Softkey command labels for checking the status of HTTP-based QR login after the QR code has been scanned. If the check is successful, the token is received and the login is complete.
+    // This can also be translated as e.g. "Continue".
+    "Check",
+    "Check",
+
+    // Error message shown when the proxy server has not sent an authentication ID which is required for HTTP-based QR login.
+    "Login session not received",
+
+    // Help text shown in the QR login screen when using HTTP-based QR login.
+    // "Check" should be pressed after the QR code is scanned on the Discord app on Android/iOS and the login is authorized by selecting the "Log in" button in the safety warning.
+    "Select 'Check' after you've authorized the login on your smartphone.",
+
+    // Error messages shown when opening a notification and the server, server channel, or DM conversation was not found in the loaded server/DM lists.
+    "Server not found. ",
+    "Channel not found",
+    "Conversation not found",
+
+    // Help text shown after the "Server not found" error.
+    "If you recently joined this server, you may have to wait a few days for the server list to update.",
+
+    // Error messages shown during password login.
+    "Incorrect email or password",
+    "Multi-factor authentication is not enabled for this account.",
+    "Multi-factor authentication via authenticator app is not enabled for this account.",
+
+    // Header of error messages shown during password login.
+    "Login failed: ",
+
+    // Header of the response sent by the server (for debugging purposes) during password login.
+    "\nResponse:\n",
+
+    // Softkey labels used for starting password login. Shown in the login screen. The long variant of the softkey label is shown as the button text.
+    "Password",
+    "Password login",
+
+    // Warning shown when starting password login but Direct connection isn't enabled.
+    "Logging in with password requires Direct connection. Do you want to enable Direct connection and continue?",
+
+    // Error message shown when a server error response contains a CAPTCHA request. Tips for circumventing the CAPTCHA are shown below.
+    "A CAPTCHA was received. ",
+    "Please try the following:",
+    
+    // Tips for circumventing the CAPTCHA:
+
+    // (shown when the current build of the app doesn't support proxyless)
+    "Install a build of the app that supports Direct connection",
+    // (shown when proxyless disabled and not in password login screen)
+    "Enable Direct connection",
+    // (shown when in password login screen)
+    "Enable multi-factor authentication (authenticator app) on your account",
+    "Log in to an official client on another device with the same IP address (same Wi-Fi or SIM)",
+    // (shown when not proxyless)
+    "Try a different proxy server or host your own proxy",
+    // (shown always)
+    "Try a different account",
+
+    // Header text shown in the password login screen.
+    "To use password login, you must have multi-factor authentication (authenticator app) enabled on your account.",
+
+    // Text field labels shown in the password login screen.
+    "Email",
+    "Password",
+    "Authentication code",
+
+    // Status messages showing the progress of password login.
+    "Sending login request...",
+    "Sending authentication code...",
+
+    // Request for the 2-factor authentication (TOTP) code.
+    "Enter the 6-digit code from your authenticator app (e.g. Google Authenticator).",
+
+    // Softkey labels for the button used to continue password login after the authentication code was entered.
+    "Continue",
+    "Continue",
+
+    // Error messages shown when trying to start password login without an email or password specified.
+    "Please enter a valid email address",
+    "Please enter your password",
+
+    // Another tip for circumventing the login CAPTCHA.
+    // (shown when in password login screen)
+    "If this device supports Wi-Fi, connect to the same Wi-Fi that you normally use for Discord",
+
+    // Error message shown when the authentication code is in an invalid format.
+    "Please enter a valid authentication code in the format '123456'",
+
+    // Progress message shown in the password login screen during the beginning, right after entering the password and email.
+    "Initiating login...",
+
+    // Text shown before the latest update's changelog in the update dialog screen.
+    "\n\nWhat's new?\n",
+
+    // Suffixes of attachment indicators in notification previews.
+    // For example a notification could say
+    //   User sent you a direct message: "Check this out (2 images) (1 file)"
+    // "Images" are for any file types that are previewable as images (which also includes videos), "files" are for any other type of file.
+    " file)",
+    " files)",
+    " image)",
+    " images)",
+
+    // Title for connection selection screen.
+    "Connection",
+
+    // Option in the connection selection screen to use the device's standard connectivity to go online.
+    "Cellular/Wi-Fi",
+
+    // Option in the connection selection screen to search for devices to use Bluetooth tethering via BlueWAP Server app.
+    "Bluetooth search",
+
+    // Option in the connection selection screen to show an explanation of BT tethering.
+    "Help",
+
+    // Line shown in the connection screen when a device search ended with no results.
+    "No devices found",
+
+    // Text shown in a separate dialog screen when a device search ended with no results.
+    "No devices found. Make sure the server device is set to visible, then try again.",
+
+    // Line shown in the connection screen when a device search ended with at least one result.
+    "Search completed",
+
+    // Title for connection help dialog.
+    "Help",
+
+    // Lines shown in the connection help screen (separate dialog). These are formatted using bullet points.
+    "Select 'Bluetooth search' to tether to a device running BlueWAP Server.",
+    "Use Direct connection if your server device supports TLS 1.2 (e.g. Android 5+).",
+    "Get BlueWAP Server: github.com/gtrxAC/BlueWAP",
+
+    // Lines shown in the connection screen when searching for devices or when connecting to a found device.
+    "Searching...",
+    "Connecting..."
+]

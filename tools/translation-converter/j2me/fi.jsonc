@@ -1,0 +1,1197 @@
+[
+    // Translation notes:
+    // - Any line that begins with a "//" is a comment and is ignored.
+    //   In this file, comments are used for explaining each string.
+    // - Write your translated string inside the two quotation marks.
+    // - If you need to use a quotation mark inside any of your translated
+    //   strings, write it as \" instead.
+    // - If the original string has any special formatting
+    //   (e.g. space at the beginning or end), keep the formatting the same.
+    // - If you want the English text to be shown for a specific string,
+    //   replace the string with null (without any quotation marks).
+    // - For any Discord-specific terminology (e.g. servers), use the same
+    //   translated term that Discord officially uses for your language.
+
+    // Notes about softkey command labels:
+    // - Each softkey label has two variations, a short and a long one.
+    // - In this translation file, the short labels are listed above the long ones.
+    // - Short labels are used in places where there is limited screen space.
+    // - Keep short labels as short as possible, ideally below 10 characters.
+    //   If needed, you may use abbreviations.
+    // - If a long label is short enough to where it could be used as a
+    //   short label, use the same string for both labels.
+
+    // Placeholder file name shown when the name of an attachment in the attachment view screen could not be loaded.
+    "Nimetön tiedosto",
+
+    // Title text for the attachment picker (native file picker) screen.
+    "Valitse liite",
+
+    // Softkey labels for going back to the previous screen.
+    "Takaisin",
+    "Takaisin",
+
+    // Softkey label for closing a menu.
+    // Currently used in the attachment picker for closing the whole picker (because there is also a "Back" softkey for going back one directory)
+    "Sulje",
+    "Sulje",
+
+    // Title text for attachment view screen.
+    "Liitteet",
+
+    // Softkey labels for refetching contents of channel view or attachment view.
+    "Päivitä",
+    "Lataa uudelleen",
+
+    // Softkey labels used in channel or DM list for marking the selected channel or DM as read.
+    "Luettu",
+    "Merkitse luetuksi",
+
+    // Softkey labels used in channel and DM lists for marking every DM or every channel in the currently shown server as read.
+    "Kaikki luettu",
+    "Merkitse kaikki luetuksi",
+
+    // Generic "Select" softkey labels.
+    "Valitse",
+    "Valitse",
+
+    // Softkey labels for sending a message in the currently open channel.
+    "Lähetä",
+    "Lähetä viesti",
+
+    // Softkey labels for sending a reply to the selected message.
+    "Vastaa",
+    "Vastaa",
+
+    // Softkey labels for sending an attachment in the currently open channel.
+    "Lähetä tiedosto",
+    "Lähetä tiedosto",
+
+    // Softkey labels for copying the text content of the selected message.
+    "Kopioi",
+    "Kopioi viesti",
+
+    // Softkey labels for editing the selected message.
+    "Muokkaa",
+    "Muokkaa",
+
+    // Softkey labels for deleting the selected message.
+    "Poista",
+    "Poista",
+
+    // Softkey labels for selecting an URL in the selected message. This opens a screen where each URL found in the message is listed, and one can be selected to be opened in the device's browser.
+    "Avaa linkki",
+    "Avaa linkki",
+
+    // Channel view title suffix when reading older messages.
+    " (vanha)",
+
+    // Text shown at the center of the channel view when it is empty (no messages).
+    "Tyhjä",
+
+    // Channel view banner text shown when reading older messages and a new message arrives via the gateway.
+    "Lue uusia viestejä valitsemalla Päivitä",
+
+    // Channel view banner text shown when a gateway disconnect occurred and an automatic reconnect is in progress.
+    "Yhdistetään uudelleen",
+
+    // Channel view banner shown when a message is being sent by the client.
+    "Lähetetään viestiä",
+
+    // Channel view banner shown when a message is being edited by the client.
+    "Muokataan viestiä",
+
+    // Channel view banner shown when a message is being deleted by the client.
+    "Poistetaan viestiä",
+
+    // Channel view banner shown when messages are being loaded, e.g. during a refresh or after a message was sent by the client.
+    "Ladataan viestejä",
+
+    // Suffix for channel view banner text when one person is typing.
+    // Example: "aa is typing"
+    " kirjoittaa",
+
+    // Suffix for channel view banner text when two or three people are typing.
+    // Example: "aa, bb, cc are typing"
+    " kirjoittavat",
+
+    // Suffix for channel view banner text when more than three people are typing.
+    // Example: "4 people are typing"
+    " henkilöä kirjoittaa",
+
+    // Comma separator used to separate usernames in the channel view banner text shown when people are typing.
+    ", ",
+
+    // Error messages shown when trying to upload a file, delete a message, or edit a message, and the current proxy server is a direct HTTPS-HTTP proxy (and not a Discord J2ME specific proxy)
+    "Tämä välityspalvelin ei tue tiedostojen lähetystä",
+    "Tämä välityspalvelin ei tue viestien poistoa",
+    "Tämä välityspalvelin ei tue viestin muokkausta",
+
+    // Error message shown when trying to open the native file picker and the device does not support the J2ME FileConnection API.
+    "Laite ei tue FileConnection-rajapintaa",
+
+    // Button labels for navigating between pages of messages in the channel view. Try to keep these as long as (or shorter than) the English strings.
+    // In the old channel view, these are shown as softkey labels (these strings are short and long variations of each)
+    "Vanhemmat",
+    "Vanhemmat viestit",
+    "Uudemmat",
+    "Uudemmat viestit",
+    
+    // Parts of the button label for viewing attachments of a message.
+    // Examples: "View 1 attachment", "View 2 attachments"
+    "Näytä ",
+    " liite",
+    " liitettä",
+
+    // Title for confirmation screen shown when deleting a message.
+    "Poista",
+
+    // Body text for confirmation screen shown when deleting a message.
+    "Poistetaanko tämä viesti?",
+
+    // Generic softkey labels.
+    "Kyllä",
+    "Kyllä",
+    "Ei",
+    "Ei",
+    null,
+    null,
+
+    // Placeholder name shown when fetching the name of an item (e.g. message author or DM) failed.
+    "(tuntematon)",
+
+    // Placeholder shown when the recipient message of a reply does not have any text content.
+    "(ei sisältöä)",
+
+    // Placeholder message content shown when a message does not have any content that is supported by Discord J2ME.
+    "(viesti ei tuettu)",
+
+    // Message content shown for a message that has been deleted.
+    "(viesti poistettu)",
+
+    // Title text for direct message search screen.
+    "Etsi yksityisviestejä",
+
+    // Guide text for text field in direct message search and "insert mention" screens.
+    "Käyttäjänimi",
+
+    // Error message shown when the searched user was not found in the direct messages list. Discord J2ME cannot initiate DM conversations based on only a username, so this message asks the user to use another client.
+    "Käyttäjää ei löytynyt. Luo keskustelu toisesta laitteesta.",
+
+    // Title text for direct message list.
+    "Yksityisviestit",
+
+    // Generic "Search" softkey label. Currently used for searching for usernames in direct messages and when inserting a mention/ping.
+    "Haku",
+    "Haku",
+
+    // Title text shown for all error message screens.
+    "Virhe",
+
+    // Title text shown for guild (server) selector.
+    "Palvelimet",
+
+    // Title text shown for favorite servers list.
+    "Suosikit",
+
+    // Generic "Remove" softkey command. Currently used for removing a server from the favorites list.
+    "Poista",
+    "Poista",
+
+    // Softkey command for adding a server to the favorites list.
+    "Lisää suosikiksi",
+    "Lisää suosikiksi",
+
+    // Text shown when the gateway disconnects due to an error with the heartbeat thread. As this error message is quite technical, you may simplify/generalize it to, for example, "connection error".
+    "",
+
+    // Error message shown when the supplied authentication token is invalid (HTTP Unauthorized).
+    "Tarkista tokenisi",
+
+    // Prefix of error message shown when the HTTP response has an error code.
+    // The full message consists of this string and the code itself,
+    // e.g. HTTP error 500
+    "HTTP-virhe ",
+
+    // Error message shown when trying to load attachments and the CDN URL hasn't been set (is empty).
+    "Mediapalvelinta ei ole määritelty. Liitteet eivät ole saatavilla.",
+
+    // Parentheses. Don't change these unless your language uses a different writing system where a different type of parentheses is normally used.
+    null,
+    null,
+
+    // Softkey labels for showing a text attachment's contents within the app.
+    "Näytä",
+    "Näytä tekstinä",
+
+    // Softkey labels for showing an attachment in the device's built-in web browser.
+    "Avaa",
+    "Avaa selaimessa",
+
+    // Generic "Loading..." text shown in loading screen and in "Insert mention" screen.
+    "Ladataan...",
+
+    // Loading screen text shown when an attachment is being sent.
+    "Lähetetään...",
+
+    // Error message prefix shown when an error occurs while uploading an attachment.
+    "Tiedoston lähetys epäonnistui: ",
+    
+    // Generic "Skip" softkey label. Currently used for skipping an action in the key mapper.
+    "Ohita",
+    "Ohita",
+
+    // Key press prompt shown in hotkey mapper.
+    "Paina näppäintä komennolle:",
+
+    // Names of hotkey actions shown in the key mapper.
+    // These are shown after the "Press the key to use for:" string.
+    // "going back" only applies to the chat view, 
+    "viestin lähetys",
+    "viestiin vastaus",
+    "viestin kopiointi",
+    "lataa uudelleen",
+    "mene takaisin",
+
+    // Error message prefix shown when a key has been mapped to an action and the user tried to map the same key to another action. The name of the already mapped action (see above) is written after this prefix.
+    "Tämä näppäin on jo määritelty: ",
+
+    // Title text shown in login screen.
+    "Kirjaudu",
+
+    // Proxy server warning message shown at the top of the login screen.
+    "Käytä vain välityspalvelimia joihin luotat!",
+
+    // Help message for finding your token. Shown in login screen above the token field.
+    "Löydät tokenisi selaimesi kehitystyökaluista - voit hakea netistä apua. Toissijaisen tilin käyttö on suositeltavaa.",
+
+    // "Use Wi-Fi" option shown in login screen on BlackBerry devices.
+    "Käytä Wi-Fi-yhteyttä",
+
+    // Labels of text fields shown in the login screen.
+    // You don't need to use these acronyms if they don't make sense in your language. Translations like "Server URL" and "Image server URL" are acceptable too.
+    "Palvelimen osoite",
+    "Mediapalvelimen osoite",
+    "Socket-palvelimen osoite",
+    null,
+
+    // Softkey label for confirming the login options in the login screen.
+    "Kirjaudu",
+    "Kirjaudu sisään",
+
+    // Softkey command for exiting the application.
+    "Poistu",
+    "Poistu",
+
+    // "Use gateway" option shown in login screen.
+    "Socket-yhteys",
+
+    // Label for radio button field for token sending options.
+    "Tokenin lähetystapa",
+
+    // Token sending options.
+    "HTTP-otsikko",
+    null,
+    "Kyselyparametri",
+
+    // Error messages shown when trying to login and the token or API URL fields are empty.
+    "Tokenia ei ole määritelty",
+    "Palvelimen osoitetta ei ole määritelty",
+
+    // Main menu items.
+    // "Log out" brings you back to the login screen where you enter your token and other login settings.
+    "Palvelimet",
+    "Suosikit",
+    "Yksityisviestit",
+    "Asetukset",
+    "Kirjaudu ulos",
+
+    // Title text shown in "Insert mention" screen (for adding a ping when writing a message).
+    "Lisää maininta",
+
+    // Label shown for username search results in "Insert mention" screen. Shown if more than one user matches the username query.
+    "Hakutulokset",
+
+    // Message shown when the username query resulted in no matches in the "Insert mention" screen.
+    "Ei tuloksia",
+
+    // Error message shown when selecting "Insert" in the "Insert mention" screen and none of the search results (radio buttons) were picked.
+    "Käyttäjää ei ole valittu",
+
+    // Prefix and suffix of status message shown when a user has been added to a group DM. The whole message is in the form "added X to the group"
+    "lisäsi ryhmään: ",
+    "",
+
+    // Status message shown when a user has left a group DM.
+    "poistui ryhmästä",
+
+    // Prefix and suffix of status message shown when a user has removed another user from a group DM. The whole message is in the form "removed X from the group".
+    "poisti ryhmästä: ",
+    "",
+
+    // Status messages.
+    "aloitti puhelun",
+    "vaihtoi ryhmän nimeä",
+    "vaihtoi ryhmän kuvaketta",
+    "kiinnitti viestin",
+    "liittyi palvelimelle",
+    "nostatti palvelinta",
+
+    // Prefix of status message shown when a user has boosted the server and the server has reached a certain boosting level. The level is appended to the end of this string, in the form "boosted the server to level X".
+    "nostatti palvelimen tasolle ",
+
+    // Prefix of message content when the message is a sticker.
+    // The whole message is in the form of "(sticker: Name)"
+    "(tarra: ",
+
+    // Placeholder name for a sticker when the sticker's name could not be fetched.
+    "tuntematon",
+
+    // Message timestamp hour-minute separator, day-month separator, and AM/PM indicators.
+    // Note: order of day and month cannot be changed currently
+    ":",
+    "/",  // for date it should be "." but that's easy to confuse for time
+    "A",
+    "I",
+
+    // Softkey labels for inserting a mention/ping in the "send message" screen.
+    "Mainitse",
+    "Lisää maininta",
+
+    // Prefixes of title text for "send message" screen.
+    // The full title is in the form of "Send message (@user)" or "Send message (#channel)".
+    "Lähetä viesti (@",
+    "Lähetä viesti (#",
+
+    // Error message shown when trying to insert a mention into a message and the gateway connection is not active.
+    "Tämä toiminto vaatii aktiivisen socket-yhteyden",
+
+    // Title text for "copy message content" screen.
+    "Kopioi viesti",
+
+    // Title text for "edit message content" screen.
+    "Muokkaa viestiä",
+
+    // Title text for gateway disconnect prompt screen.
+    "Yhteysvirhe",
+
+    // Main body text for gateway disconnect prompt screen.
+    "Socket-yhteys katkesi. Haluatko yhdistää uudelleen?",
+
+    // Top label for disconnection message shown in gateway disconnect prompt screen. The disconnection message is either a message sent by the Discord gateway (such as "requesting client reconnect") or a Java exception.
+    "Viesti",
+
+    // Prefix for top body text shown in the reply form. The whole top text is in the form "Replying to @user". The contents of the recipient message are shown below this.
+    "Vastaus käyttäjälle: ",
+
+    // Top label for the message entry box in the reply form.
+    "Kirjoita viesti",
+
+    // Checkbox for selecting whether to mention/ping the recipient. Shown in the reply form.
+    "Mainitse vastaanottaja",
+
+    // Title text for settings menu.
+    "Asetukset",
+
+    // Settings screen heading for themes section.
+    "Teema",
+
+    // Theme options.
+    "Tumma",
+    "Vaalea",
+    "Musta",
+
+    // Settings screen heading for miscellaneous user interface related settings.
+    "Käyttöliittymä",
+
+    // Settings option for enabling the old channel view user interface (from version 1.1 and below).
+    null,
+
+    // Settings option for using 12-hour time format in timestamps.
+    "12-tuntinen aika",
+
+    // Settings option for using the Java-based file picker for sending attachments. If disabled, the web-based file picker is used.
+    "Sovell. sis. tied.valinta",
+
+    // Settings option for automatically reconnecting to the gateway if the connection closes.
+    "Yhdistä uud. autom.",
+
+    // Settings option for enabling icons in server and direct message lists.
+    "Palvelinkuvakkeet",
+
+    // Settings option for enabling nickname role colors.
+    "Nimien värit",
+
+    // Settings screen heading for message author font size.
+    "Lähettäjien fonttikoko",
+
+    // Font size options.
+    "Pieni",
+    "Keskikokoinen",
+    "Suuri",
+
+    // Settings screen heading for message content font size.
+    "Viestien fonttikoko",
+
+    // Settings screen heading for message load count. This is the amount of messages that are loaded and shown at a time.
+    "Viestien latausmäärä",
+
+    // Settings screen heading for selecting attachment file format.
+    "Kuvien tied.muoto",
+
+    // Settings screen heading for maximum attachment size in pixels.
+    "Kuvien maks.koko (px)",
+
+    // Settings screen heading for profile picture shape.
+    // Note: The word "avatar" was used here because "profile picture shape" is too long to fit on one row on some phones, and I didn't want to shorten it as "PFP".
+    "Prof.kuvien muoto",
+
+    // Settings options for profile picture shape. "Circle (HQ)" is circle but with anti-aliasing and smoothing enabled.
+    "Neliö",
+    "Ympyrä",
+    "Ympyrä (HD)",
+
+    // Settings section for profile picture resolution.
+    "Prof.kuvien tarkkuus",
+
+    // Settings options for profile picture resolution. Placeholder means the PFPs won't get downloaded, but instead a placeholder (username's initials) is shown.
+    "Ei kuvaa",
+
+    // Resolution options. Used for profile picture resolution and menu icon resolution.
+    "Pois",
+    null,
+    null,
+
+    // Settings section for menu icon size.
+    "Valikoiden kuvakoko (px)",
+
+    // Settings section for controlling the display of reply messages.
+    "Näytä vastaukset",
+    
+    // Settings option to show replies as only the recipient (in the form "Author -> Recipient").
+    "Vain vastaanottaja",
+
+    // Settings option to show replies with the whole recipient message.
+    "Koko viesti",
+
+    // Settings section for hotkey action management.
+    "Pikanäppäimet",
+
+    // Settings option to use "default" hotkeys. When enabled, the J2ME game actions (ABCD) are used for hotkey actions, instead of user-defined key bindings. I named it "default" due to the lack of a better term for people who aren't familiar with J2ME development.
+    "Oletusnäppäimet",
+
+    // Softkey label for opening the key remapper in the settings menu. The long variant of the label is shown as the button text.
+    "Määrittele",
+    "Määr. pikanäpp.",
+
+    // Generic softkey labels. Currently used in settings menu.
+    "Tallenna",
+    "Tallenna",
+    "Peruuta",
+    "Peruuta",
+
+    // Error message shown when trying to open an URL (e.g. attachment)from the app, but the phone does not support opening URLs while keeping the app running in the background.
+    "Linkki avautuu kun sovellus suljetaan.",
+
+    // Prefix of error message shown when an error occurs when trying to open an URL.
+    "Linkin avaus epäonnistui (",
+
+    // Suffix of error message shown when an error occurs when trying to open an URL. The actual URL is shown after this message.
+    ")\n\nVoit kopioida linkin laitteesi selaimeen: ",
+
+    // Title text for URL list screen ('Open URL' option in channel view).
+    "Valitse linkki",
+
+    // Softkey labels for inserting a mention in the "Insert mention" screen.
+    "Lisää",
+    "Lisää",
+
+    // Title for language selection screen.
+    "Kieli",
+
+    // Settings section for language options.
+    "Kieli",
+    
+    // Softkey labels for opening the language selection menu in the settings menu. The long variant of the label is shown as the button text.
+    "Kieli",
+    "Aseta kieli",
+
+    // Softkey commands for toggling fullscreen mode in the chat view.
+    "Koko näyttö",
+    "Koko näyttö",
+
+    // Hotkey action for toggling fullscreen mode in the chat view. Shown in the key mapper.
+    // Related to "Names of hotkey actions shown in the key mapper" above.
+    "koko näyttö -tilan vaihto",
+
+    // Settings option for enabling fullscreen mode by default in the chat view.
+    "Koko näytön tila",
+
+    // Settings section for selecting which kinds of messages notifications should be shown for.
+    "Näytä ilmoitukset",
+
+    // Options for the kinds of messages that notifications should be shown for.
+    "Kaikki viestit",
+    "Maininnat",
+    "Yksityisviestit",
+
+    // Text shown in notification alert windows. This is in the form of:
+    // User sent you a direct message: "message content"
+    // User sent a message in Server Name #channel: "message content"
+    " lähetti sinulle yksityisviestin: \"",
+    " lähetti viestin kanavalle ",
+
+    // Title for notification alert windows
+    "Uusi viesti",
+
+    // Settings section for selecting which kinds of notification methods should be used for incoming messages.
+    "Ilmoitustapa",
+
+    // Options for the kinds of notification methods.
+    "Ponnahdusikkuna",
+    "Ääni",
+
+    // Settings option for keeping server/channel lists in memory when pressing the Back button, so they don't have to be reloaded every time.
+    "Pidä kanavat muistissa",
+
+    // Text shown at the center of list screens when they are empty (no items).
+    // Note: in English, this is the same as the text shown when a channel view is empty ("Nothing to see here") but in some languages, that string was translated as something like "No messages", hence the need for a separate string for lists.
+    "Tyhjä",
+
+    // Main body text for gateway disconnect prompt screen.
+    // This string is shown when "gateway auto reconnect" setting is enabled and 3 reconnect attempts have failed.
+    "Socket-palvelimeen ei saada yhteyttä. Haluatko yrittää uudelleen?",
+
+    // Softkey labels for sending an attachment as a reply to the selected message.
+    "Vastaa tiedostolla",
+    "Vastaa tiedostolla",
+
+    // Text shown in the reply form when a file is attached to the message that is currently being written. The name of the file is shown below this.
+    "Liite",
+
+    // Prefix and suffix for text shown in the notification alert window when the message has attachments.
+    // The whole text is shown as part of the message content and is in the form "(1 attachment)" or "(X attachments)"
+    "(",
+    " liite)",
+    " liitettä)",
+
+    // Settings section names/titles.
+    // "Language" title is defined above (see "Settings section for language options")
+    "Ulkoasu",
+    "Kuvat",
+    "Yleiset",
+    "Ilmoitukset",
+
+    // Settings option values shown below boolean (on/off, true/false) options in the settings menu.
+    // On large screens, these are instead shown on the right side of the options.
+    "Pois",
+    "Päällä",
+
+    // Prefix for error message shown when an invalid value was entered into a textbox in the settings menu.
+    // This can occur if the given value is not a valid number, is less than 1, or is above the maximum value for that setting.
+    // The whole message is in the form of "Please enter a valid number between 1 and X"
+    // where X is the maximum value for that setting.
+    "Anna luku väliltä 1-",
+    "",
+
+    // Settings option for using nnproject's Pigler Notifications API (extension API for showing notifications in the notification panel on Symbian Belle) for message notifications. The name "Pigler" should not be translated.
+    "Pigler API",
+
+    // Prefix for error messages related to Pigler Notifications API.
+    "Pigler API -virhe: ",
+
+    // Error message shown when Pigler API support is not detected. This is shown every time on app startup if Pigler notifications are enabled in app settings, until either the option is disabled or Pigler support is installed on the device.
+    "Laite ei tue Pigler Notifications API -rajapintaa. Asenna Pigler-rajapinta osoitteesta nnp.nnchan.ru/pna tai poista Pigler-ilmoitukset käytöstä asetuksista.",
+
+    // Settings option for showing the scrollbar on the right side of the screen.
+    "Vierityspalkki",
+
+    // Options for the "Show scroll bar" setting.
+    // "Off" (see "Settings option values shown below boolean") means the scroll bar is disabled, but content can still be scrolled by swiping anywhere on the screen.
+    // "Hidden" means the scroll bar is not shown until the user taps on the right edge of the screen. This is the default on most platforms.
+    // "Visible" means the scroll bar is always shown (decreasing the available horizontal screen space). This is the default on KEmulator.
+    "Piilotettu",
+    "Näkyvä",
+
+    // Main menu option for about/credits screen.
+    // Related to "Main menu items" above.
+    "Tietoja",
+
+    // Title text for about screen.
+    "Tietoja",
+
+    // Prefix for version line shown in the about screen. The app's version number is shown after this.
+    "Versio ",
+
+    // Heading shown in the about screen for developers.
+    "Kehittäjät",
+
+    // Heading shown in the about screen for language translation authors. Shown below developers.
+    "Kääntäjät",
+
+    // Heading shown in the about screen for links to support groups (Discord server and Telegram group).
+    "Tuki",
+
+    // Lines shown in the about (credits) screen for what each developer (major contributor) did.
+    // The name of the person in question is shown above each line.
+    "Pääkehittäjä",
+    "Liite-, JSON- ja Pigler API-tuki",
+    "Latausanimaatio, kuvakkeet, emojit, italiankielinen käännös",
+
+    // Lines shown in the about screen for which language(s) each person wrote translations for.
+    // Note: These are ordered alphabetically based on the person's name, not the language's name
+    "vietnam",
+    "ruotsi",
+    "indonesia",
+    "puola",
+    "espanja",
+    "portugali (Brasilia)",
+    "thai",
+    "portugali",
+    "kiina (perinteinen) ja kantoninkiina",
+    "ukraina",
+    "romania",
+    "turkki",
+    "venäjä",
+
+    // Softkey labels shown in notification alert window for opening/viewing the channel where the notification occurred.
+    "Näytä",
+    "Näytä",
+
+    // Settings option for automatically checking for updates on every startup of the app. If an update is found, a prompt is shown, which when confirmed, opens a browser to install the new version.
+    "Autom. päivitys",
+
+    // Title for dialog box shown when an update was found.
+    "Päivitys saatavilla",
+
+    // Parts of the body text shown in the update dialog box. The appropriate version numbers are inserted after "Current: " and "Latest: ".
+    "Discord J2ME -sovelluksesta on saatavilla uusi versio. Haluatko asentaa päivityksen?\nNykyinen versio: ",
+    "\nUusin versio: ",
+
+    // Softkey labels for confirming an update in the update dialog box.
+    "Päivitä",
+    "Päivitä",
+
+    // Options for the "Auto update" setting.
+    // "Releases only" means the user is only notified for stable release versions, not betas/pre-release versions. "All versions" means the user is also notified for betas.
+    "Vain julkaisut",
+    "Kaikki versiot",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "saksa",
+    "kroatia",
+
+    // Units for attachment sizes.
+    " tavua",
+    " kt",
+    " Mt",
+
+    // Softkey labels for opening the thread list of a channel in the channel list.
+    "Ketjut",
+    "Näytä ketjut",
+
+    // Softkey labels for entering a token in the login screen (if a token hasn't already been set). The long variant of the label is shown as the button text.
+    "Aseta",
+    "Aseta token",
+
+    // Softkey labels for changing the token in the login screen (if a token has already been set). The long variant of the label is shown as the button text.
+    "Vaihda",
+    "Vaihda token",
+
+    // Option in notification settings for using Nokia UI API for notifications.
+    "Nokia UI",
+
+    // Option in notification settings for using Nokia UI API for notifications. This variant of the option is shown on J2ME Loader, because J2ME Loader shows Nokia UI notifications as Android notifications in the notification panel.
+    "Android-ilmoitukset",
+
+    // Text shown in the red bar used for marking the last unread messages in the chat view.
+    "UUSI",
+
+    // Prompt shown at the top of the image preview screen when selecting an attachment.
+    "Valitaanko tämä kuva?",
+
+    // Settings option for enabling/disabling image previews when selecting a file in the native attachment file picker.
+    "Tied.valinn. esikatselu",
+
+    // Header shown at the top of every forwarded message.
+    "Välitetty viesti:",
+
+    // Help texts shown in the login screen for how to open the token input text box.
+    "Aseta tokenisi painamalla BlackBerry-näppäintä.",
+    "Vaihda tokenisi painamalla BlackBerry-näppäintä.",
+
+    // Error message shown when image previews are enabled in the native file picker, but there is not enough free RAM on the device to show a preview for the selected image.
+    "Muisti ei riitä kuvan esikatseluun",
+
+    // Settings option for enabling or disabling emoji display in chats.
+    "Näytä hymiöt",
+
+    // Option for "Show emoji" setting where only standard emoji are shown. Custom emoji from servers are not shown, and are displayed as text instead.
+    "Vain oletus",
+
+    // Option for "Show emoji" setting where all emoji are shown.
+    "Kaikki",
+
+    // Softkey labels for importing the token (from a file) in the login screen. The long variant of the label is shown as the button text.
+    "Tuo",
+    "Tuo token tiedostosta",
+
+    // Title text for the token import file picker screen.
+    "Valitse token-tiedosto",
+
+    // Text shown in loading screen when emoji data is being downloaded or updated.
+    "Ladataan hymiöitä...",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "ranska",
+    "bulgaria",
+
+    // Settings option for toggling markdown text formatting support in chat (bold, italic, etc).
+    "Muotoiltu teksti",
+
+    // Softkey labels for inserting an emoji in the "send message" screen.
+    "Hymiöt",
+    "Lisää emoji",  // Using the word "emoji" here because Nokia S40 already has a "Lisää hymiö" command for its built-in text emoticons
+
+    // Title for emoji picker screen.
+    "Valitse hymiö",
+
+    // Prompt shown when opening the emoji picker and the emoji images have not been downloaded onto the device.
+    "Haluatko ladata hymiöt?",
+
+    // Indicator shown at the end of messages which have been edited. If possible, this should be translated the same way that it's translated in the official Discord clients.
+    "(muokattu)",
+
+    // Softkey command for inserting a '_' character in the token input screen. Some devices don't have a built-in way to insert a '_'.
+    "Alaviiva",
+    "Lisää alaviiva",
+
+    // Related to "Lines shown in the about (credits) screen for what each developer" above.
+    "Ilmoitusääni",
+
+    // Settings option for toggling vibration alert for notifications.
+    "Värinä",
+
+    // Softkey command (short label and long label) for muting a channel/server/etc. or unmuting if it is already muted.
+    // For technical reasons it's easier to have one label for "mute/unmute" rather than separate "Mute" and "Unmute" labels that change dynamically.
+    // The short "Mute" label is also shown for unmuting. The long label can also be just "Mute" if "mute/unmute" doesn't make sense in your language.
+    "Mykistä",
+    "Mykistä",
+
+    // Hotkey actions for instantly moving to the top or bottom of the chat view. Related to "Names of hotkey actions shown in the key mapper" above.
+    "vieritys sivun alkuun",
+    "vieritys sivun loppuun",
+
+    // Settings option for toggling whether to send the typing indicator, i.e. show other people that you are typing when you select "Send message" or "Upload file".
+    "Näytä muille, kun kirjoitan",
+
+    // Softkey command labels for applying an attached audio file as the in-app notification sound. The long variant of the label is shown on the button in the attachment view screen.
+    "Käytä",
+    "Käytä ilmoitusäänenä",
+
+    // Prompt shown when applying a new notification sound. The sound is played at the same time as the prompt appears.
+    "Käytetäänkö tätä ääntä ilmoitusäänenä?",
+
+    // Softkey command for playing the notification sound again in the aforementioned prompt.
+    "Toista",
+    "Soita uudelleen",
+
+    // Confirmation message shown when a new notification sound has been set.
+    "Ilmoitusääni vaihdettu!",
+
+    // Title for data manager screen. Data manager screen is used for viewing memory usage of application data and deleting parts of the app data if needed.
+    "Hallitse dataa",
+
+    // Types of data shown in the data manager:
+
+    // Downloaded image data of default emojis (not custom server emojis)
+    "Hymiöt",
+    // Timestamps of last read messages for each channel, used for handling unread message indicators.
+    "Luetut viestit",
+    // Custom sound file applied as the notification sound via a message attachment.
+    "Ilmoitusääni",
+    // Translated string data for a downloaded language translation.
+    "Ladattu kieli",
+
+    // Title shown in the prompt when deleting a type of app data.
+    "Poista",
+
+    // Prompt shown when deleting a type of app data. The type (one of the four listed above) is shown below this text.
+    "Poistetaanko tämä kohde?\n",
+
+    // Title for dialog box shown when opening an URL on a device that does not support running an app at the same time as the browser.
+    "Avaa selain",
+    
+    // Text shown in that dialog box.
+    "Haluatko avata linkin selaimessa? Sovellus suljetaan ensin.",
+
+    // Settings option for enabling custom menu scrolling handler. When this is enabled, holding up or down on the d-pad will scroll through menus by one menu item every 50 milliseconds, which is faster than the default scrolling speed on most devices.
+    "Nopea vieritys",
+
+    // Error message shown when the notification sound failed to be played, usually because the device does not support the sound's file format.
+    "Äänen toisto epäonnistui. Laite ei tue tiedostotyyppiä.",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "japani",
+    "katalaani",
+    "arabia",
+
+    // Theme option shown in settings for the theme that uses colors from the system's UI.
+    "Järjestelmä",
+
+    // Theme option shown in settings for the user-defined theme.
+    "Mukautettu",
+
+    // Title and description of the dialog that prompts for saving and applying the custom theme that is currently being previewed.
+    "Teema",
+    "Haluatko asettaa tämän teeman?",
+
+    // Item shown in the data manager for the saved custom theme data.
+    "Teema",
+
+    // Error message shown when opening the emoji picker but there is not enough free RAM on the device to load all the emojis.
+    "Muisti ei riitä",
+
+    // Error message shown when a HTTP request results in the error 502 (bad gateway), meaning the proxy is down.
+    "HTTP 502: Välityspalvelin ei ole käytettävissä. Yritä myöhemmin uudelleen tai ota yhteyttä sovelluksen kehittäjiin.",
+
+    // Error message shown when a HTTP request results in the error 302 (moved temporarily)
+    "HTTP 302: Yhteys uudelleenohjattu - tarkista yhteytesi.",
+
+    // Title and description for the dialog warning message shown when uploading a file for the first time. The user can select 'OK' to dismiss it once, or 'Hide' to never show it again.
+    "Varoitus",
+    "Discord is known to flag uploads from 3rd-party clients as spam. This often happens on new accounts without 2FA or a verified phone number. Continue at your own risk.\nSelect 'Hide' if you don't want to see this again.",
+
+    // Softkey labels for dismissing the upload warning (above) and never showing it again.
+    "Piilota",
+    "Piilota",
+
+    // Dialog warning shown when sending direct message to someone in your DMs list who you've never messaged before.
+    "Discord is known to flag new direct messages from 3rd-party clients as spam. It is recommended to send your first message from an official client. Haluatko jatkaa?",
+
+    // Related to "Types of data shown in the data manager" above.
+    "Suosikit",
+    "Tallenn. palvelimet",
+
+    // Title and description of dialog screen shown when the user has saved their server list.
+    "Tallennettu",
+    "Palvelimet tallennettu välimuistiin!",
+
+    // Related to "Types of data shown in the data manager" above.
+    "Hymiöiden nimet",
+
+    // Softkey command in login screen for opening the Discord J2ME setup guide web page.
+    // The long version of the label is used as the button label.
+    "Ohje",
+    "Ohjeet",
+
+    // Option in login screen to use direct connection (proxyless) mode.
+    "Suora yhteys",
+
+    // Information text shown in login screen related to proxyless mode:
+    // This version of the text is shown if the device is known to support TLS 1.2.
+    "Suora yhteys mahdollistaa yhteyden ilman välityspalvelinta, mikä parantaa tilisi turvallisuutta.",
+
+    // This version of the text is shown otherwise. The text is split into three parts which are shown together. The middle one is a link to the nnproject TLS 1.2 page if using a Symbian device.
+    "Suora yhteys (",
+    "vaatii TLS 1.2 -tuen",
+    ") mahdollistaa yhteyden ilman välityspalvelinta, mikä parantaa tilisi turvallisuutta.",
+
+    // Softkey command for opening the nnproject TLS 1.2 page.
+    "Avaa",
+    "Avaa",
+
+    // Text shown in bottom message bar.
+    "Viesti",
+
+    // Text shown in bottom message bar. This version of the text includes the channel name after the text, like "Message #general". Shown if the screen is wide enough.
+    "Viesti: ",
+
+    // Error messages shown if the device does not support PATCH/DELETE HTTP methods, which are required to edit/delete messages respectively in proxyless mode.
+    // You should use the same term for "Direct connection" that you used above.
+    "Laitteesi ei tue viestien muokkausta Suora yhteys -tilassa. Haluatko käyttää välityspalvelinta?\nValitse 'Piilota' jos haluat aina käyttää välityspalvelinta.",
+
+    "Laitteesi ei tue viestien poistoa Suora yhteys -tilassa. Haluatko käyttää välityspalvelinta?\nValitse 'Piilota' jos haluat aina käyttää välityspalvelinta.",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "kiina (yksinkertaistettu)",
+
+    // Item in settings menu for opening the time format configuration screen.
+    "Ajan muoto",
+
+    // Title for time preview shown in the time format screen.
+    "Esikatselu",
+
+    // Titles for sliders in the time format screen for changing the time offset.
+    "Aikaero (h)",
+    "Aikaero (min)",
+
+    // Option in the time format screen for changing the time offset between negative and positive numbers.
+    "Negatiivinen aikaero",
+
+    // Related to "Lines shown in the about screen for which language" above.
+    "unkari",
+
+    // Softkey commands for moving an item up or down by one position in a sortable list. Currently used for the favorite servers list.
+    "Ylös",
+    "Siirrä ylöspäin",
+    "Alas",
+    "Siirrä alaspäin",
+
+    // Warning dialog shown when "Direct connection" and "Use gateway" options are both enabled.
+    "Suora yhteys -tila on päällä, mutta socket-yhteys vaatii välityspalvelimen, jonka käyttö voi olla epäturvallista. Haluatko silti yhdistää?\nValitse 'Piilota' jos haluat aina yhdistää.",
+
+    // Settings option for toggling the bar on the bottom of the screen for sending a message. Only available on touchscreen.
+    "Näytä viestipalkki",
+
+    // "Automatic" option value for settings. Currently used for the "Show message bar" setting. When that is set to "Auto", the message bar will be shown if the viewable screen area is taller than a square.
+    "Autom.",
+
+    // Title for login screen (new version).
+    "Tervetuloa",
+    
+    // Softkey commands for opening a link in the login screen.
+    "Avaa",
+    "Avaa",
+
+    // Text for the link shown in the login screen for reading more about Direct connection.
+    "Lue lisää",
+
+    // Info text shown in the login screen after the Direct connection option and before the button for changing proxy URLs.
+    "Voit myös käyttää sovellusta välityspalvelimen kanssa. ",
+
+    // Safety recommendation in the login screen, shown after the above string.
+    "Oman välityspalvelimen hostaaminen on suositeltavaa. ",
+
+    // Hint text shown after the above string on BlackBerry devices.
+    "Muokkaa yhteysosoitteita painamalla BlackBerry-näppäintä.",
+
+    // Text label shown inside the button for changing the proxy connection URLs (on non-BlackBerry devices).
+    "Yhteysosoitteet",
+
+    // Explanation strings for the "Use gateway" option.
+    // This version of the string is shown on versions that support Direct connection.
+    "Socket-yhteys (live-chat) vaatii välityspalvelimen.",
+    // This string is shown on versions that don't support Direct connection.
+    "Socket-yhteys mahdollistaa esim. viestien live-päivitykset.",
+
+    // Explanation string for the token settings.
+    "Kirjautumiseen tarvitset tilisi tunnuslausekkeen (token). ",
+
+    // Explanation strings for other token entry methods.
+    // This version of the string is shown on devices that support FileConnection (file system access in Java).
+    "Voit välttää kirjoitusvirheet tuomalla tokenisi tekstitiedostosta tai kopioimalla sen sovelluksen JAR-tiedostoon.",
+    // This string is shown on devices that don't support FileConnection.
+    "Voit välttää kirjoitusvirheet kopioimalla tokenisi sovelluksen JAR-tiedostoon.",
+
+    // Error message shown when a HTTPS connection fails due to the app not being signed with a code-signing certificate.
+    // More user-friendly form of "java.lang.SecurityException"
+    "Laitteesi vaatii allekirjoitetun sovelluksen Suora yhteys -tilan käyttämiseen. Lataa laitteellesi sopiva sovelluksen allekirjoitettu JAD-tiedosto tai poista Suora yhteys käytöstä.\nLue lisää: gtrxac.fi/j2me/proxyless",
+
+    // Related to "Lines shown in the about (credits) screen for what each developer" above.
+    "Suora yhteys -tuki",
+
+    // Settings option for toggling the custom background image on or off.
+    "Taustakuva",
+
+    // Settings option for selecting a new image file to be used as a custom background image.
+    "Tuo taustakuva",
+
+    // Title for the file picker screen for selecting a background image.
+    "Valitse taustakuva",
+
+    // Section in the settings menu for customizing notification and incoming/outgoing message sounds.
+    "Äänet",
+
+    // Title for the file picker screen for selecting a sound for notifications or incoming/outgoing messages.
+    "Valitse ääni",
+
+    // Option in the sound settings to use a generic system notification tone (usually a beep).
+    "Piippaus",
+
+    // Option in the sound settings to import a sound file from the device's storage.
+    "Tuo ääni",
+
+    // Names of the different types of customizable sounds in the sound settings screen.
+    // Incoming and outgoing message sounds are played when a message is received or sent in the currently opened channel.
+    "Ilmoitus",
+    "Saapuva viesti",
+    "Lähtevä viesti",
+
+    // Settings options for the different methods for resizing a custom background image to fit the screen.
+    "Rajaa",
+    "Venytä",
+
+    // Setting for enabling or disabling the wipe transition animation when changing between screens.
+    "Siirtymätehosteet",
+
+    // Related to "Types of data shown in the data manager" above.
+    "Saapuva viesti",
+    "Lähtevä viesti",
+    "Taustakuva",
+
+    // Explanation of QR code login shown in the login screen.
+    "Kirjautumiseen tarvitset tunnuslausekkeen (token), jonka saat skannaamalla QR-koodin Discord-mobiilisovelluksella.",
+
+    // Softkey command labels for opening the QR login screen.
+    "Hae QR",
+    "Hae QR-koodi",
+
+    // Status messages shown in the QR login screen.
+    "Yhdistetään...",
+    "Haetaan QR-koodi...",
+    "Yhteys katkesi, yritä uudelleen",
+
+    // First sentence of explanation of manual token entry in the login screen, shown below the QR login info. 
+    "Voit myös manuaalisesti kirjoittaa tokenisi. ",
+
+    // Suffixes for the new style of "View (number) attachments" buttons, singular and plural.
+    // Now there are separate types of buttons for "View X files" and "View X images"
+    // "Images" are for any file types that are previewable as images (which also includes videos), "files" are for any other type of file.
+    " tiedosto",
+    " tiedostoa",
+    " kuva",
+    " kuvaa",
+
+    // Description for the read state (unread indicator dots) synchronization feature. Shown in the login screen above the checkbox for "Sync unreads".
+    // This feature more specifically uses more network bandwidth, RAM, and storage, and also requires the gateway,
+    // but this string is kept relatively short so the login screen is not too cluttered.
+    "Luettujen viestien synkronointi vaatii enemmän muistia.",
+
+    // Label for the check box for toggling read state synchronization feature.
+    "Synkr. viestit",
+    
+    // Softkey command labels for checking the status of HTTP-based QR login after the QR code has been scanned. If the check is successful, the token is received and the login is complete.
+    // This can also be translated as e.g. "Continue".
+    "Jatka",
+    "Jatka",
+
+    // Error message shown when the proxy server has not sent an authentication ID which is required for HTTP-based QR login.
+    "Login session not received",
+
+    // Help text shown in the QR login screen when using HTTP-based QR login.
+    // "Check" should be pressed after the QR code is scanned on the Discord app on Android/iOS and the login is authorized by selecting the "Log in" button in the safety warning.
+    "Paina 'Jatka' kun olet skannannut QR-koodin ja hyväksynyt kirjautumisen.",
+
+    // Error messages shown when opening a notification and the server, server channel, or DM conversation was not found in the loaded server/DM lists.
+    "Palvelinta ei löytynyt. ",
+    "Kanavaa ei löytynyt",
+    "Keskustelua ei löytynyt",
+
+    // Help text shown after the "Server not found" error.
+    "Jos liityit palvelimelle hiljattain, odota palvelinluettelon päivittämistä, joka voi kestää muutaman päivän.",
+
+    // Error messages shown during password login.
+    "Väärä sähköpostiosoite tai salasana",
+    "Monivaiheinen todennus ei ole käytössä tällä tilillä.",
+    "Monivaiheinen todennus todennussovelluksen avulla ei ole käytössä tällä tilillä.",
+
+    // Header of error messages shown during password login.
+    "Kirjautuminen epäonnistui: ",
+
+    // Header of the response sent by the server (for debugging purposes) during password login.
+    "\nPalvelimen vastaus:\n",
+
+    // Softkey labels used for starting password login. Shown in the login screen. The long variant of the softkey label is shown as the button text.
+    "Salasana",
+    "Kirjaudu salasanalla",
+
+    // Warning shown when starting password login but Direct connection isn't enabled.
+    "Salasanalla kirjautuminen vaatii Suora yhteys -tilan. Jatketaanko ottamalla Suora yhteys käyttöön?",
+
+    // Error message shown when a server error response contains a CAPTCHA request. Tips for circumventing the CAPTCHA are shown below.
+    "Palvelin lähetti CAPTCHA-varmennuksen. ",
+    "Voit yrittää seuraavia:",
+    
+    // Tips for circumventing the CAPTCHA:
+
+    // (shown when the current build of the app doesn't support proxyless)
+    "Asenna Discord J2ME -versio, joka tukee Suora yhteys -tilaa",
+    // (shown when proxyless disabled and not in password login screen)
+    "Ota Suora yhteys käyttöön",
+    // (shown when in password login screen)
+    "Ota käyttöön monivaiheinen todennus todennussovelluksen avulla",
+    "Kirjaudu sisään viralliseen Discord-sovellukseen toisella laitteella, jolla on sama IP-osoite (sama Wi-Fi tai SIM)",
+    // (shown when not proxyless)
+    "Kokeile toista välityspalvelinta tai hostaa oma",
+    // (shown always)
+    "Kokeile toista tiliä",
+
+    // Header text shown in the password login screen.
+    "Salasanalla kirjautuminen vaatii, että tililläsi on käytössä monivaiheinen todennus todennussovelluksen avulla.",
+
+    // Text field labels shown in the password login screen.
+    "Sähköposti",
+    "Salasana",
+    "Todennuskoodi",
+
+    // Status messages showing the progress of password login.
+    "Lähetetään kirjautumispyyntöä...",
+    "Lähetetään todennuskoodia...",
+
+    // Request for the 2-factor authentication (TOTP) code.
+    "Anna 6-numeroinen koodi, jonka löydät todennussovelluksestasi (esim. Google Authenticator).",
+
+    // Softkey labels for the button used to continue password login after the authentication code was entered.
+    "Jatka",
+    "Jatka",
+
+    // Error messages shown when trying to start password login without an email or password specified.
+    "Anna kelvollinen sähköpostiosoite",
+    "Anna salasana",
+
+    // Another tip for circumventing the login CAPTCHA.
+    // (shown when in password login screen)
+    "Jos laitteesi tukee Wi-Fi-yhteyttä, yhdistä samaan Wi-Fi-verkkoon, jolla yleensä käytät Discordia",
+
+    // Error message shown when the authentication code is in an invalid format.
+    "Anna kelvollinen todennuskoodi muodossa '123456'",
+
+    // Progress message shown in the password login screen during the beginning, right after entering the password and email.
+    "Aloitetaan kirjautuminen...",
+
+    // Text shown before the latest update's changelog in the update dialog screen.
+    "\n\nMuutokset:\n",
+
+    // Suffixes of attachment indicators in notification previews.
+    // For example a notification could say
+    //   User sent you a direct message: "Check this out (2 images) (1 file)"
+    // "Images" are for any file types that are previewable as images (which also includes videos), "files" are for any other type of file.
+    " tiedosto)",
+    " tiedostoa)",
+    " kuva)",
+    " kuvaa)",
+
+    // Title for connection selection screen.
+    "Yhteys",
+
+    // Option in the connection selection screen to use the device's standard connectivity to go online.
+    "Mobiilidata/Wi-Fi",
+
+    // Option in the connection selection screen to search for devices to use Bluetooth tethering via BlueWAP Server app.
+    "Bluetooth-haku",
+
+    // Option in the connection selection screen to show an explanation of BT tethering.
+    "Ohje",
+
+    // Line shown in the connection screen when a device search ended with no results.
+    "Laitteita ei löytynyt",
+
+    // Text shown in a separate dialog screen when a device search ended with no results.
+    "Laitteita ei löytynyt. Varmista, että palvelinlaite on asetettu näkyväksi.",
+
+    // Line shown in the connection screen when a device search ended with at least one result.
+    "Haku valmis",
+
+    // Title for connection help dialog.
+    "Ohje",
+
+    // Lines shown in the connection help screen (separate dialog). These are formatted using bullet points.
+    "Voit jakaa verkkoyhteyden tähän laitteeseen BlueWAP Server -sovelluksen avulla.",
+    "Käytä Suora yhteys -tilaa jos palvelinlaite on TLS 1.2 -yhteensopiva (esim. Android 5+).",
+    "Lataa BlueWAP Server: github.com/gtrxAC/BlueWAP",
+
+    // Lines shown in the connection screen when searching for devices or when connecting to a found device.
+    "Haetaan...",
+    "Yhdistetään..."
+]
