@@ -5,10 +5,10 @@
 			  android:weightSum="1">
 
 	<TextView
-			android:id="@+id/textView"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/password_login"/>
+		android:id="@+id/textView"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/password_login"/>
 
 	<EditText
 			android:id="@+id/emailField"
@@ -51,15 +51,14 @@
 			android:text="@string/token_login"/>
 
 	<EditText
-			android:id="@+id/tokenField"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:ems="10"
-			android:hint="@string/token"
-			android:inputType="textPassword"
-			android:password="true"
-			android:maxLines="1"
-			android:singleLine="true"/>
+		android:id="@+id/tokenField"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:ems="10"
+		android:hint="@string/token"
+		android:inputType="textMultiLine"
+		android:password="false"
+		android:singleLine="false" />
 
 	<Button
 			android:id="@+id/tokenLoginButton"
