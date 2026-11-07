@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    To translators who have previously worked with Discord J2ME, this works a
+    little different on the Android side.
+
+    The strings to be translated are between the > and < symbols. Don't edit
+    other stuff, like whatever is inside the name="..." quotation marks.
+
+    It is easiest to edit these with a code editor that checks your formatting,
+    or with Android Studio 3.0.1, but any text editor can also be used.
+
+    Some translations have been imported from old Discord J2ME. If they don't
+    match the context or wording appropriate for Discofi, they will need to be
+    changed.
+
+    As this is XML, you'll need to pay attention when using some special
+    characters in your strings:
+
+    - To use ', write "\\&apos;"
+    - To use ", write "&quot;"
+    - To use &, write "&amp;"
+    - To use <, write "&lt;"
+    - To use >, write "&gt;"
+
+    Couple other notes:
+
+    - Some old Discord J2ME translations may use abbreviations to fit text on
+      the smaller screens of J2ME phones. On Android, this is a bit less
+      necessary, but still try to keep strings relatively short.
+
+    - For strings that have a direct equivalent in official Discord apps, like
+      "(edited)" or the "APP" badge, try to use the same wording that is used in
+      official Discord apps when possible.
+
+    -->
+
+    <string name="action_edit">Editează mesajul</string>
+    <string name="action_delete">Șterge mesajul</string>
+    <string name="action_reply">Răspunde</string>
+    <string name="action_forward">Forward</string>
+    <string name="action_copy_text">Copiază conținutul</string>
+    <string name="action_refresh">Reîmprosp.</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_close">Ieșire</string>
+    <string name="action_send">Trimite</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="connection_setup">Connection setup</string>
+    <string name="select_connection_method">Select your connection method.</string>
+    <string name="direct">Direct</string>
+    <string name="proxy">Proxy</string>
+    <string name="realtime_chat">Real-time chat</string>
+    <string name="disable_realtime_chat">Disable real-time chat when using a slow connection.</string>
+    <string name="host_proxy">To avoid account restrictions, it is highly recommended to host your own proxy.</string>
+    <string name="api_url">Adresă URL API</string>
+    <string name="cdn_url">Adresă URL CDN</string>
+    <string name="gateway_url">Adresă URL Gateway</string>
+    <string name="login">Conectare</string>
+    <string name="logout">Deconectează-te</string>
+    <string name="password_login">Enabling multi-factor authentication (authenticator app) on your account is recommended to log in with your email and password.</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="existing_password">Leave blank to use the existing password</string>
+    <string name="token_login">Token login is only intended for advanced users and may be unsafe.</string>
+    <string name="token">Token</string>
+    <string name="use_token">Use token</string>
+    <string name="import_token_from_file">Import token from file</string>
+    <string name="enter_code">Enter the 6-digit code from your authenticator app (e.g. Google Authenticator).</string>
+    <string name="auth_code">Authentication code</string>
+    <string name="accounts">Accounts</string>
+    <string name="add_account">Add account</string>
+    <string name="no_accounts">No accounts defined. Select &quot;Add account&quot; to log in.</string>
+    <string name="delete_account">Delete account</string>
+    <string name="account_delete_warning">Are you sure you want to delete the account &quot;%s&quot; from the list?</string>
+    <string name="guilds">Servere</string>
+    <string name="dms">Mesaje directe</string>
+    <string name="inbox">Inbox</string>
+    <string name="inbox_empty">No mentions yet.</string>
+    <string name="title_activity_chat">Chat</string>
+    <string name="msg_composer_hint">Message %s</string>
+    <string name="reply_to">Replying to &lt;b&gt;%s&lt;/b&gt;</string>
+    <string name="editing_message">Editing message</string>
+    <string name="ping_off">\@ Off</string>
+    <string name="ping_on">\@ On</string>
+    <string name="badge_bot">APP</string>
+    <string name="badge_webhook">WEBHOOK</string>
+    <string name="badge_system">OFFICIAL</string>
+    <string name="edited">(edited)</string>
+    <string name="forwarded">Forwarded</string>
+    <string name="typing_single">%s is typing...</string>
+    <string name="typing_two">%1$s and %2$s are typing...</string>
+    <string name="typing_multiple">Several people are typing...</string>
+    <string name="delete_message">Delete message</string>
+    <string name="message_delete_warning">Are you sure you want to delete this message?</string>
+    <string name="settings">Setări</string>
+    <string name="appearance">Appearance</string>
+    <string name="behavior">Behaviour</string>
+    <string name="theme">Temă</string>
+    <string name="dark">Întunecat</string>
+    <string name="light">Luminos</string>
+    <string name="font_size">Font size</string>
+    <string name="small">Mic</string>
+    <string name="medium">Mediu</string>
+    <string name="large">Mare</string>
+    <string name="avatar_shape">Formă avatar</string>
+    <string name="circle">Cerc</string>
+    <string name="square">Pătrat</string>
+    <string name="time_format">Time format</string>
+    <string name="time_12h">12-hour</string>
+    <string name="time_24h">24-hour</string>
+    <string name="show_replies">Show reply previews</string>
+    <string name="show_replies_summary">Display the message being replied to above replies</string>
+    <string name="use_name_colors">Culori nume</string>
+    <string name="use_name_colors_summary">Display the message author with role colors</string>
+    <string name="text_formatting">Text formatting</string>
+    <string name="text_formatting_summary">Render Markdown formatting in messages</string>
+    <string name="show_images">Show images</string>
+    <string name="show_images_summary">Show image attachments in messages</string>
+    <string name="compact_mode">Compact mode</string>
+    <string name="compact_mode_summary">Show messages on one line without user avatars</string>
+    <string name="message_load_count">Messages per load</string>
+    <string name="message_load_count_summary">%s messages</string>
+    <string name="message_load_count_dialog">Enter a number between 1 and 100</string>
+    <string name="send_typing">Send typing indicator</string>
+    <string name="send_typing_summary">Let others know when you are typing</string>
+    <string name="auto_reconnect">Auto-reconectare gateway</string>
+    <string name="auto_reconnect_summary">Reconnect to the gateway after a connection loss</string>
+    <string name="use_direct_cdn">Download files directly</string>
+    <string name="use_direct_cdn_summary">Download attachments without a proxy (requires TLS 1.2 or the Wolfius app)</string>
+
+</resources>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="app_name">Discofi</string>
+	<string name="app_name" translatable="false">Discofi</string>
 	<string name="action_edit">Edit</string>
 	<string name="action_delete">Delete</string>
 	<string name="action_reply">Reply</string>
@@ -13,7 +13,7 @@
 	<string name="action_close">Close</string>
 	<string name="action_send">Send</string>
 	<string name="error_field_required">This field is required</string>
-	<string name="connection_setup">Connecton setup</string>
+	<string name="connection_setup">Connection setup</string>
 	<string name="select_connection_method">Select your connection method.</string>
 	<string name="direct">Direct</string>
 	<string name="proxy">Proxy</string>
@@ -47,7 +47,7 @@
 	<string name="dms">Direct Messages</string>
 	<string name="inbox">Inbox</string>
 	<string name="inbox_empty">No mentions yet.</string>
-	<string name="reply_arrow">┌────</string>
+	<string name="reply_arrow" translatable="false">┌────</string>
 	<string name="title_activity_chat">Chat</string>
 	<string name="msg_composer_hint">Message %s</string>
 	<string name="reply_to">Replying to &lt;b&gt;%s&lt;/b&gt;</string>
