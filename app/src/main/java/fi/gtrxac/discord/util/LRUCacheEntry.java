@@ -1,35 +1,35 @@
 package fi.gtrxac.discord.util;
 
 public class LRUCacheEntry {
-	private static long usageCounter;
+    private static long usageCounter;
 
-	private Object object;
-	private long lastUsed;
+    private Object object;
+    private long lastUsed;
 
-	public LRUCacheEntry(Object o) {
-		object = o;
-	}
+    public LRUCacheEntry(Object o) {
+        object = o;
+    }
 
-	public LRUCacheEntry(Object o, long lastUsed) {
-		object = o;
-		this.lastUsed = lastUsed;
-	}
+    public LRUCacheEntry(Object o, long lastUsed) {
+        object = o;
+        this.lastUsed = lastUsed;
+    }
 
-	public Object getObject() {
-		usageCounter++;
-		lastUsed = usageCounter;
-		return object;
-	}
+    public static long getUsageCounter() {
+        return usageCounter;
+    }
 
-	public Object getObjectWithoutUpdate() {
-		return object;
-	}
+    public Object getObject() {
+        usageCounter++;
+        lastUsed = usageCounter;
+        return object;
+    }
 
-	public long getLastUsed() {
-		return lastUsed;
-	}
+    public Object getObjectWithoutUpdate() {
+        return object;
+    }
 
-	public static long getUsageCounter() {
-		return usageCounter;
-	}
+    public long getLastUsed() {
+        return lastUsed;
+    }
 }

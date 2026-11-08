@@ -9,23 +9,23 @@ import cc.nnproject.json.JSONObject;
  * main thread before touching views.
  */
 public interface GatewayListener {
-	void onGatewayConnected();
+    void onGatewayConnected();
 
-	void onGatewayDisconnected(String reason);
+    void onGatewayDisconnected(String reason);
 
-	void onGatewayReady(JSONObject data);
+    void onGatewayReady(JSONObject data);
 
-	void onMessageCreate(JSONObject message);
+    void onMessageCreate(JSONObject message);
 
-	void onMessageUpdate(JSONObject message);
+    void onMessageUpdate(JSONObject message);
 
-	void onMessageDelete(JSONObject message);
+    void onMessageDelete(JSONObject message);
 
-	void onTypingStart(JSONObject data);
+    void onTypingStart(JSONObject data);
 
-	void onGuildMembersChunk(JSONObject data);
+    void onGuildMembersChunk(JSONObject data);
 
-	void onPresenceUpdate(JSONObject data);
+    void onPresenceUpdate(JSONObject data);
 
-	void onReadStates(JSONArray entries);
+    void onReadStates(JSONArray entries);
 }

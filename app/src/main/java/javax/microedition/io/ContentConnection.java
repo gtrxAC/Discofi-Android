@@ -28,10 +28,10 @@ package javax.microedition.io;
 
 public interface ContentConnection extends StreamConnection {
 
-	String getType();
+    String getType();
 
-	String getEncoding();
+    String getEncoding();
 
-	long getLength();
+    long getLength();
 
 }

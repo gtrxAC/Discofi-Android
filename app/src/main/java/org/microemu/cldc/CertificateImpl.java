@@ -30,50 +30,50 @@ import javax.microedition.pki.Certificate;
 
 public class CertificateImpl implements Certificate {
 
-	private X509Certificate cert;
+    private X509Certificate cert;
 
-	public CertificateImpl(X509Certificate cert) {
-		this.cert = cert;
-	}
+    public CertificateImpl(X509Certificate cert) {
+        this.cert = cert;
+    }
 
-	@Override
-	public String getIssuer() {
-		return cert.getIssuerDN().getName();
-	}
+    @Override
+    public String getIssuer() {
+        return cert.getIssuerDN().getName();
+    }
 
-	@Override
-	public long getNotAfter() {
-		return cert.getNotAfter().getTime();
-	}
+    @Override
+    public long getNotAfter() {
+        return cert.getNotAfter().getTime();
+    }
 
-	@Override
-	public long getNotBefore() {
-		return cert.getNotBefore().getTime();
-	}
+    @Override
+    public long getNotBefore() {
+        return cert.getNotBefore().getTime();
+    }
 
-	@Override
-	public String getSerialNumber() {
-		return cert.getSerialNumber().toString();
-	}
+    @Override
+    public String getSerialNumber() {
+        return cert.getSerialNumber().toString();
+    }
 
-	@Override
-	public String getSigAlgName() {
-		return cert.getSigAlgName();
-	}
+    @Override
+    public String getSigAlgName() {
+        return cert.getSigAlgName();
+    }
 
-	@Override
-	public String getSubject() {
-		return cert.getSubjectDN().getName();
-	}
+    @Override
+    public String getSubject() {
+        return cert.getSubjectDN().getName();
+    }
 
-	@Override
-	public String getType() {
-		return cert.getType();
-	}
+    @Override
+    public String getType() {
+        return cert.getType();
+    }
 
-	@Override
-	public String getVersion() {
-		return Integer.toString(cert.getVersion());
-	}
+    @Override
+    public String getVersion() {
+        return Integer.toString(cert.getVersion());
+    }
 
 }

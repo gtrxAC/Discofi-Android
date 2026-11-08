@@ -1,78 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
-		 android:id="@android:id/tabhost"
-		 android:layout_width="wrap_content"
-		 android:layout_height="wrap_content"
-		 android:gravity="bottom"
-		 android:orientation="vertical"
-		 android:weightSum="1">
+    android:id="@android:id/tabhost"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:weightSum="1">
 
-	<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-		<TabWidget
-				android:id="@android:id/tabs"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"/>
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-		<FrameLayout
-				android:id="@android:id/tabcontent"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-			<LinearLayout
-					android:id="@+id/guildsTab"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/guildsTab"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-				<ListView
-						android:id="@+id/guildList"
-						android:layout_width="match_parent"
-						android:layout_height="match_parent"/>
-			</LinearLayout>
+                <ListView
+                    android:id="@+id/guildList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
 
-			<LinearLayout
-					android:id="@+id/dmsTab"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/dmsTab"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-				<ListView
-						android:id="@+id/dmList"
-						android:layout_width="match_parent"
-						android:layout_height="match_parent"/>
-			</LinearLayout>
+                <ListView
+                    android:id="@+id/dmList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
 
-			<LinearLayout
-					android:id="@+id/inboxTab"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/inboxTab"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-				<TextView
-						android:id="@+id/inboxEmptyText"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:padding="16dp"
-						android:gravity="center"
-						android:text="@string/inbox_empty"
-						android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/inboxEmptyText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:text="@string/inbox_empty"
+                    android:visibility="gone" />
 
-				<ListView
-						android:id="@+id/inboxList"
-						android:layout_width="match_parent"
-						android:layout_height="0dp"
-						android:layout_weight="1"
-						android:paddingBottom="2dp"
-						android:paddingTop="2dp"
-						android:divider="@android:color/transparent"
-						android:dividerHeight="0dp"/>
-			</LinearLayout>
+                <ListView
+                    android:id="@+id/inboxList"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="0dp"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp" />
+            </LinearLayout>
 
-		</FrameLayout>
-	</LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
 
 </TabHost>

@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			  android:orientation="vertical" android:layout_width="match_parent"
-			  android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-	<TextView
-			android:id="@+id/mfaInfoText"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/enter_code"/>
+    <TextView
+        android:id="@+id/mfaInfoText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_code" />
 
-	<EditText
-			android:id="@+id/totpField"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:ems="10"
-			android:hint="@string/auth_code"
-			android:inputType="number"
-			android:maxLines="1"
-			android:singleLine="true"/>
+    <EditText
+        android:id="@+id/totpField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/auth_code"
+        android:inputType="number"
+        android:maxLines="1"
+        android:singleLine="true" />
 
-	<Button
-			android:id="@+id/mfaContinueButton"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/action_continue"/>
+    <Button
+        android:id="@+id/mfaContinueButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_continue" />
 
 </LinearLayout>

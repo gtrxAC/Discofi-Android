@@ -1,104 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<PreferenceCategory android:title="@string/appearance">
+    <PreferenceCategory android:title="@string/appearance">
 
-		<ListPreference
-				android:key="theme"
-				android:title="@string/theme"
-				android:summary="%s"
-				android:dialogTitle="@string/theme"
-				android:entries="@array/theme_entries"
-				android:entryValues="@array/theme_values"
-				android:defaultValue="dark"/>
+        <ListPreference
+            android:defaultValue="dark"
+            android:dialogTitle="@string/theme"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:key="theme"
+            android:summary="%s"
+            android:title="@string/theme" />
 
-		<ListPreference
-				android:key="fontSize"
-				android:title="@string/font_size"
-				android:summary="%s"
-				android:dialogTitle="@string/font_size"
-				android:entries="@array/font_size_entries"
-				android:entryValues="@array/font_size_values"
-				android:defaultValue="MEDIUM"/>
+        <ListPreference
+            android:defaultValue="MEDIUM"
+            android:dialogTitle="@string/font_size"
+            android:entries="@array/font_size_entries"
+            android:entryValues="@array/font_size_values"
+            android:key="fontSize"
+            android:summary="%s"
+            android:title="@string/font_size" />
 
-		<ListPreference
-				android:key="avatarShape"
-				android:title="@string/avatar_shape"
-				android:summary="%s"
-				android:dialogTitle="@string/avatar_shape"
-				android:entries="@array/avatar_shape_entries"
-				android:entryValues="@array/avatar_shape_values"
-				android:defaultValue="circle"/>
+        <ListPreference
+            android:defaultValue="circle"
+            android:dialogTitle="@string/avatar_shape"
+            android:entries="@array/avatar_shape_entries"
+            android:entryValues="@array/avatar_shape_values"
+            android:key="avatarShape"
+            android:summary="%s"
+            android:title="@string/avatar_shape" />
 
-		<ListPreference
-				android:key="timeFormat"
-				android:title="@string/time_format"
-				android:summary="%s"
-				android:dialogTitle="@string/time_format"
-				android:entries="@array/time_format_entries"
-				android:entryValues="@array/time_format_values"
-				android:defaultValue="24"/>
+        <ListPreference
+            android:defaultValue="24"
+            android:dialogTitle="@string/time_format"
+            android:entries="@array/time_format_entries"
+            android:entryValues="@array/time_format_values"
+            android:key="timeFormat"
+            android:summary="%s"
+            android:title="@string/time_format" />
 
-		<CheckBoxPreference
-				android:key="useNameColors"
-				android:title="@string/use_name_colors"
-				android:summary="@string/use_name_colors_summary"
-				android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="useNameColors"
+            android:summary="@string/use_name_colors_summary"
+            android:title="@string/use_name_colors" />
 
-		<CheckBoxPreference
-				android:key="useDirectCdn"
-				android:title="@string/use_direct_cdn"
-				android:summary="@string/use_direct_cdn_summary"
-				android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="useDirectCdn"
+            android:summary="@string/use_direct_cdn_summary"
+            android:title="@string/use_direct_cdn" />
 
-		<CheckBoxPreference
-				android:key="showReplies"
-				android:title="@string/show_replies"
-				android:summary="@string/show_replies_summary"
-				android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showReplies"
+            android:summary="@string/show_replies_summary"
+            android:title="@string/show_replies" />
 
-		<CheckBoxPreference
-				android:key="textFormatting"
-				android:title="@string/text_formatting"
-				android:summary="@string/text_formatting_summary"
-				android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="textFormatting"
+            android:summary="@string/text_formatting_summary"
+            android:title="@string/text_formatting" />
 
-		<CheckBoxPreference
-				android:key="showImages"
-				android:title="@string/show_images"
-				android:summary="@string/show_images_summary"
-				android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showImages"
+            android:summary="@string/show_images_summary"
+            android:title="@string/show_images" />
 
-		<CheckBoxPreference
-				android:key="compactMode"
-				android:title="@string/compact_mode"
-				android:summary="@string/compact_mode_summary"
-				android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="compactMode"
+            android:summary="@string/compact_mode_summary"
+            android:title="@string/compact_mode" />
 
-	</PreferenceCategory>
+    </PreferenceCategory>
 
-	<PreferenceCategory android:title="@string/behavior">
+    <PreferenceCategory android:title="@string/behavior">
 
-		<EditTextPreference
-				android:key="messageLoadCount"
-				android:title="@string/message_load_count"
-				android:dialogMessage="@string/message_load_count_dialog"
-				android:dialogTitle="@string/message_load_count"
-				android:inputType="number"
-				android:defaultValue="25"/>
+        <EditTextPreference
+            android:defaultValue="25"
+            android:dialogMessage="@string/message_load_count_dialog"
+            android:dialogTitle="@string/message_load_count"
+            android:inputType="number"
+            android:key="messageLoadCount"
+            android:title="@string/message_load_count" />
 
-		<CheckBoxPreference
-				android:key="sendTyping"
-				android:title="@string/send_typing"
-				android:summary="@string/send_typing_summary"
-				android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="sendTyping"
+            android:summary="@string/send_typing_summary"
+            android:title="@string/send_typing" />
 
-		<CheckBoxPreference
-				android:key="autoReconnect"
-				android:title="@string/auto_reconnect"
-				android:summary="@string/auto_reconnect_summary"
-				android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="autoReconnect"
+            android:summary="@string/auto_reconnect_summary"
+            android:title="@string/auto_reconnect" />
 
-	</PreferenceCategory>
+    </PreferenceCategory>
 
 </PreferenceScreen>
