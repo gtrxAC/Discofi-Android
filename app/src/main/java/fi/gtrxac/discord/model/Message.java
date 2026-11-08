@@ -237,7 +237,8 @@ public class Message {
         // This message or above message is a status message -> true
         if (isStatus || above.isStatus) return true;
 
-        // Finally, check if message was sent more than 7 minutes after the first message of the cluster
+        // Finally, check if message was sent more than 7 minutes after the first message of the
+        // cluster
         long thisMsgTime = id >> 22;
         long firstMsgTime = clusterStart >> 22;
         return (thisMsgTime - firstMsgTime > 7 * 60 * 1000);

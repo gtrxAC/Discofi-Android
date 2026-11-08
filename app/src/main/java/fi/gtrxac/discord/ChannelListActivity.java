@@ -246,9 +246,9 @@ public class ChannelListActivity extends Activity {
             Row row = (Row) rows.elementAt(position);
 
             if (convertView == null) {
-                convertView = inflater
-                    .inflate(row.category ? R.layout.category_header : R.layout.channel_row, parent,
-                        false);
+                convertView =
+                    inflater.inflate(row.category ? R.layout.category_header : R.layout.channel_row,
+                        parent, false);
             }
 
             TextView text = (TextView) convertView;

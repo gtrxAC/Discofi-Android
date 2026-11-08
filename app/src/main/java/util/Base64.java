@@ -75,8 +75,8 @@ import java.util.Arrays;
  * OF SUCH DAMAGE.
  *
  * @author Mikael Grev
- *         Date: 2004-aug-02
- *         Time: 11:31:11
+ * Date: 2004-aug-02
+ * Time: 11:31:11
  * @version 2.2
  */
 

@@ -23,10 +23,10 @@ public class LRUCache {
 
     public void set(Object key, Object value) {
         LRUCacheEntry entry = new LRUCacheEntry(value);
-        set(key, entry);
+        setEntry(key, entry);
     }
 
-    public void set(Object key, LRUCacheEntry entry) {
+    public void setEntry(Object key, LRUCacheEntry entry) {
         deleteOldestItem();
         cache.put(key, entry);
     }

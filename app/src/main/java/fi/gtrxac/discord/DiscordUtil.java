@@ -14,8 +14,8 @@ public class DiscordUtil {
     private static Vector getInvalidTokenTips() {
         Vector result = new Vector();
         result.addElement("use password login instead of your token");
-        result
-            .addElement("if you want to use your token, make sure you have retrieved it correctly");
+        result.addElement(
+            "if you want to use your token, make sure you have retrieved it correctly");
         result.addElement(
             "to avoid typos, import your token from a text file or insert it into the JAR (see " +
                 "login screen for details)");

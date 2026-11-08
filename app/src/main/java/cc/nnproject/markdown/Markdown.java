@@ -869,8 +869,8 @@ public class Markdown {
                                                 break;
                                             }
 
-                                            ((StringBuffer) linksStack.peek())
-                                                .append(sb.toString());
+                                            ((StringBuffer) linksStack.peek()).append(
+                                                sb.toString());
                                             if (state[MD_IMAGE] == 0) {
                                                 flush(ctx, ui, sb, state);
                                             }

@@ -322,7 +322,8 @@ public class MainActivity extends TabActivity {
                 m.showAuthor = true;
             }
             // i ain't gonna fetch the channel to know what guild its from brocacho 💔
-            // (also i only coded messagelistadapter to work with a single guild so its basically useless anyway)
+            // (also i only coded messagelistadapter to work with a single guild so its basically
+            // useless anyway)
             inboxList.setAdapter(new MessageListAdapter(c, inbox, Accounts.getActive(), 0, false));
         }
 

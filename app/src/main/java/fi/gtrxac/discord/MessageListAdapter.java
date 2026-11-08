@@ -220,8 +220,8 @@ public class MessageListAdapter extends BaseAdapter {
 
                 sb.append(" ");
                 sb.append(content);
-                holder.compactText
-                    .setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
+                holder.compactText.setMovementMethod(
+                    LinkTextView.LocalLinkMovementMethod.getInstance());
             }
             holder.compactText.setText(sb);
             bindAttachments(holder.compactAttachments, message);
@@ -299,8 +299,8 @@ public class MessageListAdapter extends BaseAdapter {
                 }
 
                 holder.content.setText(content);
-                holder.content
-                    .setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
+                holder.content.setMovementMethod(
+                    LinkTextView.LocalLinkMovementMethod.getInstance());
             }
             else {
                 holder.content.setVisibility(View.GONE);
@@ -375,8 +375,8 @@ public class MessageListAdapter extends BaseAdapter {
 
             String url = acc.getCdnAssetUrl(attachment.getPreviewUrl(maxAttachmentWidth));
 
-            String fallbackUrl = attachment.animated ? acc
-                .getCdnAssetUrl(attachment.getStillPreviewUrl(maxAttachmentWidth)) : null;
+            String fallbackUrl = attachment.animated ? acc.getCdnAssetUrl(
+                attachment.getStillPreviewUrl(maxAttachmentWidth)) : null;
 
             loadImage(image, url, fallbackUrl);
         }
@@ -755,8 +755,8 @@ public class MessageListAdapter extends BaseAdapter {
     private void openInBrowser(String url) {
         if (url == null) return;
         try {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK));
         }
         catch (ActivityNotFoundException e) {
             Toast.makeText(context, "No app can open this link", Toast.LENGTH_LONG).show();

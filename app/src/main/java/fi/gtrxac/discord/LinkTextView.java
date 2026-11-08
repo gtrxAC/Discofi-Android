@@ -125,8 +125,8 @@ public class LinkTextView extends TextView {
                 ClickableSpan link = findLinkAt(widget, buffer, event);
                 if (link != null && linkWidget != null) {
                     linkWidget.startLinkGesture(link, event);
-                    Selection
-                        .setSelection(buffer, buffer.getSpanStart(link), buffer.getSpanEnd(link));
+                    Selection.setSelection(buffer, buffer.getSpanStart(link),
+                        buffer.getSpanEnd(link));
                     return true;
                 }
 

@@ -56,7 +56,7 @@ public class ChannelCache extends LRUCache {
             }
 
             LRUCacheEntry entry = new LRUCacheEntry(categories, lastUsed);
-            set(guildID, entry);
+            setEntry(guildID, entry);
         }
     }
 

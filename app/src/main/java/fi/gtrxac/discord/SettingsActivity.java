@@ -27,18 +27,17 @@ public class SettingsActivity extends PreferenceActivity
 
         EditTextPreference messageLoadCount =
             (EditTextPreference) findPreference("messageLoadCount");
-        messageLoadCount
-            .setSummary(getString(R.string.message_load_count_summary, messageLoadCount.getText()));
+        messageLoadCount.setSummary(
+            getString(R.string.message_load_count_summary, messageLoadCount.getText()));
         if (messageLoadCount != null) {
-            messageLoadCount
-                .setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            messageLoadCount.setOnPreferenceChangeListener(
+                new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
                         int value = Integer.parseInt(newValue.toString().trim());
                         if (value < Settings.MESSAGE_LOAD_COUNT_MIN ||
                             value > Settings.MESSAGE_LOAD_COUNT_MAX) {
-                            Toast
-                                .makeText(SettingsActivity.this, R.string.message_load_count_dialog,
-                                    Toast.LENGTH_LONG).show();
+                            Toast.makeText(SettingsActivity.this,
+                                R.string.message_load_count_dialog, Toast.LENGTH_LONG).show();
                             return false;
                         }
                         return true;
@@ -63,8 +62,8 @@ public class SettingsActivity extends PreferenceActivity
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         EditTextPreference messageLoadCount =
             (EditTextPreference) findPreference("messageLoadCount");
-        messageLoadCount
-            .setSummary(getString(R.string.message_load_count_summary, messageLoadCount.getText()));
+        messageLoadCount.setSummary(
+            getString(R.string.message_load_count_summary, messageLoadCount.getText()));
 
         updateListPreferenceSummary(key);
 
@@ -73,8 +72,8 @@ public class SettingsActivity extends PreferenceActivity
             Theme.FontSize.valueOf(prefs.getString("fontSize", "MEDIUM").toUpperCase());
         Settings.squareAvatars = prefs.getString("avatarShape", "circle").equals("square");
         Settings.use12hTime = prefs.getString("timeFormat", "24").equals("12");
-        Settings.messageLoadCount = Integer.valueOf(prefs
-            .getString("messageLoadCount", Integer.toString(Settings.MESSAGE_LOAD_COUNT_DEFAULT)));
+        Settings.messageLoadCount = Integer.valueOf(prefs.getString("messageLoadCount",
+            Integer.toString(Settings.MESSAGE_LOAD_COUNT_DEFAULT)));
         Settings.sendTyping = prefs.getBoolean("sendTyping", true);
         Settings.autoReconnect = prefs.getBoolean("autoReconnect", true);
         Settings.showReplies = prefs.getBoolean("showReplies", true);

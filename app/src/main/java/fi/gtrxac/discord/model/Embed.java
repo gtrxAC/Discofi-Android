@@ -25,6 +25,7 @@ public class Embed {
     public Provider provider;
     public Author author;
     public Vector<Field> fields;
+
     public Embed(JSONObject data) {
         title = data.getString("title", null);
         type = Type.valueOf(data.getString("type").toUpperCase());

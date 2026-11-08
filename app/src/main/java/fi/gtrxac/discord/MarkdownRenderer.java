@@ -155,9 +155,10 @@ public class MarkdownRenderer implements MarkdownListener {
         if ((font & Markdown.FONT_FACE_MONOSPACE) != 0) {
             out.setSpan(new TypefaceSpan("monospace"), start, end, SPAN_FLAGS);
             out.setSpan(new BackgroundColorSpan(Theme.codeBackground), start, end, SPAN_FLAGS);
-            out.setSpan(new ForegroundColorSpan(resources
-                    .getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white)),
-                start, end, SPAN_FLAGS);
+            out.setSpan(new ForegroundColorSpan(resources.getColor(
+                    Settings.lightTheme ? android.R.color.black : android.R.color.white)), start,
+                end,
+                SPAN_FLAGS);
         }
 
         float scale = 1f;
@@ -199,8 +200,8 @@ public class MarkdownRenderer implements MarkdownListener {
         int background = Theme.mentionBackground;
         int foreground = Theme.mentionForeground;
         if (color != 0) {
-            background = Color
-                .argb((int) (255 * 0.1), Color.red(color), Color.green(color), Color.blue(color));
+            background = Color.argb((int) (255 * 0.1), Color.red(color), Color.green(color),
+                Color.blue(color));
             foreground = color;
         }
 
@@ -296,8 +297,8 @@ public class MarkdownRenderer implements MarkdownListener {
         Object resolved = urls.get(link);
         String url = resolved != null ? resolved.toString() : link.toString();
         try {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK));
         }
         catch (ActivityNotFoundException e) {
             Toast.makeText(context, "No app can open this link", Toast.LENGTH_LONG).show();
@@ -359,9 +360,9 @@ public class MarkdownRenderer implements MarkdownListener {
         out.setSpan(new TypefaceSpan("monospace"), codeStart, out.length(), SPAN_FLAGS);
         out.setSpan(new BackgroundColorSpan(Theme.codeBackground), codeStart, out.length(),
             SPAN_FLAGS);
-        out.setSpan(new ForegroundColorSpan(resources
-                .getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white)),
-            codeStart, out.length(), SPAN_FLAGS);
+        out.setSpan(new ForegroundColorSpan(resources.getColor(
+                Settings.lightTheme ? android.R.color.black : android.R.color.white)), codeStart,
+            out.length(), SPAN_FLAGS);
         codeStart = -1;
     }
 
@@ -406,9 +407,9 @@ public class MarkdownRenderer implements MarkdownListener {
         if (spoilerStart >= out.length()) return;
         out.setSpan(new BackgroundColorSpan(Theme.codeBackground), spoilerStart, out.length(),
             SPAN_FLAGS);
-        out.setSpan(new ForegroundColorSpan(resources
-                .getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white)),
-            spoilerStart, out.length(), SPAN_FLAGS);
+        out.setSpan(new ForegroundColorSpan(resources.getColor(
+                Settings.lightTheme ? android.R.color.black : android.R.color.white)), spoilerStart,
+            out.length(), SPAN_FLAGS);
         final ForegroundColorSpan hide = new ForegroundColorSpan(Theme.codeBackground);
         out.setSpan(new ClickableSpan() {
             @Override
@@ -548,9 +549,9 @@ public class MarkdownRenderer implements MarkdownListener {
         if (start == end) return;
         applyFontSpans(start, end, font);
         out.setSpan(new BackgroundColorSpan(Theme.codeBackground), start, end, SPAN_FLAGS);
-        out.setSpan(new ForegroundColorSpan(resources
-                .getColor(Settings.lightTheme ? android.R.color.black : android.R.color.white)), start,
-            end, SPAN_FLAGS);
+        out.setSpan(new ForegroundColorSpan(resources.getColor(
+                Settings.lightTheme ? android.R.color.black : android.R.color.white)), start, end,
+            SPAN_FLAGS);
         if (!links.isEmpty()) {
             applyLinkSpan(start, end, links.peek());
         }

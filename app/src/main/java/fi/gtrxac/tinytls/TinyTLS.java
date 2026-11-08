@@ -835,14 +835,14 @@ public final class TinyTLS {
         TLSUtil.logHex(log, "Client verify", verify, 0, 12);
 
         /*
-        * Plaintext Finished handshake:
-        *
-        * type       1
-        * length     3
-        * verify    12
-        *
-        * total     16
-        */
+         * Plaintext Finished handshake:
+         *
+         * type       1
+         * length     3
+         * verify    12
+         *
+         * total     16
+         */
         byte[] finished = new byte[16];
 
         finished[0] = 20;
@@ -852,15 +852,15 @@ public final class TinyTLS {
         System.arraycopy(verify, 0, finished, 4, 12);
 
         /*
-        * Encrypt before adding Finished to the
-        * transcript.
-        */
+         * Encrypt before adding Finished to the
+         * transcript.
+         */
         sendEncryptedRecord(TYPE_HANDSHAKE, finished, 0, 16);
 
         /*
-        * The server Finished calculation DOES include
-        * our Finished handshake message.
-        */
+         * The server Finished calculation DOES include
+         * our Finished handshake message.
+         */
         transcript.update(finished, 0, 16);
 
         log("Client Finished sent");
@@ -872,18 +872,18 @@ public final class TinyTLS {
         byte[] aad = new byte[13];
 
         /*
-        * Fixed IV.
-        */
+         * Fixed IV.
+         */
         System.arraycopy(clientWriteIV, 0, nonce, 0, 4);
 
         /*
-        * Explicit nonce = sequence number.
-        */
+         * Explicit nonce = sequence number.
+         */
         TLSUtil.putLong(nonce, 4, clientSequence);
 
         /*
-        * AAD begins with sequence number.
-        */
+         * AAD begins with sequence number.
+         */
         TLSUtil.putLong(aad, 0, clientSequence);
 
         aad[8] = (byte) type;
@@ -893,13 +893,13 @@ public final class TinyTLS {
         TLSUtil.writeU16(aad, 11, len);
 
         /*
-        * Record:
-        *
-        * header          5
-        * explicit IV     8
-        * ciphertext      len
-        * tag            16
-        */
+         * Record:
+         *
+         * header          5
+         * explicit IV     8
+         * ciphertext      len
+         * tag            16
+         */
         byte[] record = new byte[5 + 8 + len + 16];
 
         int p = 0;
@@ -913,16 +913,16 @@ public final class TinyTLS {
         p += 2;
 
         /*
-        * Explicit nonce on wire.
-        */
+         * Explicit nonce on wire.
+         */
         TLSUtil.putLong(record, p, clientSequence);
 
         p += 8;
 
         /*
-        * Plaintext copied into record then encrypted
-        * in place.
-        */
+         * Plaintext copied into record then encrypted
+         * in place.
+         */
         System.arraycopy(plain, off, record, p, len);
 
         int cipherOff = p;
@@ -963,8 +963,8 @@ public final class TinyTLS {
         log("Server CCS received");
 
         /*
-        * serverSequence is still zero here.
-        */
+         * serverSequence is still zero here.
+         */
         int result = readEncryptedRecord();
 
         type = recordType(result);
@@ -996,18 +996,18 @@ public final class TinyTLS {
         }
 
         /*
-        * At this point transcript contains:
-        *
-        * ClientHello
-        * ServerHello
-        * Certificate
-        * ServerKeyExchange
-        * ServerHelloDone
-        * ClientKeyExchange
-        * Client Finished
-        *
-        * Exactly what server Finished needs.
-        */
+         * At this point transcript contains:
+         *
+         * ClientHello
+         * ServerHello
+         * Certificate
+         * ServerKeyExchange
+         * ServerHelloDone
+         * ClientKeyExchange
+         * Client Finished
+         *
+         * Exactly what server Finished needs.
+         */
         byte[] expected = new byte[12];
 
         makeFinished("server finished", expected);
@@ -1028,8 +1028,8 @@ public final class TinyTLS {
         }
 
         /*
-        * Add server Finished only AFTER verifying it.
-        */
+         * Add server Finished only AFTER verifying it.
+         */
         transcript.update(b, off, len);
 
         log("Server Finished verified");
@@ -1047,9 +1047,9 @@ public final class TinyTLS {
         }
 
         /*
-        * explicit nonce  8
-        * tag            16
-        */
+         * explicit nonce  8
+         * tag            16
+         */
         if (len < 24) {
             throw new IOException("Protected record too short");
         }
@@ -1065,13 +1065,13 @@ public final class TinyTLS {
         byte[] nonce = new byte[12];
 
         /*
-        * 4-byte fixed server IV.
-        */
+         * 4-byte fixed server IV.
+         */
         System.arraycopy(serverWriteIV, 0, nonce, 0, 4);
 
         /*
-        * 8-byte explicit nonce from wire.
-        */
+         * 8-byte explicit nonce from wire.
+         */
         System.arraycopy(receiveBuffer, 0, nonce, 4, 8);
 
         byte[] aad = new byte[13];
@@ -1086,14 +1086,14 @@ public final class TinyTLS {
 
         boolean ok = serverGCM.decrypt(nonce, 0, aad, 0, 13,
 
-                /*
-                * Ciphertext begins after explicit nonce.
-                */
+            /*
+             * Ciphertext begins after explicit nonce.
+             */
             receiveBuffer, 8, cipherLen,
 
-                /*
-                * Tag follows ciphertext.
-                */
+            /*
+             * Tag follows ciphertext.
+             */
             receiveBuffer, 8 + cipherLen);
 
         if (!ok) {
@@ -1103,16 +1103,16 @@ public final class TinyTLS {
         serverSequence++;
 
         /*
-        * Move plaintext to beginning of buffer.
-        */
+         * Move plaintext to beginning of buffer.
+         */
         System.arraycopy(receiveBuffer, 8, receiveBuffer, 0, cipherLen);
 
         /*
-        * Encode record type in the return value's
-        * high 8 bits and plaintext length below it.
-        *
-        * Avoids allocating a Record object.
-        */
+         * Encode record type in the return value's
+         * high 8 bits and plaintext length below it.
+         *
+         * Avoids allocating a Record object.
+         */
         return (type << 24) | cipherLen;
     }
 
@@ -1127,10 +1127,10 @@ public final class TinyTLS {
         int description = b[1] & 255;
 
         /*
-        * close_notify = 0
-        *
-        * This is a clean TLS shutdown, not an error.
-        */
+         * close_notify = 0
+         *
+         * This is a clean TLS shutdown, not an error.
+         */
         if (description == 0) {
             log("TLS close_notify");
 
@@ -1166,9 +1166,9 @@ public final class TinyTLS {
         while (true) {
 
             /*
-            * Consume already-decrypted application data
-            * first.
-            */
+             * Consume already-decrypted application data
+             * first.
+             */
             if (pendingLen > 0) {
                 int value = receiveBuffer[pendingOff] & 255;
 
@@ -1230,10 +1230,10 @@ public final class TinyTLS {
         }
 
         /*
-        * InputStream semantics:
-        *
-        * zero-length read returns 0, even at EOF.
-        */
+         * InputStream semantics:
+         *
+         * zero-length read returns 0, even at EOF.
+         */
         if (len == 0) {
             return 0;
         }
@@ -1241,14 +1241,14 @@ public final class TinyTLS {
         while (true) {
 
             /*
-            * Already have decrypted application data
-            * left over from a previous TLS record.
-            *
-            * Always return pending plaintext before EOF.
-            *
-            * This matters if we ever have buffered
-            * application data followed by close_notify.
-            */
+             * Already have decrypted application data
+             * left over from a previous TLS record.
+             *
+             * Always return pending plaintext before EOF.
+             *
+             * This matters if we ever have buffered
+             * application data followed by close_notify.
+             */
             if (pendingLen > 0) {
                 int n = len;
 
@@ -1269,8 +1269,8 @@ public final class TinyTLS {
             }
 
             /*
-            * No buffered plaintext remains.
-            */
+             * No buffered plaintext remains.
+             */
             if (eof) {
                 return -1;
             }
@@ -1284,11 +1284,11 @@ public final class TinyTLS {
             if (type == TYPE_APPLICATION_DATA) {
 
                 /*
-                * Empty ApplicationData is legal.
-                * Don't return 0 from a non-zero-length
-                * InputStream read; just read another
-                * TLS record.
-                */
+                 * Empty ApplicationData is legal.
+                 * Don't return 0 from a non-zero-length
+                 * InputStream read; just read another
+                 * TLS record.
+                 */
                 if (recordLen == 0) {
                     continue;
                 }
@@ -1297,9 +1297,9 @@ public final class TinyTLS {
                 pendingLen = recordLen;
 
                 /*
-                * Loop around and satisfy as much of the
-                * caller's request as possible.
-                */
+                 * Loop around and satisfy as much of the
+                 * caller's request as possible.
+                 */
                 continue;
             }
 
@@ -1307,12 +1307,12 @@ public final class TinyTLS {
                 handleEncryptedAlert(receiveBuffer, recordLen);
 
                 /*
-                * close_notify sets eof=true.
-                * Loop around so the EOF check above
-                * returns -1.
-                *
-                * Fatal/non-close alerts throw.
-                */
+                 * close_notify sets eof=true.
+                 * Loop around so the EOF check above
+                 * returns -1.
+                 *
+                 * Fatal/non-close alerts throw.
+                 */
                 continue;
             }
 
@@ -1329,12 +1329,12 @@ public final class TinyTLS {
     public synchronized void write(byte[] data, int off, int len) throws IOException {
 
         /*
-        * Keep records reasonably small.
-        *
-        * TLS permits much larger records, but for these
-        * old phones there is no reason for us to create
-        * huge temporary buffers.
-        */
+         * Keep records reasonably small.
+         *
+         * TLS permits much larger records, but for these
+         * old phones there is no reason for us to create
+         * huge temporary buffers.
+         */
         while (len > 0) {
             int n = len;
 

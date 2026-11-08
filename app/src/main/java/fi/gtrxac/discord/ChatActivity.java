@@ -330,8 +330,8 @@ public class ChatActivity extends Activity implements GatewayListener {
                 for (int i = 0; i < members.size(); i++) {
                     JSONObject member = members.getObject(i);
                     long id = Long.parseLong(member.getObject("user").getString("id"));
-                    account.guildMemberCache
-                        .set(id + gatewayGuildId, new GuildMember(member, guildRoles));
+                    account.guildMemberCache.set(id + gatewayGuildId,
+                        new GuildMember(member, guildRoles));
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -434,8 +434,8 @@ public class ChatActivity extends Activity implements GatewayListener {
                 composer.setText(message.content);
                 return true;
             case R.id.messageCopy:
-                ClipboardManager clipboard = (ClipboardManager) ChatActivity.this
-                    .getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboard = (ClipboardManager) ChatActivity.this.getSystemService(
+                    Context.CLIPBOARD_SERVICE);
                 clipboard.setText(message.content);
                 Toast.makeText(ChatActivity.this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
                 return true;
@@ -541,10 +541,10 @@ public class ChatActivity extends Activity implements GatewayListener {
                     loadInitialMessages();
                 }
             }).setNegativeButton(R.string.action_close, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        }).show();
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
     }
 
     private void loadOlderMessages() {
@@ -590,7 +590,8 @@ public class ChatActivity extends Activity implements GatewayListener {
                             if (isFinishing()) return;
                             showProgress(false);
                             Toast.makeText(ChatActivity.this,
-                                "Failed to load older messages: " + e.message, Toast.LENGTH_LONG)
+                                    "Failed to load older messages: " + e.message,
+                                    Toast.LENGTH_LONG)
                                 .show();
                         }
                     });
