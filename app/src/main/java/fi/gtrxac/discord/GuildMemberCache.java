@@ -1,25 +1,24 @@
 package fi.gtrxac.discord;
 
 import fi.gtrxac.discord.model.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.discord.util.*;
 
 import java.util.*;
 
 import cc.nnproject.json.*;
 
-public class GuildMemberCache {
-	private static Account account;
-	private static Hashtable members;
-	private static Vector keys;
-	public static boolean activeRequest;
+public class GuildMemberCache extends LRUCache {
+	private static final int CACHE_SIZE = 10;
 
-	public static void init(Account acc) {
+	private Account account;
+	public boolean activeRequest;
+
+	public GuildMemberCache(Account acc) {
+		super(CACHE_SIZE);
 		account = acc;
-		members = new Hashtable();
-		keys = new Vector();
 	}
 
-	private static void fetch(long guildId, Vector messages) {
+	private void fetch(long guildId, Vector messages) {
 		JSONObject reqData = new JSONObject();
 		reqData.put("guild_id", guildId);
 
@@ -51,16 +50,16 @@ public class GuildMemberCache {
 		account.gateway.send(msg);
 	}
 
-	public static boolean active() {
+	public boolean active() {
 		return account.gatewayActive();
 	}
 
-	public static GuildMember get(long guildId, long userId, Vector messages) {
+	public GuildMember get(long guildId, long userId, Vector messages) {
 		if (!active() || guildId == 0) return null;
 
 		long key = userId + guildId;
 
-		GuildMember result = (GuildMember) members.get(key);
+		GuildMember result = (GuildMember) super.get(key);
 		if (result != null) return result;
 
 		if (!activeRequest) {
@@ -70,22 +69,18 @@ public class GuildMemberCache {
 		return null;
 	}
 
-	public static GuildMember get(long guildId, User user, Vector messages) {
+	public GuildMember get(long guildId, User user, Vector messages) {
 		GuildMember member = get(guildId, user.id, messages);
 		if (member != null) return member;
 		return new GuildMember(user);
 	}
 
-	public static void set(long key, GuildMember member) {
-		Util.hashtablePutWithLimit(members, keys, key, member, 50);
-	}
-
-	public static boolean has(long guildId, User user, boolean def) {
+	public boolean has(long guildId, User user, boolean def) {
 		if (!active()) return def;
-		return members.containsKey(user.id + guildId);
+		return cache.containsKey(user.id + guildId);
 	}
 
-	public static boolean has(long guildId, User user) {
+	public boolean has(long guildId, User user) {
 		return has(guildId, user, false);
 	}
 }

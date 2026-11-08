@@ -94,7 +94,7 @@ public class MessageListAdapter extends BaseAdapter {
 		}
 
 		Message message = (Message) messages.elementAt(position);
-		GuildMember author = GuildMemberCache.get(guildId, message.author, messages);
+		GuildMember author = acc.guildMemberCache.get(guildId, message.author, messages);
 
 		if (enableMention) {
 			try {
@@ -110,7 +110,7 @@ public class MessageListAdapter extends BaseAdapter {
 
 		// Reply preview
 		if (message.reply != null && Settings.showReplies) {
-			GuildMember replyAuthor = GuildMemberCache.get(guildId, message.reply.author, messages);
+			GuildMember replyAuthor = acc.guildMemberCache.get(guildId, message.reply.author, messages);
 			holder.reply.setVisibility(View.VISIBLE);
 			if (!Settings.compactMode) {
 				holder.replyAvatar.setVisibility(View.VISIBLE);

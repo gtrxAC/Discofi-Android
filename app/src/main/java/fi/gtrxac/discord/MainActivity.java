@@ -58,7 +58,6 @@ public class MainActivity extends TabActivity {
 		}
 
 		acc.startGateway();
-		GuildMemberCache.init(acc);
 
 		try {
 			setTitle(acc.getDisplayTitle());

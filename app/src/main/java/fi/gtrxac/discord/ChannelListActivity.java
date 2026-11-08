@@ -9,6 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -74,10 +77,10 @@ public class ChannelListActivity extends Activity {
 			}
 		});
 
-		loadChannels(guildId);
+		loadChannels(guildId, false);
 	}
 
-	private void loadChannels(final long guildId) {
+	private void loadChannels(final long guildId, final boolean refresh) {
 		showProgress(true);
 
 		new Thread() {
@@ -103,7 +106,16 @@ public class ChannelListActivity extends Activity {
 						account.subscribedGuilds.addElement(guildId);
 					}
 
-					final Vector categories = account.getGuildChannels(guildId);
+					Vector cachedCategories = account.channelCache.get(guildId);
+					final Vector categories;
+
+					if (cachedCategories != null && !refresh) {
+						categories = cachedCategories;
+					} else {
+						categories = account.getGuildChannels(guildId);
+						account.channelCache.set(guildId, categories);
+						Settings.save(ChannelListActivity.this);
+					}
 
 					runOnUiThread(new Runnable() {
 						@Override
@@ -159,11 +171,29 @@ public class ChannelListActivity extends Activity {
 				.setMessage(e.getDisplayMessage())
 				.setPositiveButton(R.string.action_continue, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						loadChannels(guildId);
+						loadChannels(guildId, true);
 					}
 				})
 				.setNegativeButton(R.string.action_close, null)
 				.show();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.channel_list, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.channelRefresh:
+				loadChannels(guildId, true);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	private void showProgress(final boolean show) {

@@ -214,7 +214,7 @@ public class ChatActivity extends Activity implements GatewayListener {
 
 	public void onMessageCreate(JSONObject data) {
 		final Message message = new Message(data);
-		GuildMember author = GuildMemberCache.get(guildId, message.author, messages);
+		GuildMember author = account.guildMemberCache.get(guildId, message.author, messages);
 		final String name = author.nickname != null ? author.nickname : author.name;
 		if (message.channelId != channelId) return;
 
@@ -327,19 +327,19 @@ public class ChatActivity extends Activity implements GatewayListener {
 
 				for (int i = 0; i < notFound.size(); i++) {
 					long id = Long.parseLong(notFound.getString(i));
-					GuildMemberCache.set(id + gatewayGuildId, null);
+					account.guildMemberCache.set(id + gatewayGuildId, null);
 					adapter.notifyDataSetChanged();
 				}
 
 				for (int i = 0; i < members.size(); i++) {
 					JSONObject member = members.getObject(i);
 					long id = Long.parseLong(member.getObject("user").getString("id"));
-					GuildMemberCache.set(id + gatewayGuildId, new GuildMember(member, guildRoles));
+					account.guildMemberCache.set(id + gatewayGuildId, new GuildMember(member, guildRoles));
 					adapter.notifyDataSetChanged();
 				}
 			}
 		});
-		GuildMemberCache.activeRequest = false;
+		account.guildMemberCache.activeRequest = false;
 	}
 
 	public void onPresenceUpdate(JSONObject data) {
@@ -413,7 +413,7 @@ public class ChatActivity extends Activity implements GatewayListener {
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		final Message message = (Message) messageList.getItemAtPosition(info.position);
-		GuildMember author = GuildMemberCache.get(guildId, message.author, messages);
+		GuildMember author = account.guildMemberCache.get(guildId, message.author, messages);
 		final String name = author.nickname != null ? author.nickname : author.name;
 
 		switch (item.getItemId()) {

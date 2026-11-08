@@ -260,16 +260,6 @@ public class Util {
 		return resizeFit(imgW, imgH, maxW, maxH, false);
 	}
 
-	public static void hashtablePutWithLimit(Hashtable ht, Vector keys, Object key, Object value, int limit) {
-		if (!ht.containsKey(key) && ht.size() >= limit) {
-			Object firstKey = keys.elementAt(0);
-			ht.remove(firstKey);
-			keys.removeElementAt(0);
-		}
-		ht.put(key, value);
-		keys.addElement(key);
-	}
-
 	// _________________________________________________________________________
 	//
 	//  Color utilities

@@ -37,17 +37,15 @@ public class Account {
 	public GatewayThread gateway;
 	public Vector<Long> subscribedGuilds;
 
-	private Vector<Guild> guildsUnsorted;
-	private Vector<Guild> guilds;
-	private Vector<DMChannel> dmChannels;
-	private Vector<Message> inbox;
+	private final Vector<Guild> guildsUnsorted = new Vector();
+	private final Vector<Guild> guilds = new Vector();
+	private final Vector<DMChannel> dmChannels = new Vector();
+	private final Vector<Message> inbox = new Vector();
+
+	public final ChannelCache channelCache = new ChannelCache();
+	public final GuildMemberCache guildMemberCache = new GuildMemberCache(this);
 
 	public Account() {
-		guildsUnsorted = new Vector<>();
-		guilds = new Vector<>();
-		subscribedGuilds = new Vector<>();
-		dmChannels = new Vector<>();
-		inbox = new Vector<>();
 		cdnUrl = DEFAULT_CDN_PROXY_URL;
 	}
 
@@ -80,6 +78,8 @@ public class Account {
 			JSONArray dmChannelData = dmChannelsJson.getArray(i);
 			dmChannels.add(new DMChannel(dmChannelData));
 		}
+
+		channelCache.fromJSON(data.getArray(11, new JSONArray()));
 	}
 
 	public JSONArray toJSON() {
@@ -112,6 +112,8 @@ public class Account {
 
 		result.add(email);
 		result.add(password);
+
+		result.add(channelCache.toJSON());
 
 		return result;
 	}
