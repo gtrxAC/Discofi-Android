@@ -5,7 +5,19 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:paddingBottom="8dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp">
+
+    <ImageView
+        android:id="@+id/itemUnread"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginRight="6dp"
+        android:src="@drawable/unread_indicator"
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/itemImage"

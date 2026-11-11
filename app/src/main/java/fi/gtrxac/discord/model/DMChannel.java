@@ -9,21 +9,12 @@ import cc.nnproject.json.*;
 public class DMChannel extends Channel {
     public String username;
     public boolean isGroup;
-    public long lastMessageID;
     public long iconID;  // for groups, group ID. for users, recipient ID (not DM channel ID)
     public String iconHash;
 
     public DMChannel(JSONObject data) {
         super(data);
         isGroup = data.getInt("type") == 3;
-
-        String msgIdStr = data.getString("last_message_id");
-        if (msgIdStr != null) {
-            lastMessageID = Long.parseLong(msgIdStr);
-        }
-        else {
-            lastMessageID = id;
-        }
 
         if (isGroup) {
             populateGroupInfo(data);

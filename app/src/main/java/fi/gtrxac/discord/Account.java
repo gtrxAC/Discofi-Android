@@ -26,6 +26,7 @@ public class Account {
     public static final String DEFAULT_CDN_PROXY_URL = "http://cdn.gtrxac.fi";
     public final ChannelCache channelCache = new ChannelCache();
     public final GuildMemberCache guildMemberCache = new GuildMemberCache(this);
+    public final UnreadManager unreadManager = new UnreadManager(this);
     private final Vector<Guild> guildsUnsorted = new Vector();
     private final Vector<Guild> guilds = new Vector();
     private final Vector<DMChannel> dmChannels = new Vector();
@@ -78,6 +79,7 @@ public class Account {
         }
 
         channelCache.fromJSON(data.getArray(11, new JSONArray()));
+        unreadManager.fromJSON(data.getArray(12, new JSONArray()));
     }
 
     public JSONArray toJSON() {
@@ -112,6 +114,7 @@ public class Account {
         result.add(password);
 
         result.add(channelCache.toJSON());
+        result.add(unreadManager.toJSON());
 
         return result;
     }
@@ -533,6 +536,26 @@ public class Account {
         try {
             HTTP h = createApiRequest("POST", "/channels/" + channelId + "/typing");
             h.setData("");
+            h.getResponseCode();
+            h.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Tell Discord that a channel has been read up to the given message.
+     */
+    public void ackMessage(long channelId, long messageId) {
+        try {
+            HTTP h = createApiRequest("POST",
+                "/channels/" + channelId + "/messages/" + messageId + "/ack");
+
+            JSONObject body = new JSONObject();
+            body.put("manual", false);
+            h.setData(body.build());
+
             h.getResponseCode();
             h.close();
         }

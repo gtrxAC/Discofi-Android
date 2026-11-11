@@ -14,7 +14,7 @@ import fi.gtrxac.discord.util.LRUCacheEntry;
  * the guild's channel list (with category structure).
  */
 public class ChannelCache extends LRUCache {
-    private static final int CACHE_SIZE = 5;
+    private static final int CACHE_SIZE = 100;
 
     public ChannelCache() {
         super(CACHE_SIZE);
@@ -48,6 +48,7 @@ public class ChannelCache extends LRUCache {
                     channel.id = channelData.getLong(0);
                     channel.type = channelData.getInt(1);
                     channel.name = channelData.getString(2, null);
+                    channel.lastMessageID = channelData.getLong(3, 0);
 
                     category.children.addElement(channel);
                 }
@@ -93,6 +94,7 @@ public class ChannelCache extends LRUCache {
                     channelData.add(channel.id);
                     channelData.add(channel.type);
                     channelData.add(channel.name);
+                    channelData.add(channel.lastMessageID);
 
                     childrenData.add(channelData);
                 }
@@ -110,5 +112,26 @@ public class ChannelCache extends LRUCache {
 
     public Vector get(long guildID) {
         return (Vector) super.get(guildID);
+    }
+
+    public void setLastMessageID(long channelID, long lastMessageID) {
+        for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
+            long guildID = (long) e.nextElement();
+            LRUCacheEntry entry = (LRUCacheEntry) cache.get(guildID);
+            Vector categories = (Vector) entry.getObjectWithoutUpdate();
+
+            for (int i = 0; i < categories.size(); i++) {
+                ChannelCategory category = (ChannelCategory) categories.elementAt(i);
+
+                for (int j = 0; j < category.children.size(); j++) {
+                    Channel channel = (Channel) category.children.elementAt(j);
+
+                    if (channel.id == channelID && lastMessageID > channel.lastMessageID) {
+                        channel.lastMessageID = lastMessageID;
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

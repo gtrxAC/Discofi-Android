@@ -11,8 +11,6 @@ import cc.nnproject.json.JSONObject;
 
 public class Embed {
     public String title;
-
-    ;
     public Type type;
     public String description;
     public String url;

@@ -127,6 +127,18 @@ public class GatewayThread extends Thread {
         }
     }
 
+    private static void notifyMessageAck(JSONObject data) {
+        GatewayListener[] targets = getListeners();
+        for (int i = 0; i < targets.length; i++) {
+            try {
+                targets[i].onMessageAck(data);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private static void notifyTypingStart(JSONObject data) {
         GatewayListener[] targets = getListeners();
         for (int i = 0; i < targets.length; i++) {
@@ -163,11 +175,35 @@ public class GatewayThread extends Thread {
         }
     }
 
-    private static void notifyReadStates(JSONArray entries) {
+    private static void notifyChannelUnread(JSONObject data) {
         GatewayListener[] targets = getListeners();
         for (int i = 0; i < targets.length; i++) {
             try {
-                targets[i].onReadStates(entries);
+                targets[i].onChannelUnread(data);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void notifyPassiveUpdateV1(JSONObject data) {
+        GatewayListener[] targets = getListeners();
+        for (int i = 0; i < targets.length; i++) {
+            try {
+                targets[i].onPassiveUpdateV1(data);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void notifyPassiveUpdateV2(JSONObject data) {
+        GatewayListener[] targets = getListeners();
+        for (int i = 0; i < targets.length; i++) {
+            try {
+                targets[i].onPassiveUpdateV2(data);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -322,10 +358,12 @@ public class GatewayThread extends Thread {
                         events.add("MESSAGE_CREATE");
                         events.add("MESSAGE_DELETE");
                         events.add("MESSAGE_UPDATE");
+                        events.add("MESSAGE_ACK");
                         events.add("TYPING_START");
                         events.add("GUILD_MEMBERS_CHUNK");
                         events.add("READY");
-                        events.add("READ_STATES");
+                        events.add("CHANNEL_UNREAD_UPDATE");
+                        events.add("PASSIVE_UPDATE_V2");
 
                         JSONObject connData = new JSONObject();
                         connData.put("supported_events", events);
@@ -344,6 +382,7 @@ public class GatewayThread extends Thread {
                     }
                     else if (op.equals("MESSAGE_CREATE")) {
                         JSONObject data = message.getObject("d");
+                        account.unreadManager.onMessageCreate(data);
                         notifyMessageCreate(data);
                     }
                     else if (op.equals("MESSAGE_UPDATE")) {
@@ -353,6 +392,11 @@ public class GatewayThread extends Thread {
                     else if (op.equals("MESSAGE_DELETE")) {
                         JSONObject data = message.getObject("d");
                         notifyMessageDelete(data);
+                    }
+                    else if (op.equals("MESSAGE_ACK")) {
+                        JSONObject data = message.getObject("d");
+                        account.unreadManager.updateReadState(data);
+                        notifyMessageAck(data);
                     }
                     else if (op.equals("TYPING_START")) {
                         JSONObject data = message.getObject("d");
@@ -382,11 +426,23 @@ public class GatewayThread extends Thread {
                                 }
                             }
                         }
+                        account.unreadManager.updateReadStatesFromReady(data);
                         notifyReady(data);
                     }
-                    else if (op.equals("READ_STATES")) {
-                        JSONArray entries = message.getArray("d");
-                        notifyReadStates(entries);
+                    else if (op.equals("CHANNEL_UNREAD_UPDATE")) {
+                        JSONObject data = message.getObject("d");
+                        account.unreadManager.updateChannelUnread(data);
+                        notifyChannelUnread(data);
+                    }
+                    else if (op.equals("PASSIVE_UPDATE_V1")) {
+                        JSONObject data = message.getObject("d");
+                        account.unreadManager.updateChannelUnread(data);
+                        notifyPassiveUpdateV1(data);
+                    }
+                    else if (op.equals("PASSIVE_UPDATE_V2")) {
+                        JSONObject data = message.getObject("d");
+                        account.unreadManager.updateChannelUnread(data);
+                        notifyPassiveUpdateV2(data);
                     }
                 }
                 else if (message.getInt("op", 0) == 10) {

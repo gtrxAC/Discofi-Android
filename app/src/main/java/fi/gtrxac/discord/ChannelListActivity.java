@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +29,7 @@ import fi.gtrxac.discord.model.ChannelCategory;
 /**
  * Shows a guild's channels grouped by category.
  */
-public class ChannelListActivity extends Activity {
+public class ChannelListActivity extends Activity implements GatewayListener {
     private Account account;
     private long guildId;
     private Vector categories;
@@ -68,6 +69,11 @@ public class ChannelListActivity extends Activity {
                         "This channel type is not supported yet", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                account.unreadManager.markRead(channel);
+                Settings.save(ChannelListActivity.this);
+                row.unread = false;
+                ((ChannelListAdapter) channelList.getAdapter()).notifyDataSetChanged();
 
                 Intent intent = new Intent(ChannelListActivity.this, ChatActivity.class);
                 intent.putExtra("guildId", guildId);
@@ -162,11 +168,38 @@ public class ChannelListActivity extends Activity {
                 Row row = new Row();
                 row.channel = (Channel) category.children.elementAt(j);
                 row.name = row.channel.name;
+                row.unread = account.unreadManager.hasUnreads(row.channel);
                 rows.add(row);
             }
         }
 
         ((ChannelListAdapter) channelList.getAdapter()).notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GatewayThread.addListener(this);
+        refreshUnreadIndicators();
+    }
+
+    @Override
+    protected void onPause() {
+        GatewayThread.removeListener(this);
+        super.onPause();
+    }
+
+    private void refreshUnreadIndicators() {
+        if (rows == null || account == null) return;
+
+        for (int i = 0; i < rows.size(); i++) {
+            Row row = (Row) rows.elementAt(i);
+            if (!row.category) row.unread = account.unreadManager.hasUnreads(row.channel);
+        }
+
+        if (channelList != null && channelList.getAdapter() != null) {
+            ((ChannelListAdapter) channelList.getAdapter()).notifyDataSetChanged();
+        }
     }
 
     private void showError(final DiscordException e) {
@@ -201,8 +234,73 @@ public class ChannelListActivity extends Activity {
         this.setProgressBarIndeterminate(show);
     }
 
+    public void onGatewayConnected() {
+    }
+
+    public void onGatewayDisconnected(String reason) {
+    }
+
+    public void onGatewayReady(JSONObject data) {
+    }
+
+    public void onMessageCreate(JSONObject message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onMessageUpdate(JSONObject message) {
+    }
+
+    public void onMessageDelete(JSONObject message) {
+    }
+
+    public void onMessageAck(JSONObject message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onTypingStart(JSONObject data) {
+    }
+
+    public void onGuildMembersChunk(JSONObject data) {
+    }
+
+    public void onPresenceUpdate(JSONObject data) {
+    }
+
+    public void onChannelUnread(JSONObject message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onPassiveUpdateV1(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onPassiveUpdateV2(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
     private static class Row {
         boolean category;
+        boolean unread;
         String name;
         Channel channel;
     }
@@ -251,8 +349,26 @@ public class ChannelListActivity extends Activity {
                         parent, false);
             }
 
-            TextView text = (TextView) convertView;
-            text.setText(row.name);
+            if (row.category) {
+                TextView text = (TextView) convertView;
+                text.setText(row.name);
+            }
+            else {
+                TextView text = (TextView) convertView.findViewById(R.id.channelName);
+                ImageView unreadIndicator =
+                    (ImageView) convertView.findViewById(R.id.channelUnread);
+
+                text.setText(row.name);
+                unreadIndicator.setVisibility(row.unread ? View.VISIBLE : View.INVISIBLE);
+
+                if (Settings.lightTheme) {
+                    unreadIndicator.setImageResource(R.drawable.unread_indicator_light);
+                }
+                else {
+                    unreadIndicator.setImageResource(R.drawable.unread_indicator);
+                }
+            }
+
             return convertView;
         }
     }

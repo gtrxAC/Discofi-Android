@@ -188,6 +188,12 @@ public class ChatActivity extends Activity implements GatewayListener {
     @Override
     protected void onPause() {
         GatewayThread.removeListener(this);
+
+        if (account != null) {
+            account.unreadManager.save();
+            Settings.save(this);
+        }
+
         super.onPause();
     }
 
@@ -212,6 +218,8 @@ public class ChatActivity extends Activity implements GatewayListener {
         GuildMember author = account.guildMemberCache.get(guildId, message.author, messages);
         final String name = author.nickname != null ? author.nickname : author.name;
         if (message.channelId != channelId) return;
+
+        account.unreadManager.markRead(channelId, message.id);
 
         runOnUiThread(new Runnable() {
             public void run() {
@@ -284,6 +292,9 @@ public class ChatActivity extends Activity implements GatewayListener {
         });
     }
 
+    public void onMessageAck(JSONObject data) {
+    }
+
     public void onTypingStart(JSONObject data) {
         if (Long.parseLong(data.getString("channel_id", null)) != channelId) return;
 
@@ -342,7 +353,13 @@ public class ChatActivity extends Activity implements GatewayListener {
     public void onPresenceUpdate(JSONObject data) {
     }
 
-    public void onReadStates(JSONArray entries) {
+    public void onChannelUnread(JSONObject data) {
+    }
+
+    public void onPassiveUpdateV1(JSONObject data) {
+    }
+
+    public void onPassiveUpdateV2(JSONObject data) {
     }
 
     private void addTypingUser(final String name) {

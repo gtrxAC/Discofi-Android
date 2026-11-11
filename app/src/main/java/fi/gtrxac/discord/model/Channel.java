@@ -21,6 +21,7 @@ public class Channel {
     public int type;
     public String parentId;
     public int position;
+    public long lastMessageID;
 
     public Channel() {
     }
@@ -31,6 +32,11 @@ public class Channel {
         name = data.getString("name", null);
         parentId = data.getString("parent_id", null);
         position = data.getInt("position", 0);
+
+        String msgIdStr = data.getString("last_message_id");
+        if (msgIdStr != null) {
+            lastMessageID = Long.parseLong(msgIdStr);
+        }
 
         if (name != null && nameHasHashtag()) name = "#" + name;
         if (name == null) name = "(unknown)";

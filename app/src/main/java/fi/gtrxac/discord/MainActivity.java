@@ -18,11 +18,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import cc.nnproject.json.JSONObject;
 import fi.gtrxac.discord.model.DMChannel;
 import fi.gtrxac.discord.model.Guild;
 import fi.gtrxac.discord.model.Message;
 
-public class MainActivity extends TabActivity {
+public class MainActivity extends TabActivity implements GatewayListener {
     private static final int TAB_GUILDS = 0;
     private static final int TAB_DMS = 1;
     private static final int TAB_INBOX = 2;
@@ -36,6 +37,8 @@ public class MainActivity extends TabActivity {
     private Vector<Guild> guilds = new Vector<>();
     private Vector<DMChannel> dmChannels = new Vector<>();
     private Vector<Message> inbox = new Vector<>();
+    private final ArrayList<Boolean> guildUnread = new ArrayList<>();
+    private final ArrayList<Boolean> dmChannelUnread = new ArrayList<>();
 
     public void onCreate(Bundle savedInstanceState) {
         final Context context = this;
@@ -114,6 +117,17 @@ public class MainActivity extends TabActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 DMChannel dm = dmChannels.elementAt(position);
 
+                Account acc = Accounts.getActive();
+                if (acc != null) {
+                    acc.unreadManager.markRead(dm);
+                    Settings.save(context);
+                }
+
+                if (position < dmChannelUnread.size()) {
+                    dmChannelUnread.set(position, false);
+                    ((IconArrayAdapter) dmChannelList.getAdapter()).notifyDataSetChanged();
+                }
+
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("channelId", dm.id);
                 intent.putExtra("channelName", (!dm.isGroup ? "@" : "") + dm.name);
@@ -127,6 +141,7 @@ public class MainActivity extends TabActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        GatewayThread.addListener(this);
 
         if (Theme.checkAppearanceChanged(this)) return;
 
@@ -134,9 +149,37 @@ public class MainActivity extends TabActivity {
         for (int i = 0; i < inbox.size(); i++) {
             inbox.elementAt(i).refreshTimestamp();
         }
+        refreshUnreadIndicators();
         if (guildList != null) guildList.invalidateViews();
         if (dmChannelList != null) dmChannelList.invalidateViews();
         if (inboxList != null) inboxList.invalidateViews();
+    }
+
+    @Override
+    protected void onPause() {
+        GatewayThread.removeListener(this);
+        super.onPause();
+    }
+
+    private void refreshUnreadIndicators() {
+        Account acc = Accounts.getActive();
+        if (acc == null) return;
+
+        if (guildList != null && guildList.getAdapter() != null &&
+            guildUnread.size() == guilds.size()) {
+            for (int i = 0; i < guilds.size(); i++) {
+                guildUnread.set(i, acc.unreadManager.hasUnreads(guilds.elementAt(i)));
+            }
+            ((IconArrayAdapter) guildList.getAdapter()).notifyDataSetChanged();
+        }
+
+        if (dmChannelList != null && dmChannelList.getAdapter() != null &&
+            dmChannelUnread.size() == dmChannels.size()) {
+            for (int i = 0; i < dmChannels.size(); i++) {
+                dmChannelUnread.set(i, acc.unreadManager.hasUnreads(dmChannels.elementAt(i)));
+            }
+            ((IconArrayAdapter) dmChannelList.getAdapter()).notifyDataSetChanged();
+        }
     }
 
     private void loadGuilds(final Context context, final Account acc) {
@@ -270,17 +313,20 @@ public class MainActivity extends TabActivity {
 
     public void guildsCallback(Context c, Vector<Guild> guilds) {
         this.guilds = guilds;
+        Account acc = Accounts.getActive();
 
         ArrayList<String> guildItems = new ArrayList<>();
         ArrayList<String> guildIcons = new ArrayList<>();
+        guildUnread.clear();
 
         for (int i = 0; i < guilds.size(); i++) {
             Guild g = guilds.elementAt(i);
             guildItems.add(g.name);
-            guildIcons.add(g.getIconUrl(Accounts.getActive().getCdnUrl()));
+            guildIcons.add(g.getIconUrl(acc.getCdnUrl()));
+            guildUnread.add(acc.unreadManager.hasUnreads(g));
         }
 
-        ArrayAdapter<String> adapter = new IconArrayAdapter(c, guildItems, guildIcons);
+        ArrayAdapter<String> adapter = new IconArrayAdapter(c, guildItems, guildIcons, guildUnread);
 
         guildList.setAdapter(adapter);
 
@@ -290,17 +336,21 @@ public class MainActivity extends TabActivity {
 
     public void dmChannelsCallback(Context c, Vector<DMChannel> dmChannels) {
         this.dmChannels = dmChannels;
+        Account acc = Accounts.getActive();
 
         ArrayList<String> dmChannelItems = new ArrayList<>();
         ArrayList<String> dmChannelIcons = new ArrayList<>();
+        dmChannelUnread.clear();
 
         for (int i = 0; i < dmChannels.size(); i++) {
             DMChannel dm = dmChannels.elementAt(i);
             dmChannelItems.add((!dm.isGroup ? "@" : "") + dm.name);
-            dmChannelIcons.add(dm.getIconUrl(Accounts.getActive().getCdnUrl()));
+            dmChannelIcons.add(dm.getIconUrl(acc.getCdnUrl()));
+            dmChannelUnread.add(acc.unreadManager.hasUnreads(dm));
         }
 
-        ArrayAdapter<String> adapter = new IconArrayAdapter(c, dmChannelItems, dmChannelIcons);
+        ArrayAdapter<String> adapter =
+            new IconArrayAdapter(c, dmChannelItems, dmChannelIcons, dmChannelUnread);
 
         dmChannelList.setAdapter(adapter);
 
@@ -393,5 +443,69 @@ public class MainActivity extends TabActivity {
     private void showProgress(final boolean show) {
         this.setProgressBarVisibility(show);
         this.setProgressBarIndeterminate(show);
+    }
+
+    public void onGatewayConnected() {
+    }
+
+    public void onGatewayDisconnected(String reason) {
+    }
+
+    public void onGatewayReady(JSONObject data) {
+    }
+
+    public void onMessageCreate(JSONObject message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onMessageUpdate(JSONObject message) {
+    }
+
+    public void onMessageDelete(JSONObject message) {
+    }
+
+    public void onMessageAck(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onTypingStart(JSONObject data) {
+    }
+
+    public void onGuildMembersChunk(JSONObject data) {
+    }
+
+    public void onPresenceUpdate(JSONObject data) {
+    }
+
+    public void onChannelUnread(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onPassiveUpdateV1(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onPassiveUpdateV2(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
     }
 }
