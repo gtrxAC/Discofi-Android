@@ -176,13 +176,14 @@ public class ChatActivity extends Activity implements GatewayListener {
         if (Theme.checkAppearanceChanged(this)) return;
         if (messages == null) return;
 
+        GatewayThread.addListener(this);
+        account.unreadManager.clearMentions(channelId);
+
         // Settings may have changed while this activity was in the background.
         for (int i = 0; i < messages.size(); i++) {
             ((Message) messages.elementAt(i)).refreshTimestamp();
         }
         if (adapter != null) adapter.notifyDataSetChanged();
-
-        GatewayThread.addListener(this);
     }
 
     @Override

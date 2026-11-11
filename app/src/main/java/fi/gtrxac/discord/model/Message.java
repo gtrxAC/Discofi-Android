@@ -28,6 +28,7 @@ public class Message {
     public Vector attachments;
     public Vector embeds;
     public Hashtable mentions;
+    public Vector mentionRoles;
     public boolean mentionEveryone;
 
     public boolean isEdited;
@@ -59,6 +60,7 @@ public class Message {
             parseAttachments(contentObject);
             parseEmbeds(contentObject);
             parseMentions(contentObject);
+            parseMentionRoles(contentObject);
         }
     }
 
@@ -162,6 +164,24 @@ public class Message {
                     mentions = new Hashtable();
                 }
                 mentions.put(id, name);
+            }
+            catch (Exception e) {
+            }
+        }
+    }
+
+    private void parseMentionRoles(JSONObject data) {
+        JSONArray roleArray = data.getArray("mention_roles", null);
+        if (roleArray == null) return;
+
+        for (int i = 0; i < roleArray.size(); i++) {
+            try {
+                String roleID = roleArray.getString(i);
+
+                if (mentionRoles == null) {
+                    mentionRoles = new Vector<Long>();
+                }
+                mentionRoles.addElement(Long.parseLong(roleID));
             }
             catch (Exception e) {
             }

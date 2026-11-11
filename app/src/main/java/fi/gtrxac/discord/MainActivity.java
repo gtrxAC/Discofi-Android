@@ -39,6 +39,8 @@ public class MainActivity extends TabActivity implements GatewayListener {
     private Vector<Message> inbox = new Vector<>();
     private final ArrayList<Boolean> guildUnread = new ArrayList<>();
     private final ArrayList<Boolean> dmChannelUnread = new ArrayList<>();
+    private final ArrayList<Integer> guildMentions = new ArrayList<>();
+    private final ArrayList<Integer> dmChannelMentions = new ArrayList<>();
 
     public void onCreate(Bundle savedInstanceState) {
         final Context context = this;
@@ -125,8 +127,11 @@ public class MainActivity extends TabActivity implements GatewayListener {
 
                 if (position < dmChannelUnread.size()) {
                     dmChannelUnread.set(position, false);
-                    ((IconArrayAdapter) dmChannelList.getAdapter()).notifyDataSetChanged();
                 }
+                if (position < dmChannelMentions.size()) {
+                    dmChannelMentions.set(position, 0);
+                }
+                ((IconArrayAdapter) dmChannelList.getAdapter()).notifyDataSetChanged();
 
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("channelId", dm.id);
@@ -166,17 +171,22 @@ public class MainActivity extends TabActivity implements GatewayListener {
         if (acc == null) return;
 
         if (guildList != null && guildList.getAdapter() != null &&
-            guildUnread.size() == guilds.size()) {
+            guildUnread.size() == guilds.size() && guildMentions.size() == guilds.size()) {
             for (int i = 0; i < guilds.size(); i++) {
-                guildUnread.set(i, acc.unreadManager.hasUnreads(guilds.elementAt(i)));
+                Guild guild = guilds.elementAt(i);
+                guildUnread.set(i, acc.unreadManager.hasUnreads(guild));
+                guildMentions.set(i, acc.unreadManager.getMentionCount(guild));
             }
             ((IconArrayAdapter) guildList.getAdapter()).notifyDataSetChanged();
         }
 
         if (dmChannelList != null && dmChannelList.getAdapter() != null &&
-            dmChannelUnread.size() == dmChannels.size()) {
+            dmChannelUnread.size() == dmChannels.size() &&
+            dmChannelMentions.size() == dmChannels.size()) {
             for (int i = 0; i < dmChannels.size(); i++) {
-                dmChannelUnread.set(i, acc.unreadManager.hasUnreads(dmChannels.elementAt(i)));
+                DMChannel dm = dmChannels.elementAt(i);
+                dmChannelUnread.set(i, acc.unreadManager.hasUnreads(dm));
+                dmChannelMentions.set(i, acc.unreadManager.getMentionCount(dm.id));
             }
             ((IconArrayAdapter) dmChannelList.getAdapter()).notifyDataSetChanged();
         }
@@ -318,15 +328,18 @@ public class MainActivity extends TabActivity implements GatewayListener {
         ArrayList<String> guildItems = new ArrayList<>();
         ArrayList<String> guildIcons = new ArrayList<>();
         guildUnread.clear();
+        guildMentions.clear();
 
         for (int i = 0; i < guilds.size(); i++) {
             Guild g = guilds.elementAt(i);
             guildItems.add(g.name);
             guildIcons.add(g.getIconUrl(acc.getCdnUrl()));
             guildUnread.add(acc.unreadManager.hasUnreads(g));
+            guildMentions.add(acc.unreadManager.getMentionCount(g));
         }
 
-        ArrayAdapter<String> adapter = new IconArrayAdapter(c, guildItems, guildIcons, guildUnread);
+        ArrayAdapter<String> adapter =
+            new IconArrayAdapter(c, guildItems, guildIcons, guildUnread, guildMentions);
 
         guildList.setAdapter(adapter);
 
@@ -341,16 +354,19 @@ public class MainActivity extends TabActivity implements GatewayListener {
         ArrayList<String> dmChannelItems = new ArrayList<>();
         ArrayList<String> dmChannelIcons = new ArrayList<>();
         dmChannelUnread.clear();
+        dmChannelMentions.clear();
 
         for (int i = 0; i < dmChannels.size(); i++) {
             DMChannel dm = dmChannels.elementAt(i);
             dmChannelItems.add((!dm.isGroup ? "@" : "") + dm.name);
             dmChannelIcons.add(dm.getIconUrl(acc.getCdnUrl()));
             dmChannelUnread.add(acc.unreadManager.hasUnreads(dm));
+            dmChannelMentions.add(acc.unreadManager.getMentionCount(dm.id));
         }
 
         ArrayAdapter<String> adapter =
-            new IconArrayAdapter(c, dmChannelItems, dmChannelIcons, dmChannelUnread);
+            new IconArrayAdapter(c, dmChannelItems, dmChannelIcons, dmChannelUnread,
+                dmChannelMentions);
 
         dmChannelList.setAdapter(adapter);
 

@@ -73,6 +73,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                 account.unreadManager.markRead(channel);
                 Settings.save(ChannelListActivity.this);
                 row.unread = false;
+                row.mentions = 0;
                 ((ChannelListAdapter) channelList.getAdapter()).notifyDataSetChanged();
 
                 Intent intent = new Intent(ChannelListActivity.this, ChatActivity.class);
@@ -169,6 +170,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                 row.channel = (Channel) category.children.elementAt(j);
                 row.name = row.channel.name;
                 row.unread = account.unreadManager.hasUnreads(row.channel);
+                row.mentions = account.unreadManager.getMentionCount(row.channel.id);
                 rows.add(row);
             }
         }
@@ -194,7 +196,10 @@ public class ChannelListActivity extends Activity implements GatewayListener {
 
         for (int i = 0; i < rows.size(); i++) {
             Row row = (Row) rows.elementAt(i);
-            if (!row.category) row.unread = account.unreadManager.hasUnreads(row.channel);
+            if (row.category) continue;
+
+            row.unread = account.unreadManager.hasUnreads(row.channel);
+            row.mentions = account.unreadManager.getMentionCount(row.channel.id);
         }
 
         if (channelList != null && channelList.getAdapter() != null) {
@@ -301,6 +306,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
     private static class Row {
         boolean category;
         boolean unread;
+        int mentions;
         String name;
         Channel channel;
     }
@@ -357,9 +363,18 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                 TextView text = (TextView) convertView.findViewById(R.id.channelName);
                 ImageView unreadIndicator =
                     (ImageView) convertView.findViewById(R.id.channelUnread);
+                TextView mentionIndicator = (TextView) convertView.findViewById(R.id.channelMentions);
 
                 text.setText(row.name);
                 unreadIndicator.setVisibility(row.unread ? View.VISIBLE : View.INVISIBLE);
+
+                if (row.mentions > 0) {
+                    mentionIndicator.setText(Integer.toString(row.mentions));
+                    mentionIndicator.setVisibility(View.VISIBLE);
+                }
+                else {
+                    mentionIndicator.setVisibility(View.GONE);
+                }
 
                 if (Settings.lightTheme) {
                     unreadIndicator.setImageResource(R.drawable.unread_indicator_light);

@@ -16,16 +16,18 @@ import java.util.ArrayList;
 public class IconArrayAdapter extends ArrayAdapter<String> {
     private ArrayList<String> iconUrls;
     private ArrayList<Boolean> unreadFlags;
+    private ArrayList<Integer> mentionCounts;
 
     public IconArrayAdapter(Context context, ArrayList<String> items, ArrayList<String> iconUrls) {
-        this(context, items, iconUrls, null);
+        this(context, items, iconUrls, null, null);
     }
 
     public IconArrayAdapter(Context context, ArrayList<String> items, ArrayList<String> iconUrls,
-        ArrayList<Boolean> unreadFlags) {
+        ArrayList<Boolean> unreadFlags, ArrayList<Integer> mentionCounts) {
         super(context, 0, items);
         this.iconUrls = iconUrls;
         this.unreadFlags = unreadFlags;
+        this.mentionCounts = mentionCounts;
     }
 
     @Override
@@ -41,6 +43,7 @@ public class IconArrayAdapter extends ArrayAdapter<String> {
         ImageView image = (ImageView) convertView.findViewById(R.id.itemImage);
         TextView text = (TextView) convertView.findViewById(R.id.itemText);
         ImageView unreadIndicator = (ImageView) convertView.findViewById(R.id.itemUnread);
+        TextView mentionIndicator = (TextView) convertView.findViewById(R.id.itemMentions);
 
         text.setText(item);
 
@@ -62,6 +65,18 @@ public class IconArrayAdapter extends ArrayAdapter<String> {
 
         boolean unread = unreadFlags != null && unreadFlags.get(position);
         unreadIndicator.setVisibility(unread ? View.VISIBLE : View.INVISIBLE);
+
+        int mentions =
+            mentionCounts != null && position < mentionCounts.size() ?
+                mentionCounts.get(position).intValue() : 0;
+
+        if (mentions > 0) {
+            mentionIndicator.setText(Integer.toString(mentions));
+            mentionIndicator.setVisibility(View.VISIBLE);
+        }
+        else {
+            mentionIndicator.setVisibility(View.GONE);
+        }
 
         if (Settings.lightTheme) {
             unreadIndicator.setImageResource(R.drawable.unread_indicator_light);

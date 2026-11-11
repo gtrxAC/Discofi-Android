@@ -11,4 +11,5 @@
     <color name="mention_foreground_dark">#E0E3FF</color>
     <color name="mention_foreground_light">#5865F2</color>
     <color name="badge_background">#5865F2</color>
+    <color name="mention_badge_background">#DA373C</color>
 </resources>

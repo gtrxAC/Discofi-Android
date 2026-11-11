@@ -29,12 +29,12 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Gateway
 * Settings for theme, message count, etc.
 * Unread indicator
+* Ping indicator
 
 ### Planned for later
 * Threads
 * Forums
 * Reactions
-* Ping indicator
 * Notifications
 * Sending attachments
 * QR login
