@@ -5,46 +5,44 @@ def twemojiSourcePattern = "twemoji-${twemojiVersion}/assets/72x72/*.png"
 def twemojiAssetsRoot = layout.buildDirectory.dir("generated/twemoji/assets")
 
 def downloadTwemoji = tasks.register('downloadTwemoji') {
-	group = 'twemoji'
-	description = "Downloads the Twemoji ${twemojiVersion} tarball"
-	outputs.file(twemojiTarball)
-	onlyIf { !twemojiTarball.get().asFile.exists() }
-	doLast {
-		def target = twemojiTarball.get().asFile
-		target.parentFile.mkdirs()
-		logger.lifecycle("Downloading ${twemojiUrl}")
-		def conn = new URL(twemojiUrl).openConnection()
-		conn.connectTimeout = 15_000
-		conn.readTimeout = 60_000
-		conn.inputStream.withCloseable { input ->
-			target.withOutputStream { out -> out << input }
-		}
-	}
+    group = 'twemoji'
+    description = "Downloads the Twemoji ${twemojiVersion} tarball"
+    outputs.file(twemojiTarball)
+    onlyIf { !twemojiTarball.get().asFile.exists() }
+    doLast {
+        def target = twemojiTarball.get().asFile
+        target.parentFile.mkdirs()
+        logger.lifecycle("Downloading ${twemojiUrl}")
+        def conn = new URL(twemojiUrl).openConnection()
+        conn.connectTimeout = 15_000
+        conn.readTimeout = 60_000
+        conn.inputStream.withCloseable { input -> target.withOutputStream { out -> out << input }
+        }
+    }
 }
 
 def extractTwemoji = tasks.register('extractTwemoji', Copy) {
-	group = 'twemoji'
-	description = 'Extracts Twemoji images into a generated assets directory'
-	dependsOn downloadTwemoji
+    group = 'twemoji'
+    description = 'Extracts Twemoji images into a generated assets directory'
+    dependsOn downloadTwemoji
 
-	from({ tarTree(resources.gzip(twemojiTarball.get().asFile)) }) {
-		include twemojiSourcePattern
-	}
-	eachFile { fcd ->
-		fcd.relativePath = new RelativePath(true, 'twemoji', fcd.name)
-	}
-	includeEmptyDirs = false
-	into twemojiAssetsRoot
+    from({ tarTree(resources.gzip(twemojiTarball.get().asFile)) }) {
+        include twemojiSourcePattern
+    }
+    eachFile { fcd -> fcd.relativePath = new RelativePath(true, 'twemoji', fcd.name)
+    }
+    includeEmptyDirs = false
+    into twemojiAssetsRoot
 }
 
 android {
-	sourceSets {
-		main {
-			assets.srcDir(twemojiAssetsRoot)
-		}
-	}
+    sourceSets {
+        main {
+            assets.srcDir(twemojiAssetsRoot)
+        }
+    }
 }
 
 tasks.matching { it.name == 'preBuild' }.configureEach {
-	dependsOn extractTwemoji
+    dependsOn extractTwemoji
 }

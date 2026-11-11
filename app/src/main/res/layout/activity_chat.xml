@@ -1,87 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			  android:layout_width="match_parent"
-			  android:layout_height="match_parent"
-			  android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-	<ListView
-			android:id="@+id/messageList"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_weight="1"
-			android:paddingBottom="2dp"
-			android:paddingTop="2dp"
-			android:divider="@android:color/transparent"
-			android:dividerHeight="0dp"
-			android:stackFromBottom="true"/>
+    <ListView
+        android:id="@+id/messageList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:stackFromBottom="true" />
 
-	<TextView
-			android:id="@+id/typingIndicator"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:paddingBottom="4dp"
-			android:paddingLeft="4dp"
-			android:paddingRight="4dp"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:visibility="gone"/>
+    <TextView
+        android:id="@+id/typingIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone" />
 
-	<LinearLayout
-			android:id="@+id/replyPanel"
-			android:layout_width="fill_parent"
-			android:layout_height="46dp"
-			android:background="@android:drawable/bottom_bar"
-			android:gravity="center_vertical"
-			android:padding="5dp"
-			android:visibility="gone">
+    <LinearLayout
+        android:id="@+id/replyPanel"
+        android:layout_width="fill_parent"
+        android:layout_height="46dp"
+        android:background="@android:drawable/bottom_bar"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:visibility="gone">
 
-		<TextView
-				android:id="@+id/replyTo"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:layout_marginLeft="3dp"
-				android:text="@string/reply_to"
-				android:textAppearance="?android:attr/textAppearance"/>
+        <TextView
+            android:id="@+id/replyTo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_weight="1"
+            android:text="@string/reply_to"
+            android:textAppearance="?android:attr/textAppearance" />
 
-		<ToggleButton
-				android:id="@+id/pingToggle"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textOff="@string/ping_off"
-				android:textOn="@string/ping_on"
-				style="?android:attr/buttonStyleSmall"/>
+        <ToggleButton
+            android:id="@+id/pingToggle"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="@string/ping_off"
+            android:textOn="@string/ping_on" />
 
-		<ImageButton
-				android:id="@+id/cancelReply"
-				android:layout_width="36dp"
-				android:layout_height="36dp"
-				android:src="@drawable/ic_btn_close_panel"/>
-	</LinearLayout>
+        <ImageButton
+            android:id="@+id/cancelReply"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_btn_close_panel" />
+    </LinearLayout>
 
-	<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@android:drawable/bottom_bar"
-			android:gravity="center_vertical"
-			android:orientation="horizontal"
-			android:padding="5dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/bottom_bar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="5dp">
 
-		<EditText
-				android:id="@+id/messageComposer"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:hint="@string/msg_composer_hint"
-				android:inputType="textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
-				android:maxLength="2000"
-				android:maxLines="4"
-				android:nextFocusRight="@+id/msgSend"/>
+        <EditText
+            android:id="@+id/messageComposer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/msg_composer_hint"
+            android:inputType="textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
+            android:maxLength="2000"
+            android:maxLines="4"
+            android:nextFocusRight="@+id/msgSend" />
 
-		<Button
-				android:id="@+id/sendButton"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/action_send"/>
-	</LinearLayout>
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_send" />
+    </LinearLayout>
 
 </LinearLayout>

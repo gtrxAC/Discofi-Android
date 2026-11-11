@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:gravity="center_vertical"
-		android:padding="8dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="8dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp">
 
-	<ImageView
-			android:id="@+id/itemImage"
-			android:layout_width="32dp"
-			android:layout_height="32dp"
-			android:layout_marginRight="8dp"
-			android:src="@mipmap/ic_launcher"/>
+    <ImageView
+        android:id="@+id/itemUnread"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginRight="6dp"
+        android:src="@drawable/unread_indicator"
+        android:visibility="invisible" />
 
-	<TextView
-			android:id="@+id/itemText"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
+    <ImageView
+        android:id="@+id/itemImage"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginRight="8dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/itemText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

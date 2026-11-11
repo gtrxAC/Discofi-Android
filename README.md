@@ -28,12 +28,13 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Message editing and deleting
 * Gateway
 * Settings for theme, message count, etc.
+* Unread indicator
 
 ### Planned for later
 * Threads
 * Forums
 * Reactions
-* Unread and ping indicator
+* Ping indicator
 * Notifications
 * Sending attachments
 * QR login

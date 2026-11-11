@@ -35,43 +35,49 @@ import javax.microedition.io.ConnectionNotFoundException;
 
 /**
  * @author vlads Original MicroEmulator implementation of
- *         javax.microedition.Connector
- *         <p>
+ * javax.microedition.Connector
+ * <p>
  *         TODO integrate with ImplementationInitialization
  */
 public class ConnectorImpl extends ConnectorAdapter {
 
-	private final String TAG = ConnectorImpl.class.getName();
+    private final String TAG = ConnectorImpl.class.getName();
 
-	@Override
-	public Connection open(final String name, final int mode, final boolean timeouts) throws IOException {
-		return openSecure(name, mode, timeouts);
-	}
+    @Override
+    public Connection open(final String name, final int mode, final boolean timeouts)
+        throws IOException {
+        return openSecure(name, mode, timeouts);
+    }
 
-	private Connection openSecure(String name, int mode, boolean timeouts) throws IOException {
-		String className = null;
-		String protocol = null;
-		try {
-			try {
-				protocol = name.substring(0, name.indexOf(':'));
-				className = "org.microemu.cldc." + protocol + ".Connection";
-				Class cl = Class.forName(className);
-				Object inst = cl.newInstance();
-				if (inst instanceof ConnectionImplementation) {
-					return ((ConnectionImplementation) inst).openConnection(name, mode, timeouts);
-				} else {
-					throw new ClassNotFoundException();
-				}
-			} catch (ClassNotFoundException e) {
-				Log.d(TAG, "connection [" + protocol + "] class not found", e);
-				throw new ConnectionNotFoundException("connection [" + protocol + "] class not found");
-			}
-		} catch (InstantiationException e) {
-			Log.e(TAG, "Unable to create" + className, e);
-			throw new ConnectionNotFoundException();
-		} catch (IllegalAccessException e) {
-			Log.e(TAG, "Unable to create" + className, e);
-			throw new ConnectionNotFoundException();
-		}
-	}
+    private Connection openSecure(String name, int mode, boolean timeouts) throws IOException {
+        String className = null;
+        String protocol = null;
+        try {
+            try {
+                protocol = name.substring(0, name.indexOf(':'));
+                className = "org.microemu.cldc." + protocol + ".Connection";
+                Class cl = Class.forName(className);
+                Object inst = cl.newInstance();
+                if (inst instanceof ConnectionImplementation) {
+                    return ((ConnectionImplementation) inst).openConnection(name, mode, timeouts);
+                }
+                else {
+                    throw new ClassNotFoundException();
+                }
+            }
+            catch (ClassNotFoundException e) {
+                Log.d(TAG, "connection [" + protocol + "] class not found", e);
+                throw new ConnectionNotFoundException(
+                    "connection [" + protocol + "] class not found");
+            }
+        }
+        catch (InstantiationException e) {
+            Log.e(TAG, "Unable to create" + className, e);
+            throw new ConnectionNotFoundException();
+        }
+        catch (IllegalAccessException e) {
+            Log.e(TAG, "Unable to create" + className, e);
+            throw new ConnectionNotFoundException();
+        }
+    }
 }

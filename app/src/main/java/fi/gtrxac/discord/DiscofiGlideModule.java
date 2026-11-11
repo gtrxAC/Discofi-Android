@@ -18,61 +18,64 @@ import java.io.InputStream;
 import fi.gtrxac.bluewap.http.HTTP;
 
 public class DiscofiGlideModule implements GlideModule {
-	public void applyOptions(Context context, GlideBuilder builder) {
-	}
+    public void applyOptions(Context context, GlideBuilder builder) {
+    }
 
-	public void registerComponents(Context context, Glide glide) {
-		glide.register(GlideUrl.class, InputStream.class, new HttpModelLoaderFactory());
-	}
+    public void registerComponents(Context context, Glide glide) {
+        glide.register(GlideUrl.class, InputStream.class, new HttpModelLoaderFactory());
+    }
 
-	private static class HttpModelLoaderFactory implements ModelLoaderFactory<GlideUrl, InputStream> {
-		public ModelLoader<GlideUrl, InputStream> build(Context context, GenericLoaderFactory factories) {
-			return new HttpModelLoader();
-		}
+    private static class HttpModelLoaderFactory
+        implements ModelLoaderFactory<GlideUrl, InputStream> {
+        public ModelLoader<GlideUrl, InputStream> build(Context context,
+            GenericLoaderFactory factories) {
+            return new HttpModelLoader();
+        }
 
-		public void teardown() {
-		}
-	}
+        public void teardown() {
+        }
+    }
 
-	private static class HttpModelLoader implements ModelLoader<GlideUrl, InputStream> {
-		public DataFetcher<InputStream> getResourceFetcher(GlideUrl model, int width, int height) {
-			return new HttpDataFetcher(model.toStringUrl());
-		}
-	}
+    private static class HttpModelLoader implements ModelLoader<GlideUrl, InputStream> {
+        public DataFetcher<InputStream> getResourceFetcher(GlideUrl model, int width, int height) {
+            return new HttpDataFetcher(model.toStringUrl());
+        }
+    }
 
-	private static class HttpDataFetcher implements DataFetcher<InputStream> {
-		private final String url;
-		private HTTP request;
-		private volatile boolean cancelled;
+    private static class HttpDataFetcher implements DataFetcher<InputStream> {
+        private final String url;
+        private HTTP request;
+        private volatile boolean cancelled;
 
-		HttpDataFetcher(String url) {
-			this.url = url;
-		}
+        HttpDataFetcher(String url) {
+            this.url = url;
+        }
 
-		public InputStream loadData(Priority priority) throws Exception {
-			HTTP http = HTTP.createRequest("GET", url);
-			request = http;
+        public InputStream loadData(Priority priority) throws Exception {
+            HTTP http = HTTP.createRequest("GET", url);
+            request = http;
 
-			int responseCode = http.getResponseCode();
-			if (cancelled) throw new IOException("Cancelled");
-			if (responseCode < 200 || responseCode >= 300) {
-				throw new IOException("Image request failed with HTTP " + responseCode + ": " + url);
-			}
-			return http.getResponseStream();
-		}
+            int responseCode = http.getResponseCode();
+            if (cancelled) throw new IOException("Cancelled");
+            if (responseCode < 200 || responseCode >= 300) {
+                throw new IOException(
+                    "Image request failed with HTTP " + responseCode + ": " + url);
+            }
+            return http.getResponseStream();
+        }
 
-		public void cleanup() {
-			HTTP http = request;
-			request = null;
-			if (http != null) http.close();
-		}
+        public void cleanup() {
+            HTTP http = request;
+            request = null;
+            if (http != null) http.close();
+        }
 
-		public String getId() {
-			return url;
-		}
+        public String getId() {
+            return url;
+        }
 
-		public void cancel() {
-			cancelled = true;
-		}
-	}
+        public void cancel() {
+            cancelled = true;
+        }
+    }
 }

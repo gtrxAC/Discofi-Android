@@ -39,67 +39,66 @@ import javax.net.ssl.SSLContext;
 
 public class Connection extends org.microemu.cldc.http.Connection implements HttpsConnection {
 
-	private SSLContext sslContext;
+    private SSLContext sslContext;
 
-	private SecurityInfo securityInfo;
+    private SecurityInfo securityInfo;
 
-	public Connection() {
-		try {
-			sslContext = SSLContext.getInstance("TLS");
-		} catch (NoSuchAlgorithmException ex) {
-			ex.printStackTrace();
-		}
+    public Connection() {
+        try {
+            sslContext = SSLContext.getInstance("TLS");
+        }
+        catch (NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
+        }
 
-		securityInfo = null;
-	}
+        securityInfo = null;
+    }
 
-	@Override
-	public SecurityInfo getSecurityInfo() throws IOException {
-		if (securityInfo == null) {
-			if (cn == null) {
-				throw new IOException();
-			}
-			if (!connected) {
-				cn.connect();
-				connected = true;
-			}
-			HttpsURLConnection https = (HttpsURLConnection) cn;
+    @Override
+    public SecurityInfo getSecurityInfo() throws IOException {
+        if (securityInfo == null) {
+            if (cn == null) {
+                throw new IOException();
+            }
+            if (!connected) {
+                cn.connect();
+                connected = true;
+            }
+            HttpsURLConnection https = (HttpsURLConnection) cn;
 
-			Certificate[] certs = https.getServerCertificates();
-			if (certs.length == 0) {
-				throw new IOException();
-			}
-			securityInfo = new SecurityInfoImpl(
-					https.getCipherSuite(),
-					sslContext.getProtocol(),
-					new CertificateImpl((X509Certificate) certs[0]));
-		}
+            Certificate[] certs = https.getServerCertificates();
+            if (certs.length == 0) {
+                throw new IOException();
+            }
+            securityInfo = new SecurityInfoImpl(https.getCipherSuite(), sslContext.getProtocol(),
+                new CertificateImpl((X509Certificate) certs[0]));
+        }
 
-		return securityInfo;
-	}
+        return securityInfo;
+    }
 
-	@Override
-	public String getProtocol() {
-		return "https";
-	}
+    @Override
+    public String getProtocol() {
+        return "https";
+    }
 
 
-	/**
-	 * Returns the network port number of the URL for this HttpsConnection
-	 *
-	 * @return the network port number of the URL for this HttpsConnection. The default HTTPS port
-	 * number (443) is returned if there was no port number in the string passed to Connector.open.
-	 */
-	@Override
-	public int getPort() {
-		if (cn == null) {
-			return -1;
-		}
-		int port = cn.getURL().getPort();
-		if (port == -1) {
-			return 443;
-		}
-		return port;
-	}
+    /**
+     * Returns the network port number of the URL for this HttpsConnection
+     *
+     * @return the network port number of the URL for this HttpsConnection. The default HTTPS port
+     * number (443) is returned if there was no port number in the string passed to Connector.open.
+     */
+    @Override
+    public int getPort() {
+        if (cn == null) {
+            return -1;
+        }
+        int port = cn.getURL().getPort();
+        if (port == -1) {
+            return 443;
+        }
+        return port;
+    }
 
 }

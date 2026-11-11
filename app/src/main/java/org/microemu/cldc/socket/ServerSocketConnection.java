@@ -31,38 +31,37 @@ import java.net.ServerSocket;
 
 import javax.microedition.io.StreamConnection;
 
-public class ServerSocketConnection implements
-		javax.microedition.io.ServerSocketConnection {
+public class ServerSocketConnection implements javax.microedition.io.ServerSocketConnection {
 
-	private ServerSocket serverSocket;
+    private ServerSocket serverSocket;
 
-	public ServerSocketConnection() throws IOException {
-		serverSocket = new ServerSocket();
-	}
+    public ServerSocketConnection() throws IOException {
+        serverSocket = new ServerSocket();
+    }
 
-	public ServerSocketConnection(int port) throws IOException {
-		serverSocket = new ServerSocket(port);
-	}
+    public ServerSocketConnection(int port) throws IOException {
+        serverSocket = new ServerSocket(port);
+    }
 
-	@Override
-	public String getLocalAddress() throws IOException {
-		InetAddress localHost = InetAddress.getLocalHost();
-		return localHost.getHostAddress();
-	}
+    @Override
+    public String getLocalAddress() throws IOException {
+        InetAddress localHost = InetAddress.getLocalHost();
+        return localHost.getHostAddress();
+    }
 
-	@Override
-	public int getLocalPort() throws IOException {
-		return serverSocket.getLocalPort();
-	}
+    @Override
+    public int getLocalPort() throws IOException {
+        return serverSocket.getLocalPort();
+    }
 
-	@Override
-	public StreamConnection acceptAndOpen() throws IOException {
-		return new SocketConnection(serverSocket.accept());
-	}
+    @Override
+    public StreamConnection acceptAndOpen() throws IOException {
+        return new SocketConnection(serverSocket.accept());
+    }
 
-	@Override
-	public void close() throws IOException {
-		serverSocket.close();
-	}
+    @Override
+    public void close() throws IOException {
+        serverSocket.close();
+    }
 
 }

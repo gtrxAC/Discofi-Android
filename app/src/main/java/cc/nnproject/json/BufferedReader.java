@@ -26,91 +26,91 @@ import java.io.Reader;
 
 public class BufferedReader extends Reader {
 
-	private Reader in;
-	private char[] buffer;
-	private int idx;
-	private int length;
+    private Reader in;
+    private char[] buffer;
+    private int idx;
+    private int length;
 
-	public BufferedReader(Reader in) {
-		this(in, 16384);
-	}
+    public BufferedReader(Reader in) {
+        this(in, 16384);
+    }
 
-	public BufferedReader(Reader in, int size) {
-		this.in = in;
-		buffer = new char[size];
-	}
+    public BufferedReader(Reader in, int size) {
+        this.in = in;
+        buffer = new char[size];
+    }
 
-	public void close() throws IOException {
-		in.close();
-		buffer = null;
-	}
+    public void close() throws IOException {
+        in.close();
+        buffer = null;
+    }
 
-	public int read() throws IOException {
-		if (idx >= length && !fill()) {
-			return -1;
-		}
-		return buffer[idx++];
-	}
+    public int read() throws IOException {
+        if (idx >= length && !fill()) {
+            return -1;
+        }
+        return buffer[idx++];
+    }
 
-	public int read(char[] b) throws IOException {
-		return read(b, 0, b.length);
-	}
+    public int read(char[] b) throws IOException {
+        return read(b, 0, b.length);
+    }
 
-	public int read(char[] b, int off, int len) throws IOException {
-		if (off < 0 || len < 0 || len > b.length - off) {
-			throw new IllegalArgumentException();
-		}
-		if (len == 0) return 0;
+    public int read(char[] b, int off, int len) throws IOException {
+        if (off < 0 || len < 0 || len > b.length - off) {
+            throw new IllegalArgumentException();
+        }
+        if (len == 0) return 0;
 
-		int n = b.length - off;
-		if (n > len) n = len;
-		int left = length - idx;
+        int n = b.length - off;
+        if (n > len) n = len;
+        int left = length - idx;
 
-		if (n <= left) {
-			System.arraycopy(buffer, idx, b, off, n);
-			idx += n;
-			return n;
-		}
+        if (n <= left) {
+            System.arraycopy(buffer, idx, b, off, n);
+            idx += n;
+            return n;
+        }
 
-		if (left != 0) {
-			System.arraycopy(buffer, idx, b, off, left);
-			idx += left;
-		}
+        if (left != 0) {
+            System.arraycopy(buffer, idx, b, off, left);
+            idx += left;
+        }
 
-		if (fill()) {
-			return left + read(b, off + left, len - left);
-		}
+        if (fill()) {
+            return left + read(b, off + left, len - left);
+        }
 
-		return left == 0 ? -1 : left;
-	}
+        return left == 0 ? -1 : left;
+    }
 
-	public long skip(long n) throws IOException {
-		if (n < 0) {
-			throw new IllegalArgumentException();
-		}
+    public long skip(long n) throws IOException {
+        if (n < 0) {
+            throw new IllegalArgumentException();
+        }
 
-		int left = length - idx;
-		if (n <= left) {
-			idx += n;
-			return n;
-		}
+        int left = length - idx;
+        if (n <= left) {
+            idx += n;
+            return n;
+        }
 
-		idx += left;
-		return left + in.skip(n - left);
-	}
+        idx += left;
+        return left + in.skip(n - left);
+    }
 
-	public boolean ready() throws IOException {
-		return idx < length || in.ready();
-	}
+    public boolean ready() throws IOException {
+        return idx < length || in.ready();
+    }
 
-	private boolean fill() throws IOException {
-		int r = in.read(buffer);
-		if (r != -1) {
-			idx = 0;
-			length = r;
-			return true;
-		}
-		return false;
-	}
+    private boolean fill() throws IOException {
+        int r = in.read(buffer);
+        if (r != -1) {
+            idx = 0;
+            length = r;
+            return true;
+        }
+        return false;
+    }
 
 }

@@ -1,8 +1,5 @@
 package fi.gtrxac.discord;
 
-import fi.gtrxac.discord.model.*;
-
-import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +11,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -23,366 +18,494 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import cc.nnproject.json.JSONArray;
+import cc.nnproject.json.JSONObject;
+import fi.gtrxac.discord.model.DMChannel;
+import fi.gtrxac.discord.model.Guild;
+import fi.gtrxac.discord.model.Message;
 
-public class MainActivity extends TabActivity {
-	private static final int TAB_GUILDS = 0;
-	private static final int TAB_DMS = 1;
-	private static final int TAB_INBOX = 2;
+public class MainActivity extends TabActivity implements GatewayListener {
+    private static final int TAB_GUILDS = 0;
+    private static final int TAB_DMS = 1;
+    private static final int TAB_INBOX = 2;
 
-	private ListView guildList;
-	private ListView dmChannelList;
-	private ListView inboxList;
-	private boolean dmChannelsLoaded = false;
-	private boolean inboxLoaded = false;
+    private ListView guildList;
+    private ListView dmChannelList;
+    private ListView inboxList;
+    private boolean dmChannelsLoaded = false;
+    private boolean inboxLoaded = false;
 
-	private Vector<Guild> guilds = new Vector<>();
-	private Vector<DMChannel> dmChannels = new Vector<>();
-	private Vector<Message> inbox = new Vector<>();
+    private Vector<Guild> guilds = new Vector<>();
+    private Vector<DMChannel> dmChannels = new Vector<>();
+    private Vector<Message> inbox = new Vector<>();
+    private final ArrayList<Boolean> guildUnread = new ArrayList<>();
+    private final ArrayList<Boolean> dmChannelUnread = new ArrayList<>();
 
-	public void onCreate(Bundle savedInstanceState) {
-		final Context context = this;
+    public void onCreate(Bundle savedInstanceState) {
+        final Context context = this;
 
-		Settings.load(this);
-		Theme.load(this);
+        Settings.load(this);
+        Theme.load(this);
 
-		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_PROGRESS);
-		setContentView(R.layout.activity_main);
+        super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_PROGRESS);
+        setContentView(R.layout.activity_main);
 
-		final Account acc = Accounts.getActive();
+        final Account acc = Accounts.getActive();
 
-		if (acc == null) {
-			goToLoginScreen();
-			return;
-		}
+        if (acc == null) {
+            goToLoginScreen();
+            return;
+        }
 
-		acc.startGateway();
-		GuildMemberCache.init(acc);
+        acc.startGateway();
 
-		try {
-			setTitle(acc.getDisplayTitle());
-		} catch (DiscordException e) {
-			e.printStackTrace();
-		}
+        try {
+            setTitle(acc.getDisplayTitle());
+        }
+        catch (DiscordException e) {
+            e.printStackTrace();
+        }
 
-		TabHost tabHost = getTabHost();
-		tabHost.setup();
+        TabHost tabHost = getTabHost();
+        tabHost.setup();
 
-		TabHost.TabSpec guildsTab = tabHost.newTabSpec("guildsTab");
-		guildsTab.setIndicator(getResources().getString(R.string.guilds));
-		guildsTab.setContent(R.id.guildsTab);
-		tabHost.addTab(guildsTab);
+        TabHost.TabSpec guildsTab = tabHost.newTabSpec("guildsTab");
+        guildsTab.setIndicator(getResources().getString(R.string.guilds));
+        guildsTab.setContent(R.id.guildsTab);
+        tabHost.addTab(guildsTab);
 
-		TabHost.TabSpec dmsTab = tabHost.newTabSpec("dmsTab");
-		dmsTab.setIndicator(getResources().getString(R.string.dms));
-		dmsTab.setContent(R.id.dmsTab);
-		tabHost.addTab(dmsTab);
+        TabHost.TabSpec dmsTab = tabHost.newTabSpec("dmsTab");
+        dmsTab.setIndicator(getResources().getString(R.string.dms));
+        dmsTab.setContent(R.id.dmsTab);
+        tabHost.addTab(dmsTab);
 
-		TabHost.TabSpec inboxTab = tabHost.newTabSpec("inboxTab");
-		inboxTab.setIndicator(getResources().getString(R.string.inbox));
-		inboxTab.setContent(R.id.inboxTab);
-		tabHost.addTab(inboxTab);
+        TabHost.TabSpec inboxTab = tabHost.newTabSpec("inboxTab");
+        inboxTab.setIndicator(getResources().getString(R.string.inbox));
+        inboxTab.setContent(R.id.inboxTab);
+        tabHost.addTab(inboxTab);
 
-		tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-			@Override
-			public void onTabChanged(String tabId) {
-				if ("dmsTab".equals(tabId) && !dmChannelsLoaded) {
-					loadDmChannels(context, acc);
-				} else if ("inboxTab".equals(tabId) && !inboxLoaded) {
-					loadInbox(context, acc);
-				}
-			}
-		});
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                if ("dmsTab".equals(tabId) && !dmChannelsLoaded) {
+                    loadDmChannels(context, acc);
+                }
+                else if ("inboxTab".equals(tabId) && !inboxLoaded) {
+                    loadInbox(context, acc);
+                }
+            }
+        });
 
-		guildList = (ListView) findViewById(R.id.guildList);
-		dmChannelList = (ListView) findViewById(R.id.dmList);
-		inboxList = (ListView) findViewById(R.id.inboxList);
+        guildList = (ListView) findViewById(R.id.guildList);
+        dmChannelList = (ListView) findViewById(R.id.dmList);
+        inboxList = (ListView) findViewById(R.id.inboxList);
 
-		guildList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Guild guild = guilds.elementAt(position);
+        guildList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Guild guild = guilds.elementAt(position);
 
-				Intent intent = new Intent(context, ChannelListActivity.class);
-				intent.putExtra("guildId", guild.id);
-				intent.putExtra("guildName", guild.name);
-				startActivity(intent);
-			}
-		});
+                Intent intent = new Intent(context, ChannelListActivity.class);
+                intent.putExtra("guildId", guild.id);
+                intent.putExtra("guildName", guild.name);
+                startActivity(intent);
+            }
+        });
 
-		dmChannelList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				DMChannel dm = dmChannels.elementAt(position);
+        dmChannelList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DMChannel dm = dmChannels.elementAt(position);
 
-				Intent intent = new Intent(context, ChatActivity.class);
-				intent.putExtra("channelId", dm.id);
-				intent.putExtra("channelName", (!dm.isGroup ? "@" : "") + dm.name);
-				startActivity(intent);
-			}
-		});
+                Account acc = Accounts.getActive();
+                if (acc != null) {
+                    acc.unreadManager.markRead(dm);
+                    Settings.save(context);
+                }
 
-		loadGuilds(context, acc);
-	}
+                if (position < dmChannelUnread.size()) {
+                    dmChannelUnread.set(position, false);
+                    ((IconArrayAdapter) dmChannelList.getAdapter()).notifyDataSetChanged();
+                }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("channelId", dm.id);
+                intent.putExtra("channelName", (!dm.isGroup ? "@" : "") + dm.name);
+                startActivity(intent);
+            }
+        });
 
-		if (Theme.checkAppearanceChanged(this)) return;
+        loadGuilds(context, acc);
+    }
 
-		// Settings may have changed while the settings screen was open.
-		for (int i = 0; i < inbox.size(); i++) {
-			inbox.elementAt(i).refreshTimestamp();
-		}
-		if (guildList != null) guildList.invalidateViews();
-		if (dmChannelList != null) dmChannelList.invalidateViews();
-		if (inboxList != null) inboxList.invalidateViews();
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GatewayThread.addListener(this);
 
-	private void loadGuilds(final Context context, final Account acc) {
-		if (acc.guildsAvailable()) {
-			try {
-				guildsCallback(context, acc.getGuilds(false));
-			} catch (DiscordException e) {
-				e.show(context);
-			}
-		} else {
-			showProgress(true);
+        if (Theme.checkAppearanceChanged(this)) return;
 
-			new Thread() {
-				@Override
-				public void run() {
-					fetchGuilds(context, acc, false);
-				}
-			}.start();
-		}
-	}
+        // Settings may have changed while the settings screen was open.
+        for (int i = 0; i < inbox.size(); i++) {
+            inbox.elementAt(i).refreshTimestamp();
+        }
+        refreshUnreadIndicators();
+        if (guildList != null) guildList.invalidateViews();
+        if (dmChannelList != null) dmChannelList.invalidateViews();
+        if (inboxList != null) inboxList.invalidateViews();
+    }
 
-	private void loadDmChannels(final Context context, final Account acc) {
-		if (acc.dmChannelsAvailable()) {
-			try {
-				dmChannelsCallback(context, acc.getDmChannels(false));
-			} catch (DiscordException e) {
-				e.show(context);
-			}
-		} else {
-			showProgress(true);
+    @Override
+    protected void onPause() {
+        GatewayThread.removeListener(this);
+        super.onPause();
+    }
 
-			new Thread() {
-				@Override
-				public void run() {
-					fetchDmChannels(context, acc, false);
-				}
-			}.start();
-		}
-	}
+    private void refreshUnreadIndicators() {
+        Account acc = Accounts.getActive();
+        if (acc == null) return;
 
-	private void loadInbox(final Context context, final Account acc) {
-		if (acc.inboxAvailable()) {
-			try {
-				inboxCallback(context, acc.getInbox(false));
-			} catch (DiscordException e) {
-				e.show(context);
-			}
-		} else {
-			showProgress(true);
+        if (guildList != null && guildList.getAdapter() != null &&
+            guildUnread.size() == guilds.size()) {
+            for (int i = 0; i < guilds.size(); i++) {
+                guildUnread.set(i, acc.unreadManager.hasUnreads(guilds.elementAt(i)));
+            }
+            ((IconArrayAdapter) guildList.getAdapter()).notifyDataSetChanged();
+        }
 
-			new Thread() {
-				@Override
-				public void run() {
-					fetchInbox(context, acc, false);
-				}
-			}.start();
-		}
-	}
+        if (dmChannelList != null && dmChannelList.getAdapter() != null &&
+            dmChannelUnread.size() == dmChannels.size()) {
+            for (int i = 0; i < dmChannels.size(); i++) {
+                dmChannelUnread.set(i, acc.unreadManager.hasUnreads(dmChannels.elementAt(i)));
+            }
+            ((IconArrayAdapter) dmChannelList.getAdapter()).notifyDataSetChanged();
+        }
+    }
 
-	private void fetchGuilds(final Context context, final Account acc, final boolean refresh) {
-		try {
-			final Vector<Guild> guilds = acc.getGuilds(refresh);
+    private void loadGuilds(final Context context, final Account acc) {
+        if (acc.guildsAvailable()) {
+            try {
+                guildsCallback(context, acc.getGuilds(false));
+            }
+            catch (DiscordException e) {
+                e.show(context);
+            }
+        }
+        else {
+            showProgress(true);
 
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					guildsCallback(context, guilds);
-				}
-			});
-		} catch (final DiscordException e) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					showProgress(false);
-					e.show(context);
-				}
-			});
-		}
-	}
+            new Thread() {
+                @Override
+                public void run() {
+                    fetchGuilds(context, acc, false);
+                }
+            }.start();
+        }
+    }
 
-	private void fetchDmChannels(final Context context, final Account acc, final boolean refresh) {
-		try {
-			final Vector<DMChannel> dmChannels = acc.getDmChannels(refresh);
+    private void loadDmChannels(final Context context, final Account acc) {
+        if (acc.dmChannelsAvailable()) {
+            try {
+                dmChannelsCallback(context, acc.getDmChannels(false));
+            }
+            catch (DiscordException e) {
+                e.show(context);
+            }
+        }
+        else {
+            showProgress(true);
 
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					dmChannelsCallback(context, dmChannels);
-				}
-			});
-		} catch (final DiscordException e) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					showProgress(false);
-					e.show(context);
-				}
-			});
-		}
-	}
+            new Thread() {
+                @Override
+                public void run() {
+                    fetchDmChannels(context, acc, false);
+                }
+            }.start();
+        }
+    }
 
-	private void fetchInbox(final Context context, final Account acc, final boolean refresh) {
-		try {
-			final Vector<Message> inbox = acc.getInbox(refresh);
+    private void loadInbox(final Context context, final Account acc) {
+        if (acc.inboxAvailable()) {
+            try {
+                inboxCallback(context, acc.getInbox(false));
+            }
+            catch (DiscordException e) {
+                e.show(context);
+            }
+        }
+        else {
+            showProgress(true);
 
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					inboxCallback(context, inbox);
-				}
-			});
-		} catch (final DiscordException e) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					showProgress(false);
-					e.show(context);
-				}
-			});
-		}
-	}
+            new Thread() {
+                @Override
+                public void run() {
+                    fetchInbox(context, acc, false);
+                }
+            }.start();
+        }
+    }
 
-	public void guildsCallback(Context c, Vector<Guild> guilds) {
-		this.guilds = guilds;
+    private void fetchGuilds(final Context context, final Account acc, final boolean refresh) {
+        try {
+            final Vector<Guild> guilds = acc.getGuilds(refresh);
 
-		ArrayList<String> guildItems = new ArrayList<>();
-		ArrayList<String> guildIcons = new ArrayList<>();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    guildsCallback(context, guilds);
+                }
+            });
+        }
+        catch (final DiscordException e) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showProgress(false);
+                    e.show(context);
+                }
+            });
+        }
+    }
 
-		for (int i = 0; i < guilds.size(); i++) {
-			Guild g = guilds.elementAt(i);
-			guildItems.add(g.name);
-			guildIcons.add(g.getIconUrl(Accounts.getActive().getCdnUrl()));
-		}
+    private void fetchDmChannels(final Context context, final Account acc, final boolean refresh) {
+        try {
+            final Vector<DMChannel> dmChannels = acc.getDmChannels(refresh);
 
-		ArrayAdapter<String> adapter = new IconArrayAdapter(c, guildItems, guildIcons);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dmChannelsCallback(context, dmChannels);
+                }
+            });
+        }
+        catch (final DiscordException e) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showProgress(false);
+                    e.show(context);
+                }
+            });
+        }
+    }
 
-		guildList.setAdapter(adapter);
+    private void fetchInbox(final Context context, final Account acc, final boolean refresh) {
+        try {
+            final Vector<Message> inbox = acc.getInbox(refresh);
 
-		showProgress(false);
-		Settings.save(c);
-	}
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    inboxCallback(context, inbox);
+                }
+            });
+        }
+        catch (final DiscordException e) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showProgress(false);
+                    e.show(context);
+                }
+            });
+        }
+    }
 
-	public void dmChannelsCallback(Context c, Vector<DMChannel> dmChannels) {
-		this.dmChannels = dmChannels;
+    public void guildsCallback(Context c, Vector<Guild> guilds) {
+        this.guilds = guilds;
+        Account acc = Accounts.getActive();
 
-		ArrayList<String> dmChannelItems = new ArrayList<>();
-		ArrayList<String> dmChannelIcons = new ArrayList<>();
+        ArrayList<String> guildItems = new ArrayList<>();
+        ArrayList<String> guildIcons = new ArrayList<>();
+        guildUnread.clear();
 
-		for (int i = 0; i < dmChannels.size(); i++) {
-			DMChannel dm = dmChannels.elementAt(i);
-			dmChannelItems.add((!dm.isGroup ? "@" : "") + dm.name);
-			dmChannelIcons.add(dm.getIconUrl(Accounts.getActive().getCdnUrl()));
-		}
+        for (int i = 0; i < guilds.size(); i++) {
+            Guild g = guilds.elementAt(i);
+            guildItems.add(g.name);
+            guildIcons.add(g.getIconUrl(acc.getCdnUrl()));
+            guildUnread.add(acc.unreadManager.hasUnreads(g));
+        }
 
-		ArrayAdapter<String> adapter = new IconArrayAdapter(c, dmChannelItems, dmChannelIcons);
+        ArrayAdapter<String> adapter = new IconArrayAdapter(c, guildItems, guildIcons, guildUnread);
 
-		dmChannelList.setAdapter(adapter);
+        guildList.setAdapter(adapter);
 
-		showProgress(false);
-		Settings.save(c);
-		dmChannelsLoaded = true;
-	}
+        showProgress(false);
+        Settings.save(c);
+    }
 
-	public void inboxCallback(Context c, Vector<Message> inbox) {
-		this.inbox = inbox;
+    public void dmChannelsCallback(Context c, Vector<DMChannel> dmChannels) {
+        this.dmChannels = dmChannels;
+        Account acc = Accounts.getActive();
 
-		if (inbox.size() == 0) {
-			TextView inboxEmptyText = (TextView) findViewById(R.id.inboxEmptyText);
-			inboxEmptyText.setVisibility(View.VISIBLE);
-		} else {
-			for (int i = 0; i < inbox.size(); i++) {
-				Message m = inbox.elementAt(i);
-				m.showAuthor = true;
-			}
-			// i ain't gonna fetch the channel to know what guild its from brocacho 💔
-			// (also i only coded messagelistadapter to work with a single guild so its basically useless anyway)
-			inboxList.setAdapter(new MessageListAdapter(c, inbox, Accounts.getActive(), 0, false));
-		}
+        ArrayList<String> dmChannelItems = new ArrayList<>();
+        ArrayList<String> dmChannelIcons = new ArrayList<>();
+        dmChannelUnread.clear();
 
-		showProgress(false);
-		inboxLoaded = true;
-	}
+        for (int i = 0; i < dmChannels.size(); i++) {
+            DMChannel dm = dmChannels.elementAt(i);
+            dmChannelItems.add((!dm.isGroup ? "@" : "") + dm.name);
+            dmChannelIcons.add(dm.getIconUrl(acc.getCdnUrl()));
+            dmChannelUnread.add(acc.unreadManager.hasUnreads(dm));
+        }
 
-	private void goToLoginScreen() {
-		final Account acc = Accounts.getActive();
-		if (acc != null) acc.gateway.stop = true;
-		Intent intent = new Intent(this, AccountListActivity.class);
-		startActivity(intent);
-		finish();
-	}
+        ArrayAdapter<String> adapter =
+            new IconArrayAdapter(c, dmChannelItems, dmChannelIcons, dmChannelUnread);
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main, menu);
-		return true;
-	}
+        dmChannelList.setAdapter(adapter);
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.mainRefresh:
-				refreshCurrentTab();
-				return true;
-			case R.id.mainSettings:
-				startActivity(new Intent(this, SettingsActivity.class));
-				return true;
-			case R.id.mainLogout:
-				goToLoginScreen();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-	}
+        showProgress(false);
+        Settings.save(c);
+        dmChannelsLoaded = true;
+    }
 
-	private void refreshCurrentTab() {
-		final Account acc = Accounts.getActive();
-		if (acc == null) {
-			goToLoginScreen();
-			return;
-		}
-		final Context context = this;
-		showProgress(true);
+    public void inboxCallback(Context c, Vector<Message> inbox) {
+        this.inbox = inbox;
 
-		new Thread() {
-			@Override
-			public void run() {
-				switch (getTabHost().getCurrentTab()) {
-					case TAB_GUILDS:
-						fetchGuilds(context, acc, true);
-						break;
-					case TAB_DMS:
-						fetchDmChannels(context, acc, true);
-						break;
-					case TAB_INBOX:
-						fetchInbox(context, acc, true);
-						break;
-				}
-			}
-		}.start();
-	}
+        if (inbox.size() == 0) {
+            TextView inboxEmptyText = (TextView) findViewById(R.id.inboxEmptyText);
+            inboxEmptyText.setVisibility(View.VISIBLE);
+        }
+        else {
+            for (int i = 0; i < inbox.size(); i++) {
+                Message m = inbox.elementAt(i);
+                m.showAuthor = true;
+            }
+            // i ain't gonna fetch the channel to know what guild its from brocacho 💔
+            // (also i only coded messagelistadapter to work with a single guild so its basically
+            // useless anyway)
+            inboxList.setAdapter(new MessageListAdapter(c, inbox, Accounts.getActive(), 0, false));
+        }
 
-	private void showProgress(final boolean show) {
-		this.setProgressBarVisibility(show);
-		this.setProgressBarIndeterminate(show);
-	}
+        showProgress(false);
+        inboxLoaded = true;
+    }
+
+    private void goToLoginScreen() {
+        final Account acc = Accounts.getActive();
+        if (acc != null) acc.gateway.stop = true;
+        Intent intent = new Intent(this, AccountListActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mainRefresh:
+                refreshCurrentTab();
+                return true;
+            case R.id.mainSettings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.mainLogout:
+                goToLoginScreen();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void refreshCurrentTab() {
+        final Account acc = Accounts.getActive();
+        if (acc == null) {
+            goToLoginScreen();
+            return;
+        }
+        final Context context = this;
+        showProgress(true);
+
+        new Thread() {
+            @Override
+            public void run() {
+                switch (getTabHost().getCurrentTab()) {
+                    case TAB_GUILDS:
+                        fetchGuilds(context, acc, true);
+                        break;
+                    case TAB_DMS:
+                        fetchDmChannels(context, acc, true);
+                        break;
+                    case TAB_INBOX:
+                        fetchInbox(context, acc, true);
+                        break;
+                }
+            }
+        }.start();
+    }
+
+    private void showProgress(final boolean show) {
+        this.setProgressBarVisibility(show);
+        this.setProgressBarIndeterminate(show);
+    }
+
+    public void onGatewayConnected() {
+    }
+
+    public void onGatewayDisconnected(String reason) {
+    }
+
+    public void onGatewayReady(JSONObject data) {
+    }
+
+    public void onMessageCreate(JSONObject message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onMessageUpdate(JSONObject message) {
+    }
+
+    public void onMessageDelete(JSONObject message) {
+    }
+
+    public void onMessageAck(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onTypingStart(JSONObject data) {
+    }
+
+    public void onGuildMembersChunk(JSONObject data) {
+    }
+
+    public void onPresenceUpdate(JSONObject data) {
+    }
+
+    public void onChannelUnread(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onPassiveUpdateV1(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
+
+    public void onPassiveUpdateV2(JSONObject data) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshUnreadIndicators();
+            }
+        });
+    }
 }

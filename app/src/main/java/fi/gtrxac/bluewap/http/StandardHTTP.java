@@ -12,168 +12,175 @@ import javax.net.ssl.HttpsURLConnection;
 import tech.alicesworld.ModernConnector.ModernConnector;
 
 public class StandardHTTP extends HTTP {
-	public static final Exception requestMethodException = new Exception();
+    public static final Exception requestMethodException = new Exception();
 
-	private HttpsURLConnection conn;
-	private HttpConnection modernConn;
+    private HttpsURLConnection conn;
+    private HttpConnection modernConn;
 
-	public StandardHTTP(String method, String url) {
-		super(method, url);
-	}
+    public StandardHTTP(String method, String url) {
+        super(method, url);
+    }
 
-	protected InputStream makeRequest() throws Exception {
-		try {
-			return makePlatformRequest();
-		} catch (Exception e) {
-			// Fallback to Modernconnector for older Android versions
-			closeTransport();
-			return makeModernConnectorRequest();
-		}
-	}
+    protected InputStream makeRequest() throws Exception {
+        try {
+            return makePlatformRequest();
+        }
+        catch (Exception e) {
+            // Fallback to Modernconnector for older Android versions
+            closeTransport();
+            return makeModernConnectorRequest();
+        }
+    }
 
-	private InputStream makePlatformRequest() throws Exception {
-		String currentUrl = url;
-		String currentMethod = method;
+    private InputStream makePlatformRequest() throws Exception {
+        String currentUrl = url;
+        String currentMethod = method;
 
-		for (int redirects = 0; redirects < 5; redirects++) {
-			URL parsed = new URL(currentUrl);
-			conn = (HttpsURLConnection) parsed.openConnection();
-			// Enable TLS 1.2 on Android 4.1-4.4
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
-					Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-				conn.setSSLSocketFactory(new TLSSocketFactory());
-			}
-			conn.setInstanceFollowRedirects(false);
-			try {
-				conn.setRequestMethod(currentMethod);
-			} catch (Exception e) {
-				throw requestMethodException;
-			}
+        for (int redirects = 0; redirects < 5; redirects++) {
+            URL parsed = new URL(currentUrl);
+            conn = (HttpsURLConnection) parsed.openConnection();
+            // Enable TLS 1.2 on Android 4.1-4.4
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
+                Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                conn.setSSLSocketFactory(new TLSSocketFactory());
+            }
+            conn.setInstanceFollowRedirects(false);
+            try {
+                conn.setRequestMethod(currentMethod);
+            }
+            catch (Exception e) {
+                throw requestMethodException;
+            }
 
-			for (Enumeration e = requestHeaders.keys(); e.hasMoreElements(); ) {
-				String key = (String) e.nextElement();
-				String value = (String) requestHeaders.get(key);
-				conn.setRequestProperty(key, value);
-			}
+            for (Enumeration e = requestHeaders.keys(); e.hasMoreElements(); ) {
+                String key = (String) e.nextElement();
+                String value = (String) requestHeaders.get(key);
+                conn.setRequestProperty(key, value);
+            }
 
-			if (data != null) {
-				conn.setDoOutput(true);
-				conn.setFixedLengthStreamingMode(data.length);
-				OutputStream os = conn.getOutputStream();
-				os.write(data);
-				os.close();
-			}
+            if (data != null) {
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(data.length);
+                OutputStream os = conn.getOutputStream();
+                os.write(data);
+                os.close();
+            }
 
-			responseCode = conn.getResponseCode();
-			responseHeaders.clear();
-			for (int i = 0; ; i++) {
-				String key = conn.getHeaderFieldKey(i);
-				String value = conn.getHeaderField(i);
-				if (key == null && value == null) break;
-				if (key == null) continue;
-				responseHeaders.put(key.toLowerCase(), value);
-			}
+            responseCode = conn.getResponseCode();
+            responseHeaders.clear();
+            for (int i = 0; ; i++) {
+                String key = conn.getHeaderFieldKey(i);
+                String value = conn.getHeaderField(i);
+                if (key == null && value == null) break;
+                if (key == null) continue;
+                responseHeaders.put(key.toLowerCase(), value);
+            }
 
-			if (responseCode >= 300 && responseCode < 400) {
-				String location = (String) responseHeaders.get("location");
-				conn.disconnect();
-				if (location == null) break;
+            if (responseCode >= 300 && responseCode < 400) {
+                String location = (String) responseHeaders.get("location");
+                conn.disconnect();
+                if (location == null) break;
 
-				currentUrl = new URL(parsed, location).toString();
-				continue;
-			}
-			break;
-		}
+                currentUrl = new URL(parsed, location).toString();
+                continue;
+            }
+            break;
+        }
 
-		url = currentUrl;
-		method = currentMethod;
+        url = currentUrl;
+        method = currentMethod;
 
-		if (responseCode >= 400) {
-			InputStream err = conn.getErrorStream();
-			if (err == null) {
-				try {
-					err = conn.getInputStream();
-				} catch (IOException e) {
-					err = new ByteArrayInputStream(new byte[0]);
-				}
-			}
-			if (err == null) err = new ByteArrayInputStream(new byte[0]);
-			return err;
-		}
-		return conn.getInputStream();
-	}
+        if (responseCode >= 400) {
+            InputStream err = conn.getErrorStream();
+            if (err == null) {
+                try {
+                    err = conn.getInputStream();
+                }
+                catch (IOException e) {
+                    err = new ByteArrayInputStream(new byte[0]);
+                }
+            }
+            if (err == null) err = new ByteArrayInputStream(new byte[0]);
+            return err;
+        }
+        return conn.getInputStream();
+    }
 
-	private InputStream makeModernConnectorRequest() throws Exception {
-		String currentUrl = url;
+    private InputStream makeModernConnectorRequest() throws Exception {
+        String currentUrl = url;
 
-		for (int redirects = 0; redirects < 5; redirects++) {
-			HttpConnection hc = (HttpConnection) ModernConnector.open(currentUrl);
+        for (int redirects = 0; redirects < 5; redirects++) {
+            HttpConnection hc = (HttpConnection) ModernConnector.open(currentUrl);
 
-			try {
-				try {
-					hc.setRequestMethod(method);
-				} catch (Exception e) {
-					throw requestMethodException;
-				}
+            try {
+                try {
+                    hc.setRequestMethod(method);
+                }
+                catch (Exception e) {
+                    throw requestMethodException;
+                }
 
-				for (Enumeration e = requestHeaders.keys(); e.hasMoreElements(); ) {
-					String key = (String) e.nextElement();
-					String value = (String) requestHeaders.get(key);
-					hc.setRequestProperty(key, value);
-				}
+                for (Enumeration e = requestHeaders.keys(); e.hasMoreElements(); ) {
+                    String key = (String) e.nextElement();
+                    String value = (String) requestHeaders.get(key);
+                    hc.setRequestProperty(key, value);
+                }
 
-				if (data != null) {
-					OutputStream os = hc.openOutputStream();
-					os.write(data);
-					os.close();
-				}
+                if (data != null) {
+                    OutputStream os = hc.openOutputStream();
+                    os.write(data);
+                    os.close();
+                }
 
-				responseCode = hc.getResponseCode();
-				responseHeaders.clear();
-				for (int i = 0; ; i++) {
-					String key = hc.getHeaderFieldKey(i);
-					String value = hc.getHeaderField(i);
-					if (key == null && value == null) break;
-					if (key == null) continue;
-					responseHeaders.put(key.toLowerCase(), value);
-				}
+                responseCode = hc.getResponseCode();
+                responseHeaders.clear();
+                for (int i = 0; ; i++) {
+                    String key = hc.getHeaderFieldKey(i);
+                    String value = hc.getHeaderField(i);
+                    if (key == null && value == null) break;
+                    if (key == null) continue;
+                    responseHeaders.put(key.toLowerCase(), value);
+                }
 
-				String location = null;
-				if (responseCode >= 300 && responseCode < 400) {
-					location = hc.getHeaderField("Location");
-				}
+                String location = null;
+                if (responseCode >= 300 && responseCode < 400) {
+                    location = hc.getHeaderField("Location");
+                }
 
-				if (location == null) {
-					modernConn = hc;
-					url = currentUrl;
-					return hc.openInputStream();
-				}
+                if (location == null) {
+                    modernConn = hc;
+                    url = currentUrl;
+                    return hc.openInputStream();
+                }
 
-				hc.close();
-				currentUrl = new URL(new URL(currentUrl), location).toString();
-			} catch (Exception e) {
-				try {
-					hc.close();
-				} catch (Exception ignored) {
-				}
-				throw e;
-			}
-		}
+                hc.close();
+                currentUrl = new URL(new URL(currentUrl), location).toString();
+            }
+            catch (Exception e) {
+                try {
+                    hc.close();
+                }
+                catch (Exception ignored) {
+                }
+                throw e;
+            }
+        }
 
-		throw new IOException("too many redirects");
-	}
+        throw new IOException("too many redirects");
+    }
 
-	protected void closeTransport() {
-		if (conn != null) {
-			conn.disconnect();
-			conn = null;
-		}
-		if (modernConn != null) {
-			try {
-				modernConn.close();
-			} catch (IOException e) {
-			}
-			modernConn = null;
-		}
-	}
+    protected void closeTransport() {
+        if (conn != null) {
+            conn.disconnect();
+            conn = null;
+        }
+        if (modernConn != null) {
+            try {
+                modernConn.close();
+            }
+            catch (IOException e) {
+            }
+            modernConn = null;
+        }
+    }
 }

@@ -1,11 +1,18 @@
 <resources>
-	<style name="AppBaseTheme" parent="@android:style/Theme"></style>
-	<style name="AppBaseTheme.NoActionBar" parent="@android:style/Theme.NoTitleBar"></style>
-	<style name="AppBaseTheme.Light" parent="@android:style/Theme.Light"></style>
-	<style name="AppBaseTheme.Light.NoActionBar" parent="@android:style/Theme.Light.NoTitleBar"></style>
 
-	<style name="AppTheme" parent="AppBaseTheme"></style>
-	<style name="AppTheme.NoActionBar" parent="AppBaseTheme.NoActionBar"></style>
-	<style name="AppTheme.Light" parent="AppBaseTheme.Light"></style>
-	<style name="AppTheme.Light.NoActionBar" parent="AppBaseTheme.Light.NoActionBar"></style>
+    <style name="AppBaseTheme" parent="@android:style/Theme"></style>
+
+    <style name="AppBaseTheme.NoActionBar" parent="@android:style/Theme.NoTitleBar"></style>
+
+    <style name="AppBaseTheme.Light" parent="@android:style/Theme.Light"></style>
+
+    <style name="AppBaseTheme.Light.NoActionBar" parent="@android:style/Theme.Light.NoTitleBar"></style>
+
+    <style name="AppTheme" parent="AppBaseTheme"></style>
+
+    <style name="AppTheme.NoActionBar" parent="AppBaseTheme.NoActionBar"></style>
+
+    <style name="AppTheme.Light" parent="AppBaseTheme.Light"></style>
+
+    <style name="AppTheme.Light.NoActionBar" parent="AppBaseTheme.Light.NoActionBar"></style>
 </resources>

@@ -1,6 +1,5 @@
 package fi.gtrxac.discord;
 
-import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONObject;
 
 /**
@@ -9,23 +8,29 @@ import cc.nnproject.json.JSONObject;
  * main thread before touching views.
  */
 public interface GatewayListener {
-	void onGatewayConnected();
+    void onGatewayConnected();
 
-	void onGatewayDisconnected(String reason);
+    void onGatewayDisconnected(String reason);
 
-	void onGatewayReady(JSONObject data);
+    void onGatewayReady(JSONObject data);
 
-	void onMessageCreate(JSONObject message);
+    void onMessageCreate(JSONObject message);
 
-	void onMessageUpdate(JSONObject message);
+    void onMessageUpdate(JSONObject message);
 
-	void onMessageDelete(JSONObject message);
+    void onMessageDelete(JSONObject message);
 
-	void onTypingStart(JSONObject data);
+    void onMessageAck(JSONObject data);
 
-	void onGuildMembersChunk(JSONObject data);
+    void onTypingStart(JSONObject data);
 
-	void onPresenceUpdate(JSONObject data);
+    void onGuildMembersChunk(JSONObject data);
 
-	void onReadStates(JSONArray entries);
+    void onPresenceUpdate(JSONObject data);
+
+    void onChannelUnread(JSONObject data);
+
+    void onPassiveUpdateV1(JSONObject data);
+
+    void onPassiveUpdateV2(JSONObject data);
 }

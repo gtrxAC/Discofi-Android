@@ -28,8 +28,8 @@ import java.io.IOException;
 
 public interface ServerSocketConnection extends StreamConnectionNotifier {
 
-	public String getLocalAddress() throws IOException;
+    public String getLocalAddress() throws IOException;
 
-	public int getLocalPort() throws IOException;
+    public int getLocalPort() throws IOException;
 
 }

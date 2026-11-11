@@ -5,16 +5,16 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 public class MessageRowLayout extends LinearLayout {
-	public MessageRowLayout(Context context) {
-		super(context);
-	}
+    public MessageRowLayout(Context context) {
+        super(context);
+    }
 
-	public MessageRowLayout(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public MessageRowLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	@Override
-	public boolean hasFocusable() {
-		return false;
-	}
+    @Override
+    public boolean hasFocusable() {
+        return false;
+    }
 }

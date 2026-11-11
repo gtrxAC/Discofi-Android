@@ -30,6 +30,6 @@ import java.io.IOException;
 
 public interface StreamConnectionNotifier extends Connection {
 
-	StreamConnection acceptAndOpen() throws IOException;
+    StreamConnection acceptAndOpen() throws IOException;
 
 }

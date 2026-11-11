@@ -6,168 +6,172 @@ import java.io.*;
 import java.util.*;
 
 public abstract class HTTP {
-	protected String method;
-	protected String url;
-	protected byte[] data;
-	protected Hashtable<String, String> requestHeaders;
-	protected Hashtable<String, String> responseHeaders;
-	protected int responseCode;
-	protected byte[] responseBytes;
-	protected InputStream is;
-	private boolean requestMade;
+    protected String method;
+    protected String url;
+    protected byte[] data;
+    protected Hashtable<String, String> requestHeaders;
+    protected Hashtable<String, String> responseHeaders;
+    protected int responseCode;
+    protected byte[] responseBytes;
+    protected InputStream is;
+    private boolean requestMade;
 
-	protected HTTP(String method, String url) {
-		this.method = method;
-		this.url = url;
-		this.requestHeaders = new Hashtable();
-		this.responseHeaders = new Hashtable();
-		requestHeaders.put("Accept", HTTPConfig.DEFAULT_ACCEPT);
-		requestHeaders.put("User-Agent", HTTPConfig.DEFAULT_USER_AGENT);
-	}
+    protected HTTP(String method, String url) {
+        this.method = method;
+        this.url = url;
+        this.requestHeaders = new Hashtable();
+        this.responseHeaders = new Hashtable();
+        requestHeaders.put("Accept", HTTPConfig.DEFAULT_ACCEPT);
+        requestHeaders.put("User-Agent", HTTPConfig.DEFAULT_USER_AGENT);
+    }
 
-	public static HTTP createRequest(String method, String url) throws Exception {
-		String proto = new URL(url).protocol;
+    public static HTTP createRequest(String method, String url) throws Exception {
+        String proto = new URL(url).protocol;
 
-		if (proto.equals("http") || proto.equals("https")) {
-			return createFetchRequest(method, url);
-		}
-		throw new Exception("unsupported protocol '" + proto + "'");
-	}
+        if (proto.equals("http") || proto.equals("https")) {
+            return createFetchRequest(method, url);
+        }
+        throw new Exception("unsupported protocol '" + proto + "'");
+    }
 
-	public static HTTP createRequest(String url) throws Exception {
-		return createRequest("GET", url);
-	}
+    public static HTTP createRequest(String url) throws Exception {
+        return createRequest("GET", url);
+    }
 
-	private static HTTP createFetchRequest(String method, String url) {
-		return new StandardHTTP(method, url);
-	}
+    private static HTTP createFetchRequest(String method, String url) {
+        return new StandardHTTP(method, url);
+    }
 
-	protected abstract InputStream makeRequest() throws Exception;
+    protected abstract InputStream makeRequest() throws Exception;
 
-	protected abstract void closeTransport();
+    protected abstract void closeTransport();
 
-	protected void checkMakeRequest() throws Exception {
-		if (!requestMade) {
-			is = makeRequest();
-			requestMade = true;
-		}
-	}
+    protected void checkMakeRequest() throws Exception {
+        if (!requestMade) {
+            is = makeRequest();
+            requestMade = true;
+        }
+    }
 
-	/**
-	 * Public API
-	 */
+    /**
+     * Public API
+     */
 
-	/**
-	 * Set a HTTP request header that will be sent to the server with this request.
-	 */
-	public HTTP setHeader(String key, String value) {
-		requestHeaders.put(key, value);
-		return this;
-	}
+    /**
+     * Set a HTTP request header that will be sent to the server with this request.
+     */
+    public HTTP setHeader(String key, String value) {
+        requestHeaders.put(key, value);
+        return this;
+    }
 
-	public HTTP setHeader(Hashtable<String, String> headers) {
-		if (headers != null) requestHeaders.putAll(headers);
-		return this;
-	}
+    public HTTP setHeader(Hashtable<String, String> headers) {
+        if (headers != null) requestHeaders.putAll(headers);
+        return this;
+    }
 
-	/**
-	 * Set the data that will be sent to the server with this request.
-	 */
-	public HTTP setData(byte[] data) {
-		this.data = data;
+    /**
+     * Set the data that will be sent to the server with this request.
+     */
+    public HTTP setData(byte[] data) {
+        this.data = data;
 
-		if (data != null) {
-			requestHeaders.put("Content-Length", String.valueOf(data.length));
-		} else {
-			requestHeaders.remove("Content-Length");
-		}
+        if (data != null) {
+            requestHeaders.put("Content-Length", String.valueOf(data.length));
+        }
+        else {
+            requestHeaders.remove("Content-Length");
+        }
 
-		if (!requestHeaders.containsKey("Content-Type")) {
-			requestHeaders.put("Content-Type", HTTPConfig.DEFAULT_CONTENT_TYPE);
-		}
-		return this;
-	}
+        if (!requestHeaders.containsKey("Content-Type")) {
+            requestHeaders.put("Content-Type", HTTPConfig.DEFAULT_CONTENT_TYPE);
+        }
+        return this;
+    }
 
-	/**
-	 * Set the data that will be sent to the server with this request.
-	 */
-	public HTTP setData(String data) {
-		return setData(Util.stringToBytes(data));
-	}
+    /**
+     * Set the data that will be sent to the server with this request.
+     */
+    public HTTP setData(String data) {
+        return setData(Util.stringToBytes(data));
+    }
 
-	/**
-	 * Get the resulting URL that was requested, which may have changed in the case of a redirect.
-	 */
-	public String getUrl() throws Exception {
-		checkMakeRequest();
-		return url;
-	}
+    /**
+     * Get the resulting URL that was requested, which may have changed in the case of a redirect.
+     */
+    public String getUrl() throws Exception {
+        checkMakeRequest();
+        return url;
+    }
 
-	/**
-	 * Get the HTTP response code returned by the server.
-	 */
-	public int getResponseCode() throws Exception {
-		checkMakeRequest();
-		return responseCode;
-	}
+    /**
+     * Get the HTTP response code returned by the server.
+     */
+    public int getResponseCode() throws Exception {
+        checkMakeRequest();
+        return responseCode;
+    }
 
-	public Hashtable getResponseHeaders() throws Exception {
-		checkMakeRequest();
-		return responseHeaders;
-	}
+    public Hashtable getResponseHeaders() throws Exception {
+        checkMakeRequest();
+        return responseHeaders;
+    }
 
-	/**
-	 * Get the value of a HTTP response header sent by the server.
-	 * Must be called before the other `getResponse*()` methods.
-	 * If the other `getResponse*()` methods are not called for this request, then `close()` must be used.
-	 */
-	public String getResponseHeader(String name) throws Exception {
-		checkMakeRequest();
-		return (String) responseHeaders.get(name);
-	}
+    /**
+     * Get the value of a HTTP response header sent by the server.
+     * Must be called before the other `getResponse*()` methods.
+     * If the other `getResponse*()` methods are not called for this request, then `close()` must
+     * be used.
+     */
+    public String getResponseHeader(String name) throws Exception {
+        checkMakeRequest();
+        return (String) responseHeaders.get(name);
+    }
 
-	/**
-	 * Get server response as an input stream that can be used to read streamed data.
-	 * Stream must be closed with `close()` after use.
-	 */
-	public InputStream getResponseStream() throws Exception {
-		checkMakeRequest();
-		return is;
-	}
+    /**
+     * Get server response as an input stream that can be used to read streamed data.
+     * Stream must be closed with `close()` after use.
+     */
+    public InputStream getResponseStream() throws Exception {
+        checkMakeRequest();
+        return is;
+    }
 
-	/**
-	 * Get server response as a byte array.
-	 */
-	public byte[] getResponseBytes() throws Exception {
-		try {
-			checkMakeRequest();
+    /**
+     * Get server response as a byte array.
+     */
+    public byte[] getResponseBytes() throws Exception {
+        try {
+            checkMakeRequest();
 
-			if (responseBytes != null) {
-				return responseBytes;
-			}
-			return Util.readBytes(is);
-		} finally {
-			close();
-		}
-	}
+            if (responseBytes != null) {
+                return responseBytes;
+            }
+            return Util.readBytes(is);
+        }
+        finally {
+            close();
+        }
+    }
 
-	/**
-	 * Get server response as a string.
-	 */
-	public String getResponseString() throws Exception {
-		String contentType = getResponseHeader("Content-Type");
-		String charset = Util.getCharsetFromContentType(contentType);
-		return Util.bytesToString(getResponseBytes(), charset);
-	}
+    /**
+     * Get server response as a string.
+     */
+    public String getResponseString() throws Exception {
+        String contentType = getResponseHeader("Content-Type");
+        String charset = Util.getCharsetFromContentType(contentType);
+        return Util.bytesToString(getResponseBytes(), charset);
+    }
 
-	/**
-	 * Close all streams related to this request.
-	 */
-	public void close() {
-		closeTransport();
-		try {
-			is.close();
-		} catch (Exception e) {
-		}
-	}
+    /**
+     * Close all streams related to this request.
+     */
+    public void close() {
+        closeTransport();
+        try {
+            is.close();
+        }
+        catch (Exception e) {
+        }
+    }
 }

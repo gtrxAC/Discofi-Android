@@ -6,137 +6,143 @@ import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONObject;
 
 public class Channel {
-	// https://docs.discord.food/resources/channel#channel-type
-	public static final int TYPE_GUILD_TEXT = 0;
-	public static final int TYPE_DM = 1;
-	public static final int TYPE_GUILD_VOICE = 2;
-	public static final int TYPE_GROUP_DM = 3;
-	public static final int TYPE_GUILD_CATEGORY = 4;
-	public static final int TYPE_GUILD_NEWS = 5;
-	public static final int TYPE_GUILD_FORUM = 15;
-	public static final int TYPE_GUILD_MEDIA = 16;
+    // https://docs.discord.food/resources/channel#channel-type
+    public static final int TYPE_GUILD_TEXT = 0;
+    public static final int TYPE_DM = 1;
+    public static final int TYPE_GUILD_VOICE = 2;
+    public static final int TYPE_GROUP_DM = 3;
+    public static final int TYPE_GUILD_CATEGORY = 4;
+    public static final int TYPE_GUILD_NEWS = 5;
+    public static final int TYPE_GUILD_FORUM = 15;
+    public static final int TYPE_GUILD_MEDIA = 16;
 
-	public long id;
-	public String name;
-	public int type;
-	public String parentId;
-	public int position;
+    public long id;
+    public String name;
+    public int type;
+    public String parentId;
+    public int position;
+    public long lastMessageID;
 
-	public Channel() {
-	}
+    public Channel() {
+    }
 
-	public Channel(JSONObject data) {
-		id = Long.parseLong(data.getString("id"));
-		type = data.getInt("type", 0);
-		name = data.getString("name", null);
-		parentId = data.getString("parent_id", null);
-		position = data.getInt("position", 0);
+    public Channel(JSONObject data) {
+        id = Long.parseLong(data.getString("id"));
+        type = data.getInt("type", 0);
+        name = data.getString("name", null);
+        parentId = data.getString("parent_id", null);
+        position = data.getInt("position", 0);
 
-		if (name != null && nameHasHashtag()) name = "#" + name;
-		if (name == null) name = "(unknown)";
-	}
+        String msgIdStr = data.getString("last_message_id");
+        if (msgIdStr != null) {
+            lastMessageID = Long.parseLong(msgIdStr);
+        }
 
-	/**
-	 * Parse fetched channel list into sorted categories and channels.
-	 */
-	public static Vector parseChannels(JSONArray channelsJson) {
-		int numChannels = channelsJson.size();
+        if (name != null && nameHasHashtag()) name = "#" + name;
+        if (name == null) name = "(unknown)";
+    }
 
-		Vector sortedChannels = new Vector();
-		Vector sortedPositions = new Vector();
+    /**
+     * Parse fetched channel list into sorted categories and channels.
+     */
+    public static Vector parseChannels(JSONArray channelsJson) {
+        int numChannels = channelsJson.size();
 
-		// Insertion sort by position
-		for (int i = 0; i < numChannels; i++) {
-			JSONObject channelJson = channelsJson.getObject(i);
-			int position = channelJson.getInt("position", i);
-			int insertAt = sortedChannels.size();
+        Vector sortedChannels = new Vector();
+        Vector sortedPositions = new Vector();
 
-			while (insertAt > 0) {
-				Integer previousPosition = (Integer) sortedPositions.elementAt(insertAt - 1);
-				if (previousPosition.intValue() <= position) break;
-				insertAt--;
-			}
+        // Insertion sort by position
+        for (int i = 0; i < numChannels; i++) {
+            JSONObject channelJson = channelsJson.getObject(i);
+            int position = channelJson.getInt("position", i);
+            int insertAt = sortedChannels.size();
 
-			sortedChannels.insertElementAt(channelJson, insertAt);
-			sortedPositions.insertElementAt(new Integer(position), insertAt);
-		}
+            while (insertAt > 0) {
+                Integer previousPosition = (Integer) sortedPositions.elementAt(insertAt - 1);
+                if (previousPosition.intValue() <= position) break;
+                insertAt--;
+            }
 
-		Vector textChannelsJson = new Vector();
-		Vector voiceChannelsJson = new Vector();
-		Vector categories = new Vector();
+            sortedChannels.insertElementAt(channelJson, insertAt);
+            sortedPositions.insertElementAt(new Integer(position), insertAt);
+        }
 
-		ChannelCategory defaultCategory = new ChannelCategory((String) null);
-		categories.addElement(defaultCategory);
+        Vector textChannelsJson = new Vector();
+        Vector voiceChannelsJson = new Vector();
+        Vector categories = new Vector();
 
-		// Divide all channels into text/voice channels and channel categories.
-		// Voice channels are separate so that they can be added last.
-		// If we were to go just by position numbers, VC's would show first.
-		// Channels with unsupported types are discarded.
-		for (int i = 0; i < sortedChannels.size(); i++) {
-			JSONObject channelJson = (JSONObject) sortedChannels.elementAt(i);
-			int type = channelJson.getInt("type", 0);
+        ChannelCategory defaultCategory = new ChannelCategory((String) null);
+        categories.addElement(defaultCategory);
 
-			switch (type) {
-				case Channel.TYPE_GUILD_CATEGORY: {
-					categories.addElement(new ChannelCategory(channelJson));
-					break;
-				}
-				case Channel.TYPE_GUILD_TEXT:
-				case Channel.TYPE_GUILD_NEWS:
-				case Channel.TYPE_GUILD_FORUM:
-				case Channel.TYPE_GUILD_MEDIA: {
-					textChannelsJson.addElement(channelJson);
-					break;
-				}
-				case Channel.TYPE_GUILD_VOICE: {
-					voiceChannelsJson.addElement(channelJson);
-					break;
-				}
-			}
-		}
+        // Divide all channels into text/voice channels and channel categories.
+        // Voice channels are separate so that they can be added last.
+        // If we were to go just by position numbers, VC's would show first.
+        // Channels with unsupported types are discarded.
+        for (int i = 0; i < sortedChannels.size(); i++) {
+            JSONObject channelJson = (JSONObject) sortedChannels.elementAt(i);
+            int type = channelJson.getInt("type", 0);
 
-		groupChannelsIntoCategories(textChannelsJson, categories);
-		groupChannelsIntoCategories(voiceChannelsJson, categories);
+            switch (type) {
+                case Channel.TYPE_GUILD_CATEGORY: {
+                    categories.addElement(new ChannelCategory(channelJson));
+                    break;
+                }
+                case Channel.TYPE_GUILD_TEXT:
+                case Channel.TYPE_GUILD_NEWS:
+                case Channel.TYPE_GUILD_FORUM:
+                case Channel.TYPE_GUILD_MEDIA: {
+                    textChannelsJson.addElement(channelJson);
+                    break;
+                }
+                case Channel.TYPE_GUILD_VOICE: {
+                    voiceChannelsJson.addElement(channelJson);
+                    break;
+                }
+            }
+        }
 
-		if (defaultCategory.children.size() == 0) {
-			categories.removeElementAt(0);
-		}
+        groupChannelsIntoCategories(textChannelsJson, categories);
+        groupChannelsIntoCategories(voiceChannelsJson, categories);
 
-		return categories;
-	}
+        if (defaultCategory.children.size() == 0) {
+            categories.removeElementAt(0);
+        }
 
-	private static void groupChannelsIntoCategories(Vector channels, Vector categories) {
-		for (int i = 0; i < channels.size(); i++) {
-			JSONObject channelJson = (JSONObject) channels.elementAt(i);
-			String parentID = channelJson.getString("parent_id", null);
+        return categories;
+    }
 
-			// Fallback to default (topmost) category
-			ChannelCategory parentCategory = (ChannelCategory) categories.elementAt(0);
+    private static void groupChannelsIntoCategories(Vector channels, Vector categories) {
+        for (int i = 0; i < channels.size(); i++) {
+            JSONObject channelJson = (JSONObject) channels.elementAt(i);
+            String parentID = channelJson.getString("parent_id", null);
 
-			// Find the parent category
-			for (int j = 1; j < categories.size(); j++) {
-				ChannelCategory category = (ChannelCategory) categories.elementAt(j);
+            // Fallback to default (topmost) category
+            ChannelCategory parentCategory = (ChannelCategory) categories.elementAt(0);
 
-				if (Long.toString(category.id).equals(parentID)) {
-					parentCategory = category;
-					break;
-				}
-			}
+            // Find the parent category
+            for (int j = 1; j < categories.size(); j++) {
+                ChannelCategory category = (ChannelCategory) categories.elementAt(j);
 
-			Channel channel = new Channel(channelJson);
-			parentCategory.children.addElement(channel);
-		}
-	}
+                if (Long.toString(category.id).equals(parentID)) {
+                    parentCategory = category;
+                    break;
+                }
+            }
 
-	protected boolean nameHasHashtag() {
-		// Voice channels are displayed without a hashtag
-		return type != TYPE_GUILD_VOICE;
-	}
+            Channel channel = new Channel(channelJson);
+            parentCategory.children.addElement(channel);
+        }
+    }
 
-	/**
-	 * Whether clicking this channel can open a chat screen.
-	 */
-	public boolean isMessageable() {
-		return type == TYPE_GUILD_TEXT || type == TYPE_GUILD_NEWS || type == TYPE_GUILD_VOICE;
-	}
+    protected boolean nameHasHashtag() {
+        // Voice channels are displayed without a hashtag
+        return type != TYPE_GUILD_VOICE;
+    }
+
+    /**
+     * Whether clicking this channel can open a chat screen.
+     */
+    public boolean isMessageable() {
+        return type == TYPE_GUILD_TEXT || type == TYPE_GUILD_NEWS || type == TYPE_GUILD_VOICE;
+    }
 }

@@ -45,83 +45,81 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-public class Connection extends org.microemu.cldc.socket.SocketConnection implements SecureConnection, ConnectionImplementation {
+public class Connection extends org.microemu.cldc.socket.SocketConnection
+    implements SecureConnection, ConnectionImplementation {
 
-	private SecurityInfo securityInfo;
+    private SecurityInfo securityInfo;
 
-	public Connection() {
-		securityInfo = null;
-	}
+    public Connection() {
+        securityInfo = null;
+    }
 
-	@Override
-	public javax.microedition.io.Connection openConnection(String name, int mode, boolean timeouts) throws IOException {
+    @Override
+    public javax.microedition.io.Connection openConnection(String name, int mode, boolean timeouts)
+        throws IOException {
 
-		if (!org.microemu.cldc.http.Connection.isAllowNetworkConnection()) {
-			throw new IOException("No network");
-		}
+        if (!org.microemu.cldc.http.Connection.isAllowNetworkConnection()) {
+            throw new IOException("No network");
+        }
 
-		int portSepIndex = name.lastIndexOf(':');
-		int port = Integer.parseInt(name.substring(portSepIndex + 1));
-		String host = name.substring("ssl://".length(), portSepIndex);
+        int portSepIndex = name.lastIndexOf(':');
+        int port = Integer.parseInt(name.substring(portSepIndex + 1));
+        String host = name.substring("ssl://".length(), portSepIndex);
 
-		// TODO validate certificate chains
-		TrustManager[] trustAllCerts = new TrustManager[]{
-				new X509TrustManager() {
-					@Override
-					public X509Certificate[] getAcceptedIssuers() {
-						return null;
-					}
+        // TODO validate certificate chains
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
 
-					@Override
-					public void checkClientTrusted(
-							X509Certificate[] certs, String authType) {
-					}
+            @Override
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+            }
 
-					@Override
-					public void checkServerTrusted(
-							X509Certificate[] certs, String authType) {
-					}
-				}
-		};
+            @Override
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+            }
+        }};
 
-		try {
-			SSLContext sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new SecureRandom());
-			SSLSocketFactory factory = sc.getSocketFactory();
-			socket = factory.createSocket(host, port);
-		} catch (NoSuchAlgorithmException ex) {
-			throw new IOException(ex.toString());
-		} catch (KeyManagementException ex) {
-			throw new IOException(ex.toString());
-		}
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            SSLSocketFactory factory = sc.getSocketFactory();
+            socket = factory.createSocket(host, port);
+        }
+        catch (NoSuchAlgorithmException ex) {
+            throw new IOException(ex.toString());
+        }
+        catch (KeyManagementException ex) {
+            throw new IOException(ex.toString());
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	@Override
-	public void close() throws IOException {
-		// TODO fix differences between Java ME and Java SE
+    @Override
+    public void close() throws IOException {
+        // TODO fix differences between Java ME and Java SE
 
-		socket.close();
-	}
+        socket.close();
+    }
 
-	@Override
-	public SecurityInfo getSecurityInfo() throws IOException {
-		if (securityInfo == null) {
-			SSLSession session = ((SSLSocket) socket).getSession();
+    @Override
+    public SecurityInfo getSecurityInfo() throws IOException {
+        if (securityInfo == null) {
+            SSLSession session = ((SSLSocket) socket).getSession();
 
-			Certificate[] certs = session.getPeerCertificates();
-			if (certs.length == 0) {
-				throw new IOException();
-			}
+            Certificate[] certs = session.getPeerCertificates();
+            if (certs.length == 0) {
+                throw new IOException();
+            }
 
-			securityInfo = new SecurityInfoImpl(
-					session.getCipherSuite(),
-					session.getProtocol(),
-					new CertificateImpl((X509Certificate) certs[0]));
-		}
+            securityInfo = new SecurityInfoImpl(session.getCipherSuite(), session.getProtocol(),
+                new CertificateImpl((X509Certificate) certs[0]));
+        }
 
-		return securityInfo;
-	}
+        return securityInfo;
+    }
 
 }

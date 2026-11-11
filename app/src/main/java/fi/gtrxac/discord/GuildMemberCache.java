@@ -1,91 +1,88 @@
 package fi.gtrxac.discord;
 
-import fi.gtrxac.discord.model.*;
-import fi.gtrxac.bluewap.Util;
+import java.util.Vector;
 
-import java.util.*;
+import cc.nnproject.json.JSONArray;
+import cc.nnproject.json.JSONObject;
+import fi.gtrxac.discord.model.GuildMember;
+import fi.gtrxac.discord.model.Message;
+import fi.gtrxac.discord.model.User;
+import fi.gtrxac.discord.util.LRUCache;
 
-import cc.nnproject.json.*;
+public class GuildMemberCache extends LRUCache {
+    private static final int CACHE_SIZE = 10;
+    public boolean activeRequest;
+    private Account account;
 
-public class GuildMemberCache {
-	private static Account account;
-	private static Hashtable members;
-	private static Vector keys;
-	public static boolean activeRequest;
+    public GuildMemberCache(Account acc) {
+        super(CACHE_SIZE);
+        account = acc;
+    }
 
-	public static void init(Account acc) {
-		account = acc;
-		members = new Hashtable();
-		keys = new Vector();
-	}
+    private void fetch(long guildId, Vector messages) {
+        JSONObject reqData = new JSONObject();
+        reqData.put("guild_id", guildId);
 
-	private static void fetch(long guildId, Vector messages) {
-		JSONObject reqData = new JSONObject();
-		reqData.put("guild_id", guildId);
+        JSONArray requestIds = new JSONArray();
 
-		JSONArray requestIds = new JSONArray();
+        // Populate requestIds with authors and recipients of all messages that
+        // are currently loaded and that don't have guild member data fetched
+        for (int i = 0; messages != null && i < messages.size(); i++) {
+            Message msg = (Message) messages.elementAt(i);
+            long userId = msg.author.id;
 
-		// Populate requestIds with authors and recipients of all messages that
-		// are currently loaded and that don't have guild member data fetched
-		for (int i = 0; messages != null && i < messages.size(); i++) {
-			Message msg = (Message) messages.elementAt(i);
-			long userId = msg.author.id;
+            if (requestIds.indexOf(Long.toString(userId)) == -1 && !has(guildId, msg.author)) {
+                requestIds.add(Long.toString(userId));
+            }
 
-			if (requestIds.indexOf(Long.toString(userId)) == -1 && !has(guildId, msg.author)) {
-				requestIds.add(Long.toString(userId));
-			}
+            if (msg.reply == null) continue;
+            userId = msg.reply.author.id;
 
-			if (msg.reply == null) continue;
-			userId = msg.reply.author.id;
+            if (requestIds.indexOf(Long.toString(userId)) == -1 &&
+                !has(guildId, msg.reply.author)) {
+                requestIds.add(Long.toString(userId));
+            }
+        }
 
-			if (requestIds.indexOf(Long.toString(userId)) == -1 && !has(guildId, msg.reply.author)) {
-				requestIds.add(Long.toString(userId));
-			}
-		}
+        reqData.put("user_ids", requestIds);
 
-		reqData.put("user_ids", requestIds);
+        JSONObject msg = new JSONObject();
+        msg.put("op", 8);
+        msg.put("d", reqData);
+        account.gateway.send(msg);
+    }
 
-		JSONObject msg = new JSONObject();
-		msg.put("op", 8);
-		msg.put("d", reqData);
-		account.gateway.send(msg);
-	}
+    public boolean active() {
+        return account.gatewayActive();
+    }
 
-	public static boolean active() {
-		return account.gatewayActive();
-	}
+    public GuildMember get(long guildId, long userId, Vector messages) {
+        if (!active() || guildId == 0) return null;
 
-	public static GuildMember get(long guildId, long userId, Vector messages) {
-		if (!active() || guildId == 0) return null;
+        long key = userId + guildId;
 
-		long key = userId + guildId;
+        GuildMember result = (GuildMember) super.get(key);
+        if (result != null) return result;
 
-		GuildMember result = (GuildMember) members.get(key);
-		if (result != null) return result;
+        if (!activeRequest) {
+            activeRequest = true;
+            fetch(guildId, messages);
+        }
+        return null;
+    }
 
-		if (!activeRequest) {
-			activeRequest = true;
-			fetch(guildId, messages);
-		}
-		return null;
-	}
+    public GuildMember get(long guildId, User user, Vector messages) {
+        GuildMember member = get(guildId, user.id, messages);
+        if (member != null) return member;
+        return new GuildMember(user);
+    }
 
-	public static GuildMember get(long guildId, User user, Vector messages) {
-		GuildMember member = get(guildId, user.id, messages);
-		if (member != null) return member;
-		return new GuildMember(user);
-	}
+    public boolean has(long guildId, User user, boolean def) {
+        if (!active()) return def;
+        return cache.containsKey(user.id + guildId);
+    }
 
-	public static void set(long key, GuildMember member) {
-		Util.hashtablePutWithLimit(members, keys, key, member, 50);
-	}
-
-	public static boolean has(long guildId, User user, boolean def) {
-		if (!active()) return def;
-		return members.containsKey(user.id + guildId);
-	}
-
-	public static boolean has(long guildId, User user) {
-		return has(guildId, user, false);
-	}
+    public boolean has(long guildId, User user) {
+        return has(guildId, user, false);
+    }
 }
