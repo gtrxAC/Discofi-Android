@@ -49,6 +49,7 @@ import java.util.Stack;
 import cc.nnproject.markdown.Markdown;
 import cc.nnproject.markdown.MarkdownListener;
 import fi.gtrxac.discord.model.Message;
+import fi.gtrxac.discord.model.Channel;
 
 public class MarkdownRenderer implements MarkdownListener {
 
@@ -503,7 +504,15 @@ public class MarkdownRenderer implements MarkdownListener {
 
     public void appendChannelMention(Object ctx, String id, int font) {
         emojiOnly = false;
-        appendMentionStyled("#" + id, font); // TODO: parse channels
+
+        Account acc = Accounts.getActive();
+
+        // here we should also use primaryGuildID argument (currently selected server) if we had access to it
+        Channel channel = acc.channelCache.getChannelByID(0, Long.parseLong(id));
+
+        String channelName = (channel != null) ? channel.name : "#unknown";
+
+        appendMentionStyled(channelName, font);
     }
 
     public void appendEveryone(Object ctx, int font) {

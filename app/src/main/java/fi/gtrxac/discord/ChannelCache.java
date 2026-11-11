@@ -134,4 +134,48 @@ public class ChannelCache extends LRUCache {
             }
         }
     }
+
+    /**
+     * Find a channel by its ID in all cached guilds, first searching the primary guild if specified.
+     */
+    public Channel getChannelByID(long primaryGuildID, long channelID) {
+        if (channelID == 0) return null;
+
+        if (primaryGuildID != 0) {
+            Channel result = getChannelByIDInGuild(primaryGuildID, channelID);
+            if (result != null) return result;
+        }
+
+        for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
+            long guildID = (long) e.nextElement();
+
+            if (primaryGuildID != 0 && guildID == primaryGuildID) continue;
+
+            Channel result = getChannelByIDInGuild(guildID, channelID);
+            if (result != null) return result;
+        }
+
+        return null;
+    }
+
+    /**
+     * Find a channel by ID in the specified guild.
+     */
+    public Channel getChannelByIDInGuild(long guildID, long channelID) {
+        if (guildID == 0 || channelID == 0) return null;
+
+        Vector categories = get(guildID);
+
+        for (int i = 0; i < categories.size(); i++) {
+            ChannelCategory category = (ChannelCategory) categories.elementAt(i);
+
+            for (int j = 0; j < category.children.size(); j++) {
+                Channel channel = (Channel) category.children.elementAt(j);
+
+                if (channel.id == channelID) return channel;
+            }
+        }
+
+        return null;
+    }
 }
