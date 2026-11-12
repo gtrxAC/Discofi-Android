@@ -56,6 +56,9 @@ public class ChatActivity extends Activity implements GatewayListener {
     private TextView typingIndicator;
     private boolean initialLoadDone;
     private boolean loadingOlder;
+    private boolean loadingNewer;
+    private boolean noMoreOlder;
+    private boolean haveNewest = true;
     private boolean sending;
     private boolean atBottom = true;
     private long lastTypingSent;
@@ -154,16 +157,26 @@ public class ChatActivity extends Activity implements GatewayListener {
                 atBottom =
                     totalItemCount == 0 || firstVisibleItem + visibleItemCount >= totalItemCount;
 
-                if (!initialLoadDone || loadingOlder || sending) return;
+                if (!initialLoadDone || loadingOlder || loadingNewer || sending) return;
 
-                // Near the top -> fetch the previous page of history
-                if (firstVisibleItem == 0 && messages.size() >= Settings.messageLoadCount) {
+                // At the top -> fetch the previous page of history
+                if (firstVisibleItem == 0 && !noMoreOlder &&
+                    messages.size() >= Settings.messageLoadCount) {
                     loadOlderMessages();
+                }
+                // At the bottom, but the newest messages are not loaded -> fetch the next page
+                else if (atBottom && !haveNewest) {
+                    loadNewerMessages();
                 }
             }
         });
 
-        loadInitialMessages();
+        long messageId = getIntent().getLongExtra("messageId", 0);
+        if (messageId != 0) {
+            loadAroundMessage(messageId, true);
+        } else {
+            loadInitialMessages();
+        }
     }
 
     @Override
@@ -511,7 +524,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             public void run() {
                 try {
                     final Vector result =
-                        account.getMessages(channelId, 0, 0, Settings.messageLoadCount);
+                        account.getMessages(channelId, 0, 0, 0, Settings.messageLoadCount);
 
                     if (guildId != 0) {
                         guildRoles = account.getGuildRoles(guildId);
@@ -529,7 +542,11 @@ public class ChatActivity extends Activity implements GatewayListener {
                             cluster();
 
                             adapter = new MessageListAdapter(ChatActivity.this, messages, account,
-                                guildId, guildRoles);
+                                guildId, guildRoles, new MessageListAdapter.OnReplyClickListener() {
+                                public void onReplyClick(Message reply) {
+                                    jumpToMessage(reply.id);
+                                }
+                            });
                             messageList.setAdapter(adapter);
 
                             if (messages.size() > 0) {
@@ -579,7 +596,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             public void run() {
                 try {
                     final Vector older =
-                        account.getMessages(channelId, first.id, 0, Settings.messageLoadCount);
+                        account.getMessages(channelId, first.id, 0, 0, Settings.messageLoadCount);
 
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -598,6 +615,10 @@ public class ChatActivity extends Activity implements GatewayListener {
                                 messageList.setSelectionFromTop(firstVisible + older.size() - 1,
                                     topOffset);
                             }
+                            else {
+                                // Start of channel history reached
+                                noMoreOlder = true;
+                            }
                         }
                     });
                 }
@@ -609,6 +630,162 @@ public class ChatActivity extends Activity implements GatewayListener {
                             showProgress(false);
                             Toast.makeText(ChatActivity.this,
                                     "Failed to load older messages: " + e.message,
+                                    Toast.LENGTH_LONG)
+                                .show();
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
+    public void jumpToMessage(long messageId) {
+        if (messageId == 0) return;
+
+        for (int i = 0; i < messages.size(); i++) {
+            if (((Message) messages.elementAt(i)).id == messageId) {
+                messageList.setSelection(i);
+                return;
+            }
+        }
+
+        loadAroundMessage(messageId, false);
+    }
+
+    private void loadAroundMessage(final long messageId, final boolean initial) {
+        if (initial) {
+            composer.setEnabled(false);
+            sendButton.setEnabled(false);
+        }
+        showProgress(true);
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final Vector result =
+                        account.getMessages(channelId, 0, 0, messageId, Settings.messageLoadCount);
+
+                    if (initial && guildId != 0 && guildRoles == null) {
+                        guildRoles = account.getGuildRoles(guildId);
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (initial) {
+                                composer.setEnabled(true);
+                                sendButton.setEnabled(true);
+                            }
+                            if (isFinishing()) return;
+                            showProgress(false);
+
+                            messages.clear();
+                            messages.addAll(result);
+                            cluster();
+
+                            adapter = new MessageListAdapter(ChatActivity.this, messages, account,
+                                guildId, guildRoles, new MessageListAdapter.OnReplyClickListener() {
+                                public void onReplyClick(Message reply) {
+                                    jumpToMessage(reply.id);
+                                }
+                            });
+                            messageList.setAdapter(adapter);
+
+                            int olderCount = 0;
+                            int newerCount = 0;
+                            for (int i = 0; i < result.size(); i++) {
+                                long id = ((Message) result.elementAt(i)).id;
+                                if (id < messageId) olderCount++;
+                                if (id > messageId) newerCount++;
+                            }
+                            noMoreOlder = olderCount < Settings.messageLoadCount / 2;
+                            haveNewest = newerCount < Settings.messageLoadCount / 2;
+
+                            for (int i = 0; i < messages.size(); i++) {
+                                if (((Message) messages.elementAt(i)).id == messageId) {
+                                    messageList.setSelection(i);
+                                    initialLoadDone = true;
+                                    return;
+                                }
+                            }
+
+                            // Anchor message was deleted (or can't be viewed):
+                            // show the middle of the fetched page instead
+                            messageList.setSelection(messages.size() / 2);
+                            initialLoadDone = true;
+                        }
+                    });
+                }
+                catch (final DiscordException e) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (isFinishing()) return;
+                            showProgress(false);
+                            if (initial) showInitialLoadError(e);
+                            else {
+                                Toast.makeText(ChatActivity.this,
+                                        "Failed to load message: " + e.message,
+                                        Toast.LENGTH_LONG)
+                                    .show();
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
+    private void loadNewerMessages() {
+        loadingNewer = true;
+        showProgress(true);
+
+        final Message last = (Message) messages.lastElement();
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final Vector newer =
+                        account.getMessages(channelId, 0, last.id, 0, Settings.messageLoadCount);
+
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            loadingNewer = false;
+                            if (isFinishing()) return;
+                            showProgress(false);
+
+                            if (newer.size() == 0) {
+                                haveNewest = true;
+                                return;
+                            }
+                            if (newer.size() < Settings.messageLoadCount) haveNewest = true;
+
+                            // The gateway may already have added some of these
+                            for (int i = 0; i < newer.size(); i++) {
+                                Message message = (Message) newer.elementAt(i);
+                                boolean exists = false;
+                                for (int j = 0; j < messages.size(); j++) {
+                                    if (((Message) messages.elementAt(j)).id == message.id) {
+                                        exists = true;
+                                        break;
+                                    }
+                                }
+                                if (!exists) messages.addElement(message);
+                            }
+                            cluster();
+                            adapter.notifyDataSetChanged();
+                            // The previously visible rows stay in place
+                        }
+                    });
+                }
+                catch (final DiscordException e) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            loadingNewer = false;
+                            if (isFinishing()) return;
+                            showProgress(false);
+                            Toast.makeText(ChatActivity.this,
+                                    "Failed to load newer messages: " + e.message,
                                     Toast.LENGTH_LONG)
                                 .show();
                         }

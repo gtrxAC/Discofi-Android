@@ -178,4 +178,23 @@ public class ChannelCache extends LRUCache {
 
         return null;
     }
+
+    /**
+     * Find the guild the specified channel is from.
+     */
+    public long getGuildIDByChannel(long channelID) {
+        if (channelID == 0) return 0;
+
+        for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
+            long guildID = (long) e.nextElement();
+            Channel result = getChannelByIDInGuild(guildID, channelID);
+            if (result != null) return guildID;
+        }
+
+        return 0;
+    }
+
+    public long getGuildIDByChannel(Channel channel) {
+        return getGuildIDByChannel(channel.id);
+    }
 }

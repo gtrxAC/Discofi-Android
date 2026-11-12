@@ -26,6 +26,7 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Text formatting with [nnmarkdown](https://github.com/shinovon/nnmarkdown)
 * Emojis
 * Message editing and deleting
+* Jumping to replies
 * Gateway
 * Settings for theme, message count, etc.
 * Unread indicator

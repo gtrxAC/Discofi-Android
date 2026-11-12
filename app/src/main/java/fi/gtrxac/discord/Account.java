@@ -379,6 +379,16 @@ public class Account {
         return inbox;
     }
 
+    public Guild getGuild(long guildId) throws DiscordException {
+        if (guildsAvailable()) {
+            for (int i = 0; i < guilds.size(); i++) {
+                Guild guild = guilds.elementAt(i);
+                if (guild.id == guildId) return guild;
+            }
+        }
+        return null;
+    }
+
     /**
      * Get a guild's channels grouped into sorted categories.
      * Returns a Vector of ChannelCategory.
@@ -418,7 +428,7 @@ public class Account {
      * Fetch messages from a channel. The returned Vector is ordered oldest
      * first, regardless of the order the API returned them in.
      */
-    public Vector getMessages(long channelId, long before, long after, int limit)
+    public Vector getMessages(long channelId, long before, long after, long around, int limit)
         throws DiscordException {
         StringBuffer url =
             new StringBuffer("/channels/").append(channelId).append("/messages?limit=")
@@ -430,6 +440,9 @@ public class Account {
         }
         else if (after != 0) {
             url.append("&after=").append(after);
+        }
+        else if (around != 0) {
+            url.append("&around=").append(around);
         }
 
         JSONArray messagesJson = (JSONArray) fetchJSON(url.toString());

@@ -51,6 +51,7 @@ public class MessageListAdapter extends BaseAdapter {
     private final Account acc;
     private final long guildId;
     private final Vector guildRoles;
+    private final OnReplyClickListener onReplyClickListener;
     private final boolean enableMention;
     private final LayoutInflater inflater;
     private final int maxAttachmentHeight;
@@ -58,25 +59,46 @@ public class MessageListAdapter extends BaseAdapter {
 
     public MessageListAdapter(Context context, Vector messages, Account acc, long guildId,
         Vector guildRoles) {
-        this(context, messages, acc, guildId, guildRoles, true);
-    }
-
-    public MessageListAdapter(Context context, Vector messages, Account acc, Guild guild) {
-        this(context, messages, acc, guild.id, guild.roles, true);
-    }
-
-    public MessageListAdapter(Context context, Vector messages, Account acc, Guild guild,
-        boolean enableMention) {
-        this(context, messages, acc, guild.id, guild.roles, enableMention);
+        this(context, messages, acc, guildId, guildRoles, null, true);
     }
 
     public MessageListAdapter(Context context, Vector messages, Account acc, long guildId,
         Vector guildRoles, boolean enableMention) {
+        this(context, messages, acc, guildId, guildRoles, null, enableMention);
+    }
+
+    public MessageListAdapter(Context context, Vector messages, Account acc, long guildId,
+        Vector guildRoles, OnReplyClickListener onReplyClickListener) {
+        this(context, messages, acc, guildId, guildRoles, onReplyClickListener, true);
+    }
+
+    public MessageListAdapter(Context context, Vector messages, Account acc, Guild guild) {
+        this(context, messages, acc, guild.id, guild.roles, null, true);
+    }
+
+    public MessageListAdapter(Context context, Vector messages, Account acc, Guild guild,
+        boolean enableMention) {
+        this(context, messages, acc, guild.id, guild.roles, null, enableMention);
+    }
+
+    public MessageListAdapter(Context context, Vector messages, Account acc, Guild guild,
+        OnReplyClickListener onReplyClickListener) {
+        this(context, messages, acc, guild.id, guild.roles, onReplyClickListener, true);
+    }
+
+    public MessageListAdapter(Context context, Vector messages, Account acc, Guild guild,
+        OnReplyClickListener onReplyClickListener, boolean enableMention) {
+        this(context, messages, acc, guild.id, guild.roles, onReplyClickListener, enableMention);
+    }
+
+    public MessageListAdapter(Context context, Vector messages, Account acc, long guildId,
+        Vector guildRoles, OnReplyClickListener onReplyClickListener, boolean enableMention) {
         this.context = context;
         this.messages = messages;
         this.acc = acc;
         this.guildId = guildId;
         this.guildRoles = guildRoles;
+        this.onReplyClickListener = onReplyClickListener;
         this.enableMention = enableMention;
         this.inflater = LayoutInflater.from(context);
         this.maxAttachmentHeight = context.getResources().getDisplayMetrics().heightPixels;
@@ -108,7 +130,7 @@ public class MessageListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Message message = (Message) messages.elementAt(position);
+        final Message message = (Message) messages.elementAt(position);
         GuildMember author = acc.guildMemberCache.get(guildId, message.author, messages);
 
         if (enableMention) {
@@ -173,6 +195,14 @@ public class MessageListAdapter extends BaseAdapter {
             }
             else {
                 holder.replyContent.setVisibility(View.GONE);
+            }
+
+            if (onReplyClickListener != null) {
+                holder.reply.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        onReplyClickListener.onReplyClick(message.reply);
+                    }
+                });
             }
         }
         else {
@@ -524,8 +554,10 @@ public class MessageListAdapter extends BaseAdapter {
                 }
                 if (field.value != null) {
                     TextView value = new TextView(context);
-                    value.setText(field.value);
+                    MarkdownRenderer renderer = new MarkdownRenderer(context, null, acc, guildId, guildRoles, value);
+                    value.setText(renderer.render(field.value));
                     value.setTextColor(textColor);
+                    value.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());
                     column.addView(value);
                 }
 
@@ -829,5 +861,9 @@ public class MessageListAdapter extends BaseAdapter {
             compactText = (LinkTextView) view.findViewById(R.id.compactText);
             compactAttachments = (LinearLayout) view.findViewById(R.id.compactAttachments);
         }
+    }
+
+    public interface OnReplyClickListener {
+        void onReplyClick(Message reply);
     }
 }

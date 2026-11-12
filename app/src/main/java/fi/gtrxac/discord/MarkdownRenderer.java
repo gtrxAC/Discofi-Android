@@ -535,7 +535,7 @@ public class MarkdownRenderer implements MarkdownListener {
 
     public void appendChannelMention(Object ctx, String id, int font) {
         emojiOnly = false;
-        final Channel channel = account.channelCache.getChannelByIDInGuild(guildId, Long.parseLong(id));
+        final Channel channel = account.channelCache.getChannelByID(guildId, Long.parseLong(id));
         if (channel != null) {
             int start = out.length();
             appendMentionStyled(channel.name, font);

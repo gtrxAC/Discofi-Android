@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import cc.nnproject.json.JSONObject;
+import fi.gtrxac.discord.model.Channel;
 import fi.gtrxac.discord.model.DMChannel;
 import fi.gtrxac.discord.model.Guild;
 import fi.gtrxac.discord.model.Message;
@@ -136,6 +137,27 @@ public class MainActivity extends TabActivity implements GatewayListener {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("channelId", dm.id);
                 intent.putExtra("channelName", (!dm.isGroup ? "@" : "") + dm.name);
+                startActivity(intent);
+            }
+        });
+
+        inboxList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Message message = inbox.elementAt(position);
+                Channel channel = acc.channelCache.getChannelByID(0, message.channelId);
+
+                Account acc = Accounts.getActive();
+                if (acc != null) {
+                    acc.unreadManager.markRead(channel.id, message.id);
+                    Settings.save(context);
+                }
+
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("guildId", acc.channelCache.getGuildIDByChannel(channel));
+                intent.putExtra("channelId", channel.id);
+                intent.putExtra("channelName", channel.name);
+                intent.putExtra("messageId", message.id);
                 startActivity(intent);
             }
         });
