@@ -114,19 +114,6 @@ public class ChannelCache extends LRUCache {
         return (Vector) super.get(guildID);
     }
 
-    public Channel getChannel(long guildID, long channelID) {
-        Vector categories = get(guildID);
-        for (int i = 0; i < categories.size(); i++) {
-            ChannelCategory category = (ChannelCategory) categories.elementAt(i);
-
-            for (int j = 0; j < category.children.size(); j++) {
-                Channel channel = (Channel) category.children.elementAt(j);
-                if (channel.id == channelID) return channel;
-            }
-        }
-        return null;
-    }
-
     public void setLastMessageID(long channelID, long lastMessageID) {
         for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
             long guildID = (long) e.nextElement();
