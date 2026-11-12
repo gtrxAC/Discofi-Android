@@ -98,9 +98,6 @@ public class ChatActivity extends Activity implements GatewayListener {
             composer.setHint(getResources().getString(R.string.msg_composer_hint, channelName));
         }
 
-        adapter = new MessageListAdapter(this, messages, account, guildId);
-        messageList.setAdapter(adapter);
-
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (activeEdit != null) {
@@ -530,7 +527,10 @@ public class ChatActivity extends Activity implements GatewayListener {
                             messages.clear();
                             messages.addAll(result);
                             cluster();
-                            adapter.notifyDataSetChanged();
+
+                            adapter = new MessageListAdapter(ChatActivity.this, messages, account,
+                                guildId, guildRoles);
+                            messageList.setAdapter(adapter);
 
                             if (messages.size() > 0) {
                                 messageList.setSelection(messages.size() - 1);

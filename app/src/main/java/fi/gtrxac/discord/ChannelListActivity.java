@@ -363,7 +363,8 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                 TextView text = (TextView) convertView.findViewById(R.id.channelName);
                 ImageView unreadIndicator =
                     (ImageView) convertView.findViewById(R.id.channelUnread);
-                TextView mentionIndicator = (TextView) convertView.findViewById(R.id.channelMentions);
+                TextView mentionIndicator =
+                    (TextView) convertView.findViewById(R.id.channelMentions);
 
                 text.setText(row.name);
                 unreadIndicator.setVisibility(row.unread ? View.VISIBLE : View.INVISIBLE);

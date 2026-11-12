@@ -67,8 +67,8 @@ public class IconArrayAdapter extends ArrayAdapter<String> {
         unreadIndicator.setVisibility(unread ? View.VISIBLE : View.INVISIBLE);
 
         int mentions =
-            mentionCounts != null && position < mentionCounts.size() ?
-                mentionCounts.get(position).intValue() : 0;
+            mentionCounts != null && position < mentionCounts.size() ? mentionCounts.get(position)
+                .intValue() : 0;
 
         if (mentions > 0) {
             mentionIndicator.setText(Integer.toString(mentions));

@@ -38,6 +38,7 @@ import java.util.Vector;
 
 import fi.gtrxac.discord.model.Attachment;
 import fi.gtrxac.discord.model.Embed;
+import fi.gtrxac.discord.model.Guild;
 import fi.gtrxac.discord.model.GuildMember;
 import fi.gtrxac.discord.model.Message;
 
@@ -49,21 +50,33 @@ public class MessageListAdapter extends BaseAdapter {
     private final Vector messages;
     private final Account acc;
     private final long guildId;
+    private final Vector guildRoles;
     private final boolean enableMention;
     private final LayoutInflater inflater;
     private final int maxAttachmentHeight;
     private final int maxAttachmentWidth;
 
-    public MessageListAdapter(Context context, Vector messages, Account acc, long guildId) {
-        this(context, messages, acc, guildId, true);
+    public MessageListAdapter(Context context, Vector messages, Account acc, long guildId,
+        Vector guildRoles) {
+        this(context, messages, acc, guildId, guildRoles, true);
+    }
+
+    public MessageListAdapter(Context context, Vector messages, Account acc, Guild guild) {
+        this(context, messages, acc, guild.id, guild.roles, true);
+    }
+
+    public MessageListAdapter(Context context, Vector messages, Account acc, Guild guild,
+        boolean enableMention) {
+        this(context, messages, acc, guild.id, guild.roles, enableMention);
     }
 
     public MessageListAdapter(Context context, Vector messages, Account acc, long guildId,
-        boolean enableMention) {
+        Vector guildRoles, boolean enableMention) {
         this.context = context;
         this.messages = messages;
         this.acc = acc;
         this.guildId = guildId;
+        this.guildRoles = guildRoles;
         this.enableMention = enableMention;
         this.inflater = LayoutInflater.from(context);
         this.maxAttachmentHeight = context.getResources().getDisplayMetrics().heightPixels;
@@ -150,8 +163,8 @@ public class MessageListAdapter extends BaseAdapter {
                 holder.replyContent.setVisibility(View.VISIBLE);
                 if (Settings.useMarkdown) {
                     MarkdownRenderer renderer =
-                        new MarkdownRenderer(context, message.reply, acc.getCdnUrl(),
-                            holder.replyContent);
+                        new MarkdownRenderer(context, message.reply, acc, guildId, guildRoles,
+                            holder.replyContent, false);
                     holder.replyContent.setText(renderer.render(message.reply.content));
                 }
                 else {
@@ -186,8 +199,8 @@ public class MessageListAdapter extends BaseAdapter {
                 SpannableStringBuilder content;
                 if (Settings.useMarkdown) {
                     MarkdownRenderer renderer =
-                        new MarkdownRenderer(context, message, acc.getCdnUrl(), holder.compactText,
-                            false);
+                        new MarkdownRenderer(context, message, acc, guildId, guildRoles,
+                            holder.compactText, false);
                     content = renderer.render(message.content);
                 }
                 else {
@@ -267,7 +280,8 @@ public class MessageListAdapter extends BaseAdapter {
                 SpannableStringBuilder content;
                 if (Settings.useMarkdown) {
                     MarkdownRenderer renderer =
-                        new MarkdownRenderer(context, message, acc.getCdnUrl(), holder.content);
+                        new MarkdownRenderer(context, message, acc, guildId, guildRoles,
+                            holder.content);
                     content = renderer.render(message.content);
                 }
                 else {
@@ -472,7 +486,7 @@ public class MessageListAdapter extends BaseAdapter {
 
         if (embed.description != null) {
             MarkdownRenderer renderer =
-                new MarkdownRenderer(context, null, acc.getCdnUrl(), description);
+                new MarkdownRenderer(context, null, acc, guildId, guildRoles, description);
             description.setText(renderer.render(embed.description));
             description.setTextColor(textColor);
             description.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());

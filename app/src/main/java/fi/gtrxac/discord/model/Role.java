@@ -7,12 +7,14 @@ import cc.nnproject.json.JSONObject;
 
 public class Role {
     public long id;
+    public String name;
     public int color;
     public long permissions;
     public int position;
 
     public Role(JSONObject data) {
         id = Long.parseLong(data.getString("id"));
+        name = data.getString("name");
         color = data.getInt("color");
         if (data.has("colors")) {
             color = data.getObject("colors").getInt("primary_color");
@@ -29,8 +31,6 @@ public class Role {
                 JSONObject data = arr.getObject(a);
 
                 if (data.getInt("position", -1) != i) continue;
-
-                if (data.getInt("color") == 0) continue;
 
                 result.addElement(new Role(data));
             }

@@ -45,11 +45,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Stack;
+import java.util.Vector;
 
 import cc.nnproject.markdown.Markdown;
 import cc.nnproject.markdown.MarkdownListener;
-import fi.gtrxac.discord.model.Message;
 import fi.gtrxac.discord.model.Channel;
+import fi.gtrxac.discord.model.Guild;
+import fi.gtrxac.discord.model.Message;
+import fi.gtrxac.discord.model.Role;
 
 public class MarkdownRenderer implements MarkdownListener {
 
@@ -64,7 +67,9 @@ public class MarkdownRenderer implements MarkdownListener {
     private final Context context;
     private final Resources resources;
     private final Message message;
-    private final String cdnUrl;
+    private final Account account;
+    private final long guildId;
+    private final Vector guildRoles;
     private final TextView view;
     private final boolean enableBigEmoji;
 
@@ -80,16 +85,33 @@ public class MarkdownRenderer implements MarkdownListener {
     private boolean emojiOnly;
     private int emojiCount;
 
-    public MarkdownRenderer(Context context, Message message, String cdnUrl, TextView view) {
-        this(context, message, cdnUrl, view, true);
+    public MarkdownRenderer(Context context, Message message, Account account, TextView view) {
+        this(context, message, account, 0, null, view, true);
     }
 
-    public MarkdownRenderer(Context context, Message message, String cdnUrl, TextView view,
-        boolean enableBigEmoji) {
+    public MarkdownRenderer(Context context, Message message, Account account, Guild guild,
+        TextView view) {
+        this(context, message, account, guild.id, guild.roles, view, true);
+    }
+
+    public MarkdownRenderer(Context context, Message message, Account account, Guild guild,
+        TextView view, boolean enableBigEmoji) {
+        this(context, message, account, guild.id, guild.roles, view, enableBigEmoji);
+    }
+
+    public MarkdownRenderer(Context context, Message message, Account account, long guildId,
+        Vector guildRoles, TextView view) {
+        this(context, message, account, guildId, guildRoles, view, true);
+    }
+
+    public MarkdownRenderer(Context context, Message message, Account account, long guildId,
+        Vector guildRoles, TextView view, boolean enableBigEmoji) {
         this.context = context.getApplicationContext();
         this.resources = context.getResources();
         this.message = message;
-        this.cdnUrl = cdnUrl;
+        this.account = account;
+        this.guildId = guildId;
+        this.guildRoles = guildRoles;
         this.view = view;
         this.enableBigEmoji = enableBigEmoji;
     }
@@ -201,9 +223,9 @@ public class MarkdownRenderer implements MarkdownListener {
         int background = Theme.mentionBackground;
         int foreground = Theme.mentionForeground;
         if (color != 0) {
-            background = Color.argb((int) (255 * 0.1), Color.red(color), Color.green(color),
+            background = Color.argb((int) (255 * 0.25), Color.red(color), Color.green(color),
                 Color.blue(color));
-            foreground = color;
+            foreground = color | 0xFF000000;
         }
 
         applyFontSpans(start, end, font);
@@ -499,20 +521,52 @@ public class MarkdownRenderer implements MarkdownListener {
 
     public void appendRoleMention(Object ctx, String id, int font) {
         emojiOnly = false;
-        appendMentionStyled("@" + id, font); // TODO: parse roles
+        if (guildRoles != null) {
+            for (int i = 0; i < guildRoles.size(); i++) {
+                Role role = (Role) guildRoles.elementAt(i);
+                if (Long.toString(role.id).equals(id)) {
+                    appendMentionStyled("@" + role.name, font, role.color);
+                    return;
+                }
+            }
+        }
+        append(ctx, "@unknown-role", font);
     }
 
     public void appendChannelMention(Object ctx, String id, int font) {
         emojiOnly = false;
+        final Channel channel = account.channelCache.getChannel(guildId, Long.parseLong(id));
+        if (channel != null) {
+            int start = out.length();
+            appendMentionStyled(channel.name, font);
+            int end = out.length();
+            out.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    if (!channel.isMessageable()) {
+                        Toast.makeText(context, "This channel type is not supported yet",
+                            Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-        Account acc = Accounts.getActive();
+                    Intent intent = new Intent(context, ChatActivity.class);
+                    intent.putExtra("guildId", guildId);
+                    intent.putExtra("channelId", channel.id);
+                    intent.putExtra("channelName", channel.name);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
 
-        // here we should also use primaryGuildID argument (currently selected server) if we had access to it
-        Channel channel = acc.channelCache.getChannelByID(0, Long.parseLong(id));
-
-        String channelName = (channel != null) ? channel.name : "#unknown";
-
-        appendMentionStyled(channelName, font);
+                @Override
+                public void updateDrawState(TextPaint ds) {
+                    ds.setColor(Theme.mentionForeground);
+                    ds.setUnderlineText(false);
+                }
+            }, start, end, SPAN_FLAGS);
+        }
+        else {
+            appendMentionStyled("#unknown", font);
+        }
     }
 
     public void appendEveryone(Object ctx, int font) {
@@ -528,7 +582,7 @@ public class MarkdownRenderer implements MarkdownListener {
     public void appendDiscordEmoji(Object ctx, String name, String id, boolean animated, int font) {
         emojiCount++;
         appendEmojiText(":" + name + ":", font,
-            EmojiSpan.custom(context, view, name, cdnUrl, id, animated));
+            EmojiSpan.custom(context, view, name, account.getCdnUrl(), id, animated));
     }
 
     public void appendUnicodeEmoji(Object ctx, String emoji, String codepoints, int font) {

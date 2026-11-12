@@ -390,7 +390,8 @@ public class MainActivity extends TabActivity implements GatewayListener {
             // i ain't gonna fetch the channel to know what guild its from brocacho 💔
             // (also i only coded messagelistadapter to work with a single guild so its basically
             // useless anyway)
-            inboxList.setAdapter(new MessageListAdapter(c, inbox, Accounts.getActive(), 0, false));
+            inboxList.setAdapter(
+                new MessageListAdapter(c, inbox, Accounts.getActive(), 0, null, false));
         }
 
         showProgress(false);
