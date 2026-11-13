@@ -136,7 +136,8 @@ public class ChannelCache extends LRUCache {
     }
 
     /**
-     * Find a channel by its ID in all cached guilds, first searching the primary guild if specified.
+     * Find a channel by its ID in all cached guilds, first searching the primary guild if
+     * specified.
      */
     public Channel getChannelByID(long primaryGuildID, long channelID) {
         if (channelID == 0) return null;

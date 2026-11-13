@@ -554,7 +554,8 @@ public class MessageListAdapter extends BaseAdapter {
                 }
                 if (field.value != null) {
                     TextView value = new TextView(context);
-                    MarkdownRenderer renderer = new MarkdownRenderer(context, null, acc, guildId, guildRoles, value);
+                    MarkdownRenderer renderer =
+                        new MarkdownRenderer(context, null, acc, guildId, guildRoles, value);
                     value.setText(renderer.render(field.value));
                     value.setTextColor(textColor);
                     value.setMovementMethod(LinkTextView.LocalLinkMovementMethod.getInstance());

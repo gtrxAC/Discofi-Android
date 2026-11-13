@@ -21,7 +21,7 @@ public class UnreadManager {
     public boolean autoSave;
     public boolean needSave;
     public long lastUnreadTime;
-        // previously unread message ID for the last channel that markRead() was used on
+    // previously unread message ID for the last channel that markRead() was used on
     public boolean lastHadUnreads;
 
     // parameters for ack/"mark as read" API call
@@ -276,11 +276,13 @@ public class UnreadManager {
         account.channelCache.setLastMessageID(channelID, messageID);
     }
 
-    public void onMessageCreate(JSONObject data) {
+    public boolean onMessageCreate(JSONObject data) {
         long channelID = Long.parseLong(data.getString("channel_id"));
         long messageID = Long.parseLong(data.getString("id"));
 
         updateChannelLastMessageID(channelID, messageID);
+
+        boolean mentioned = false;
 
         try {
             JSONObject author = data.getObject("author", null);
@@ -291,12 +293,16 @@ public class UnreadManager {
             }
 
             long guildId = Long.parseLong(data.getString("guild_id", "0"));
-            if (isMentioned(data, guildId, channelID, messageID)) {
+            mentioned = isMentioned(data, guildId, channelID, messageID);
+
+            if (mentioned) {
                 setMentionCount(channelID, getMentionCount(channelID) + 1);
             }
         }
         catch (Exception e) {
         }
+
+        return mentioned;
     }
 
     private boolean isMentioned(JSONObject data, long guildId, long channelID, long messageID) {

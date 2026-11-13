@@ -82,6 +82,16 @@ public class SettingsActivity extends PreferenceActivity
         Settings.compactMode = prefs.getBoolean("compactMode", false);
         Settings.useNameColors = prefs.getBoolean("useNameColors", true);
         Settings.useDirectCdn = prefs.getBoolean("useDirectCdn", true);
+        Settings.notifications = prefs.getBoolean("notifications", true);
+        Settings.notifyAllMessages = prefs.getBoolean("notifyAllMessages", false);
+        Settings.notifyMentions = prefs.getBoolean("notifyMentions", true);
+        Settings.notifyDirectMessages = prefs.getBoolean("notifyDirectMessages", true);
+        Settings.notificationSound = prefs.getBoolean("notificationSound", true);
+        Settings.notificationVibrate = prefs.getBoolean("notificationVibrate", false);
+
+        if (key.equals("notifications") && !Settings.notifications) {
+            Notifications.clearAll();
+        }
 
         if (key.equals("theme") || key.equals("fontSize")) {
             getListView().post(new Runnable() {

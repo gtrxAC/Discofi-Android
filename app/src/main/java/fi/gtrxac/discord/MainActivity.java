@@ -60,7 +60,9 @@ public class MainActivity extends TabActivity implements GatewayListener {
             return;
         }
 
-        acc.startGateway();
+        if (!acc.gatewayActive()) {
+            acc.startGateway();
+        }
 
         try {
             setTitle(acc.getDisplayTitle());
@@ -163,6 +165,45 @@ public class MainActivity extends TabActivity implements GatewayListener {
         });
 
         loadGuilds(context, acc);
+        openNotificationChannel(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        openNotificationChannel(intent);
+    }
+
+    private void openNotificationChannel(Intent intent) {
+        if (intent == null || !intent.getBooleanExtra("fromNotification", false)) {
+            return;
+        }
+
+        // Avoid opening the channel again if this activity is recreated
+        intent.removeExtra("fromNotification");
+
+        long channelId = intent.getLongExtra("channelId", 0);
+        if (channelId == 0) return;
+
+        Account acc = Accounts.getActive();
+        if (acc == null) return;
+
+        long guildId = intent.getLongExtra("guildId", 0);
+        long messageId = intent.getLongExtra("messageId", 0);
+        String channelName = intent.getStringExtra("channelName");
+
+        if (messageId != 0) {
+            acc.unreadManager.markRead(channelId, messageId);
+        }
+        Notifications.clear(channelId);
+
+        Intent chatIntent = new Intent(this, ChatActivity.class);
+        chatIntent.putExtra("guildId", guildId);
+        chatIntent.putExtra("channelId", channelId);
+        chatIntent.putExtra("channelName", channelName);
+        if (messageId != 0) chatIntent.putExtra("messageId", messageId);
+        startActivity(chatIntent);
     }
 
     @Override
@@ -423,6 +464,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     private void goToLoginScreen() {
         final Account acc = Accounts.getActive();
         if (acc != null) acc.gateway.stop = true;
+        Notifications.clearAll();
         Intent intent = new Intent(this, AccountListActivity.class);
         startActivity(intent);
         finish();

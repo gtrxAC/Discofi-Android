@@ -34,7 +34,7 @@
         <item>@string/time_12h</item>
         <item>@string/time_24h</item>
     </array>
-    <string-array name="time_format_values">
+    <string-array name="time_format_values" translatable="false">
         <item>12</item>
         <item>24</item>
     </string-array>

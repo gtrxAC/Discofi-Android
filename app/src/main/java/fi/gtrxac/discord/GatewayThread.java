@@ -382,7 +382,8 @@ public class GatewayThread extends Thread {
                     }
                     else if (op.equals("MESSAGE_CREATE")) {
                         JSONObject data = message.getObject("d");
-                        account.unreadManager.onMessageCreate(data);
+                        boolean mentioned = account.unreadManager.onMessageCreate(data);
+                        Notifications.onMessageCreate(account, data, mentioned);
                         notifyMessageCreate(data);
                     }
                     else if (op.equals("MESSAGE_UPDATE")) {

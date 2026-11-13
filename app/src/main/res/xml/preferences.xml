@@ -101,4 +101,49 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/notifications">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="notifications"
+            android:summary="@string/notifications_summary"
+            android:title="@string/notifications_enabled" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="notifications"
+            android:key="notifyAllMessages"
+            android:summary="@string/notify_all_messages_summary"
+            android:title="@string/notify_all_messages" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="notifications"
+            android:key="notifyMentions"
+            android:summary="@string/notify_mentions_summary"
+            android:title="@string/notify_mentions" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="notifications"
+            android:key="notifyDirectMessages"
+            android:summary="@string/notify_direct_messages_summary"
+            android:title="@string/notify_direct_messages" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="notifications"
+            android:key="notificationSound"
+            android:summary="@string/notification_sound_summary"
+            android:title="@string/notification_sound" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="notifications"
+            android:key="notificationVibrate"
+            android:summary="@string/notification_vibrate_summary"
+            android:title="@string/notification_vibrate" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

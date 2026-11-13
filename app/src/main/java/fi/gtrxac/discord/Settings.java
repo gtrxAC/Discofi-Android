@@ -31,6 +31,12 @@ public class Settings {
     public static boolean compactMode = false;
     public static boolean useNameColors = true;
     public static boolean useDirectCdn = true;
+    public static boolean notifications = true;
+    public static boolean notifyAllMessages = false;
+    public static boolean notifyMentions = true;
+    public static boolean notifyDirectMessages = true;
+    public static boolean notificationSound = true;
+    public static boolean notificationVibrate = false;
 
     /**
      * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each
@@ -39,6 +45,8 @@ public class Settings {
     public static String deviceVendorID = DiscordUtil.generateRandomUUID();
 
     public static void load(Context c) {
+        Notifications.context = c.getApplicationContext();
+
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
 
         int numAccounts = settings.getInt("numAccounts", 0);
@@ -75,6 +83,12 @@ public class Settings {
         compactMode = settings.getBoolean("compactMode", false);
         useNameColors = settings.getBoolean("useNameColors", true);
         useDirectCdn = settings.getBoolean("useDirectCdn", false);
+        notifications = settings.getBoolean("notifications", true);
+        notifyAllMessages = settings.getBoolean("notifyAllMessages", false);
+        notifyMentions = settings.getBoolean("notifyMentions", true);
+        notifyDirectMessages = settings.getBoolean("notifyDirectMessages", true);
+        notificationSound = settings.getBoolean("notificationSound", true);
+        notificationVibrate = settings.getBoolean("notificationVibrate", false);
     }
 
     public static void save(Context c) {
@@ -105,6 +119,12 @@ public class Settings {
         editor.putBoolean("compactMode", compactMode);
         editor.putBoolean("useNameColors", useNameColors);
         editor.putBoolean("useDirectCdn", useDirectCdn);
+        editor.putBoolean("notifications", notifications);
+        editor.putBoolean("notifyAllMessages", notifyAllMessages);
+        editor.putBoolean("notifyMentions", notifyMentions);
+        editor.putBoolean("notifyDirectMessages", notifyDirectMessages);
+        editor.putBoolean("notificationSound", notificationSound);
+        editor.putBoolean("notificationVibrate", notificationVibrate);
 
         editor.commit();
     }

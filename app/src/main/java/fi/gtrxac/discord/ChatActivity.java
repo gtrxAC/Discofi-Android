@@ -174,7 +174,8 @@ public class ChatActivity extends Activity implements GatewayListener {
         long messageId = getIntent().getLongExtra("messageId", 0);
         if (messageId != 0) {
             loadAroundMessage(messageId, true);
-        } else {
+        }
+        else {
             loadInitialMessages();
         }
     }
@@ -187,6 +188,8 @@ public class ChatActivity extends Activity implements GatewayListener {
         if (messages == null) return;
 
         GatewayThread.addListener(this);
+        Notifications.setOpenChannel(channelId);
+        Notifications.clear(channelId);
         account.unreadManager.clearMentions(channelId);
 
         // Settings may have changed while this activity was in the background.
@@ -199,6 +202,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     @Override
     protected void onPause() {
         GatewayThread.removeListener(this);
+        Notifications.clearOpenChannel(channelId);
 
         if (account != null) {
             account.unreadManager.save();
@@ -721,11 +725,12 @@ public class ChatActivity extends Activity implements GatewayListener {
                         public void run() {
                             if (isFinishing()) return;
                             showProgress(false);
-                            if (initial) showInitialLoadError(e);
+                            if (initial) {
+                                showInitialLoadError(e);
+                            }
                             else {
                                 Toast.makeText(ChatActivity.this,
-                                        "Failed to load message: " + e.message,
-                                        Toast.LENGTH_LONG)
+                                        "Failed to load message: " + e.message, Toast.LENGTH_LONG)
                                     .show();
                             }
                         }

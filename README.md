@@ -31,12 +31,12 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 * Settings for theme, message count, etc.
 * Unread indicator
 * Ping indicator
+* Notifications
 
 ### Planned for later
 * Threads
 * Forums
 * Reactions
-* Notifications
 * Sending attachments
 * QR login
 * Pinned messages

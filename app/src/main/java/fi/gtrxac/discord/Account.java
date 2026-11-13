@@ -368,8 +368,8 @@ public class Account {
     public Vector getInbox(boolean refresh) throws DiscordException {
         if (!refresh && inboxAvailable()) return inbox;
 
-        JSONArray inboxJson = (JSONArray) fetchJSON(
-            "/users/@me/mentions?limit=25&roles=true&everyone=true");
+        JSONArray inboxJson =
+            (JSONArray) fetchJSON("/users/@me/mentions?limit=25&roles=true&everyone=true");
 
         for (int i = 0; i < inboxJson.size(); i++) {
             JSONObject mentionJson = inboxJson.getObject(i);
