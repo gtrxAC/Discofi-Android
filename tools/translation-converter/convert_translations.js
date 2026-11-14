@@ -15,8 +15,6 @@ const j2meStringsEn = JSON.parse(stripJsonComments(fs.readFileSync("j2me/en.json
 
 j2meTransNames.forEach((filename) => {
 
-    if (filename == 'en.jsonc') return;
-
     // -- language name parse --------------------------------------
 
     let langName, langRegion;
@@ -27,6 +25,7 @@ j2meTransNames.forEach((filename) => {
     })
 
     if (!langName) throw new Error("no langname: " + filename);
+    if (langName == "en") return;
 
     console.log("[" + langName + "], [" + langRegion + "]");
 
