@@ -93,7 +93,7 @@ public class Notifications {
                 title = dm.name;
                 text = authorName + ": " + content;
                 ticker =
-                    context.getString(R.string.notification_server, authorName, location, content);
+                    context.getString(R.string.notification_guild, authorName, location, content);
             }
             else {
                 channelName = "@" + (dm != null ? dm.name : authorName);
@@ -106,6 +106,7 @@ public class Notifications {
             String guildName = null;
             try {
                 Guild guild = account.getGuild(guildId);
+                guildName = guild.name;
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -123,7 +124,7 @@ public class Notifications {
             location = guildName + " " + channelName;
             title = location;
             text = authorName + ": " + content;
-            ticker = context.getString(R.string.notification_server, authorName, location, content);
+            ticker = context.getString(R.string.notification_guild, authorName, location, content);
         }
 
         long when = (message.id >> 22) + DiscordUtil.DISCORD_EPOCH;
@@ -213,32 +214,15 @@ public class Notifications {
         content = content.replace('\n', ' ').replace('\r', ' ');
         StringBuffer attachments = new StringBuffer();
 
-        int images = 0;
-        int files = 0;
-
         if (message.attachments != null) {
-            for (int i = 0; i < message.attachments.size(); i++) {
+            int attachmentsSize = message.attachments.size();
+            for (int i = 0; i < attachmentsSize; i++) {
                 Attachment attachment = (Attachment) message.attachments.elementAt(i);
-
-                if (attachment.previewable || attachment.animated) {
-                    images++;
-                }
-                else {
-                    files++;
-                }
+                attachments.append(context.getString(
+                    attachmentsSize == 1 ? R.string.notification_attachments_single
+                        : R.string.notification_attachments_multiple,
+                    new Integer(attachmentsSize)));
             }
-        }
-
-        if (images > 0) {
-            attachments.append(context.getString(
-                images == 1 ? R.string.notification_images_single : R.string.notification_images_multiple,
-                new Integer(images)));
-        }
-        if (files > 0) {
-            if (attachments.length() > 0) attachments.append(' ');
-            attachments.append(context.getString(
-                files == 1 ? R.string.notification_files_single : R.string.notification_files_multiple,
-                new Integer(files)));
         }
 
         if (attachments.length() > 0) {
@@ -246,21 +230,8 @@ public class Notifications {
             content += attachments.toString();
         }
 
-        if (content.length() == 0 && message.embeds != null && message.embeds.size() > 0) {
-            Embed embed = (Embed) message.embeds.firstElement();
-
-            if (embed.title != null) {
-                content = embed.title;
-            }
-            else if (embed.description != null) content = embed.description;
-
-            if (content != null) {
-                content = content.trim().replace('\n', ' ').replace('\r', ' ');
-            }
-        }
-
         if (content == null || content.length() == 0) {
-            content = context.getString(R.string.notification_no_content);
+            content = context.getString(R.string.no_content);
         }
 
         return truncate(content);
@@ -276,20 +247,6 @@ public class Notifications {
         if (last >= 0xD800 && last <= 0xDBFF) end--;
 
         return text.substring(0, end) + "...";
-    }
-
-    private static Guild getGuild(Account account, long guildId) {
-        try {
-            return account.getGuild(guildId);
-        }
-        catch (Exception e) {
-            return null;
-        }
-    }
-
-    private static String getGuildName(Account account, long guildId) {
-        Guild guild = getGuild(account, guildId);
-        return guild != null ? guild.name : null;
     }
 
     private static DMChannel getDMChannel(Account account, long channelId) {

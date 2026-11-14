@@ -49,7 +49,7 @@ j2meTransNames.forEach((filename) => {
 
     // -- output --------------------------------------
 
-    const outDir = "../app/src/main/res/values-" +
+    const outDir = "../../app/src/main/res/values-" +
         langName +
         (langRegion ? ("-r" + langRegion) : "")
 

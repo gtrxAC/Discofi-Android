@@ -38,7 +38,7 @@
     <string name="action_edit">Muokkaa</string>
     <string name="action_delete">Poista</string>
     <string name="action_reply">Vastaa</string>
-    <string name="action_forward">Välitä</string>
+    <string name="action_forward">Forward</string>
     <string name="action_copy_text">Kopioi viesti</string>
     <string name="action_refresh">Lataa uudelleen</string>
     <string name="action_retry">Retry</string>
@@ -48,7 +48,7 @@
     <string name="error_field_required">This field is required</string>
     <string name="connection_setup">Connection setup</string>
     <string name="select_connection_method">Select your connection method.</string>
-    <string name="direct">Direct</string>
+    <string name="direct">Suora yhteys</string>
     <string name="proxy">Proxy</string>
     <string name="realtime_chat">Real-time chat</string>
     <string name="disable_realtime_chat">Disable real-time chat when using a slow connection.</string>
@@ -78,17 +78,19 @@
     <string name="inbox">Inbox</string>
     <string name="inbox_empty">No mentions yet.</string>
     <string name="title_activity_chat">Chat</string>
-    <string name="msg_composer_hint">Message %s</string>
-    <string name="reply_to">Replying to &lt;b&gt;%s&lt;/b&gt;</string>
-    <string name="editing_message">Editing message</string>
+    <string name="msg_composer_hint">Viesti: %s</string>
+    <string name="reply_to">Vastaus käyttäjälle: &lt;b&gt;%s&lt;/b&gt;</string>
+    <string name="editing_message">Muokataan viestiä</string>
     <string name="ping_off">\@ Off</string>
     <string name="ping_on">\@ On</string>
     <string name="badge_bot">APP</string>
     <string name="badge_webhook">WEBHOOK</string>
     <string name="badge_system">OFFICIAL</string>
     <string name="edited">(muokattu)</string>
+    <string name="unknown">(tuntematon)</string>
+    <string name="no_content">(ei sisältöä)</string>
     <string name="forwarded">Forwarded</string>
-    <string name="typing_single">%s is typing...</string>
+    <string name="typing_single">%s kirjoittaa...</string>
     <string name="typing_two">%1$s and %2$s are typing...</string>
     <string name="typing_multiple">Several people are typing...</string>
     <string name="delete_message">Delete message</string>
@@ -119,7 +121,7 @@
     <string name="show_images_summary">Show image attachments in messages</string>
     <string name="compact_mode">Compact mode</string>
     <string name="compact_mode_summary">Show messages on one line without user avatars</string>
-    <string name="message_load_count">Messages per load</string>
+    <string name="message_load_count">Viestien latausmäärä</string>
     <string name="message_load_count_summary">%s messages</string>
     <string name="message_load_count_dialog">Enter a number between 1 and 100</string>
     <string name="send_typing">Näytä muille, kun kirjoitan</string>
@@ -129,5 +131,22 @@
     <string name="use_direct_cdn">Download files directly</string>
     <string name="use_direct_cdn_summary">Download attachments without a proxy (requires TLS 1.2 or the Wolfius app)</string>
     <string name="dont_share_your_token">Don\&apos;t share your token with others!</string>
+    <string name="notifications">Ilmoitukset</string>
+    <string name="notifications_enabled">Enable notifications</string>
+    <string name="notifications_summary">Show a notification when a new message arrives</string>
+    <string name="notify_all_messages">Kaikki viestit</string>
+    <string name="notify_all_messages_summary">Notify for every message in servers and direct messages</string>
+    <string name="notify_mentions">Maininnat</string>
+    <string name="notify_mentions_summary">Notify when someone mentions you in a server</string>
+    <string name="notify_direct_messages">Yksityisviestit</string>
+    <string name="notify_direct_messages_summary">Notify for new direct messages</string>
+    <string name="notification_sound">Ääni</string>
+    <string name="notification_sound_summary">Play a sound when a notification arrives</string>
+    <string name="notification_vibrate">Värinä</string>
+    <string name="notification_vibrate_summary">Vibrate when a notification arrives</string>
+    <string name="notification_dm">%1$s lähetti sinulle yksityisviestin: &quot;%2$s&quot;</string>
+    <string name="notification_guild">%1$s lähetti viestin kanavalle %2$s: &quot;%3$s&quot;</string>
+    <string name="notification_attachments_single">(1 liite)</string>
+    <string name="notification_attachments_multiple">(%1$d liitettä)</string>
 
 </resources>

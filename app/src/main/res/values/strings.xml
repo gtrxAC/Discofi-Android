@@ -56,6 +56,7 @@
     <string name="badge_system">OFFICIAL</string>
     <string name="edited">(edited)</string>
     <string name="unknown">(unknown)</string>
+    <string name="no_content">(no content)</string>
     <string name="forwarded">Forwarded</string>
     <string name="typing_single">%s is typing...</string>
     <string name="typing_two">%1$s and %2$s are typing...</string>
@@ -112,11 +113,8 @@
     <string name="notification_vibrate">Vibration</string>
     <string name="notification_vibrate_summary">Vibrate when a notification arrives</string>
     <string name="notification_dm">%1$s sent you a direct message: &quot;%2$s&quot;</string>
-    <string name="notification_server">%1$s sent a message in %2$s: &quot;%3$s&quot;</string>
-    <string name="notification_images_single">(1 image)</string>
-    <string name="notification_images_multiple">(%1$d images)</string>
-    <string name="notification_files_single">(1 file)</string>
-    <string name="notification_files_multiple">(%1$d files)</string>
-    <string name="notification_no_content">(no content)</string>
+    <string name="notification_guild">%1$s sent a message in %2$s: &quot;%3$s&quot;</string>
+    <string name="notification_attachments_single">(1 attachment)</string>
+    <string name="notification_attachments_multiple">(%1$d attachments)</string>
 
 </resources>
