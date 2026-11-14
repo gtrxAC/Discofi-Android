@@ -427,6 +427,7 @@ public class GatewayThread extends Thread {
                                 }
                             }
                         }
+                        account.channelCache.onGatewayReady(data);
                         account.unreadManager.updateReadStatesFromReady(data);
                         notifyReady(data);
                     }

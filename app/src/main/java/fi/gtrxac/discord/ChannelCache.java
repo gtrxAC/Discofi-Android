@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import cc.nnproject.json.JSONArray;
+import cc.nnproject.json.JSONObject;
 import fi.gtrxac.discord.model.Channel;
 import fi.gtrxac.discord.model.ChannelCategory;
 import fi.gtrxac.discord.util.LRUCache;
@@ -112,6 +113,20 @@ public class ChannelCache extends LRUCache {
 
     public Vector get(long guildID) {
         return (Vector) super.get(guildID);
+    }
+
+    public void onGatewayReady(JSONObject data) {
+        if (data == null || !data.has("guilds")) return;
+
+        JSONArray guilds = data.getArray("guilds");
+        for (int i = 0; i < guilds.size(); i++) {
+            JSONObject guildJSON = guilds.getObject(i);
+            long guildID = Long.parseLong(guildJSON.getString("id"));
+            if (guildJSON.has("channels")) {
+                Vector channels = Channel.parseChannels(guildJSON.getArray("channels"));
+                set(guildID, channels);
+            }
+        }
     }
 
     public void setLastMessageID(long channelID, long lastMessageID) {
