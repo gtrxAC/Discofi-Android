@@ -22,14 +22,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import fi.gtrxac.bluewap.Util;
-import fi.gtrxac.tinytls.TinyTLS;
 
 /**
  * Created by gtrx on 29.8.2026.
  */
 
 public class AccountListActivity extends Activity {
-    private static final int MENU_TEST_TLS = 0;
     private ListView accountList;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -158,62 +156,4 @@ public class AccountListActivity extends Activity {
                 }
             }).setNegativeButton(android.R.string.no, null).show();
     }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_TEST_TLS, 0, "Test TLS");
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case MENU_TEST_TLS:
-                testTLS();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void testTLS() {
-        final StringBuffer log = new StringBuffer();
-        Toast.makeText(this, "Testing TLS...", Toast.LENGTH_SHORT).show();
-
-        new Thread() {
-            @Override
-            public void run() {
-                TinyTLS tls = new TinyTLS(log);
-
-                try {
-                    tls.connect("discord.com", 8443);
-
-                    InputStream is = tls.openInputStream();
-                    OutputStream os = tls.openOutputStream();
-
-                    byte[] req = Util.stringToBytes("GET / HTTP/1.1\r\n" + "Host: discord.com\r\n" +
-                        "User-Agent: TinyTLS/1.0\r\n" + "Connection: close\r\n" + "\r\n");
-
-                    os.write(req);
-
-                    log.append(Util.bytesToString(Util.readBytes(is)));
-                }
-                catch (Exception e) {
-                    log.append("TLS FAILED: " + e);
-                    e.printStackTrace();
-                }
-                finally {
-                    tls.close();
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(AccountListActivity.this).setTitle("TLS test")
-                            .setMessage(log.toString()).setPositiveButton("Close", null).show();
-                    }
-                });
-            }
-        }.start();
-    }
-
 }
