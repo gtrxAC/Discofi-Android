@@ -6,12 +6,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 
 import java.util.Hashtable;
 import java.util.Vector;
 
 import cc.nnproject.json.JSONObject;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
+
 import fi.gtrxac.discord.model.Attachment;
 import fi.gtrxac.discord.model.Channel;
 import fi.gtrxac.discord.model.DMChannel;
@@ -75,11 +80,14 @@ public class Notifications {
     private static void send(Account account, Message message, long guildId, boolean isDM,
         long channelId) {
         String authorName = message.author != null ? message.author.name : "(unknown)";
+        String authorAvatar =
+            message.author != null ? message.author.getAvatarUrl(account.getCdnUrl()) : null;
         String content = getMessageText(context, message);
 
         DMChannel dm = isDM ? getDMChannel(account, channelId) : null;
         boolean isGroupDM = dm != null && dm.isGroup;
 
+        String icon = null;
         String location;
         String channelName;
         String title;
@@ -88,6 +96,7 @@ public class Notifications {
 
         if (isDM) {
             if (isGroupDM) {
+                icon = dm.getIconUrl(account.getCdnUrl());
                 location = dm.name;
                 channelName = dm.name;
                 title = dm.name;
@@ -96,8 +105,8 @@ public class Notifications {
                     context.getString(R.string.notification_guild, authorName, location, content);
             }
             else {
-                channelName = "@" + (dm != null ? dm.name : authorName);
-                title = dm != null ? dm.name : authorName;
+                icon = dm != null ? dm.getIconUrl(account.getCdnUrl()) : authorAvatar;
+                channelName = title = "@" + (dm != null ? dm.name : authorName);
                 text = content;
                 ticker = context.getString(R.string.notification_dm, authorName, content);
             }
@@ -107,6 +116,7 @@ public class Notifications {
             try {
                 Guild guild = account.getGuild(guildId);
                 guildName = guild.name;
+                icon = guild.getIconUrl(account.getCdnUrl());
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -130,8 +140,6 @@ public class Notifications {
         long when = (message.id >> 22) + DiscordUtil.DISCORD_EPOCH;
         int id = getNotificationId(channelId);
         int count = addMessageCount(channelId);
-
-        int icon = R.drawable.ic_stat_discofi;
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -164,7 +172,7 @@ public class Notifications {
         manager.notify(id, notification);
     }
 
-    private static Notification buildNotification(Context context, int icon, String ticker,
+    private static Notification buildNotification(Context context, String icon, String ticker,
         long when, String title, String text, PendingIntent pendingIntent, int count,
         String notifChannelId) {
         int defaults = 0;
@@ -173,12 +181,23 @@ public class Notifications {
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                Notification.Builder builder =
-                    new Notification.Builder(context).setSmallIcon(icon).setTicker(ticker)
-                        .setWhen(when).setContentTitle(title).setContentText(text)
+                final Notification.Builder builder =
+                    new Notification.Builder(context).setSmallIcon(R.drawable.ic_stat_discofi)
+                        .setTicker(ticker).setWhen(when).setContentTitle(title).setContentText(text)
                         .setContentIntent(pendingIntent).setAutoCancel(true).setDefaults(defaults);
 
                 if (count > 1) builder.setNumber(count);
+
+                if (icon != null) {
+                    int width = context.getResources()
+                        .getDimensionPixelSize(android.R.dimen.notification_large_icon_width);
+                    int height = context.getResources()
+                        .getDimensionPixelSize(android.R.dimen.notification_large_icon_height);
+                    FutureTarget<Bitmap> target =
+                        Glide.with(context).load(icon).asBitmap().into(width, height);
+                    builder.setLargeIcon(target.get());
+                    Glide.clear(target);
+                }
 
                 // Required on Android 8.0 and later
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -188,7 +207,8 @@ public class Notifications {
                 return builder.getNotification();
             }
             else {
-                Notification notification = new Notification(icon, ticker, when);
+                Notification notification =
+                    new Notification(R.drawable.ic_stat_discofi, ticker, when);
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
                 notification.defaults |= defaults;
 
