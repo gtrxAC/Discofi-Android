@@ -46,7 +46,7 @@
             android:title="@string/use_name_colors" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="useDirectCdn"
             android:summary="@string/use_direct_cdn_summary"
             android:title="@string/use_direct_cdn" />
@@ -59,7 +59,7 @@
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="textFormatting"
+            android:key="useMarkdown"
             android:summary="@string/text_formatting_summary"
             android:title="@string/text_formatting" />
 

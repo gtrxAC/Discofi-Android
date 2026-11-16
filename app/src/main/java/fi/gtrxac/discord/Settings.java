@@ -30,7 +30,7 @@ public class Settings {
     public static boolean showImages = true;
     public static boolean compactMode = false;
     public static boolean useNameColors = true;
-    public static boolean useDirectCdn = true;
+    public static boolean useDirectCdn = false;
     public static boolean notifications = true;
     public static boolean notifyAllMessages = false;
     public static boolean notifyMentions = true;
@@ -78,7 +78,7 @@ public class Settings {
         sendTyping = settings.getBoolean("sendTyping", true);
         autoReconnect = settings.getBoolean("autoReconnect", true);
         showReplies = settings.getBoolean("showReplies", true);
-        useMarkdown = settings.getBoolean("textFormatting", true);
+        useMarkdown = settings.getBoolean("useMarkdown", true);
         showImages = settings.getBoolean("showImages", true);
         compactMode = settings.getBoolean("compactMode", false);
         useNameColors = settings.getBoolean("useNameColors", true);
