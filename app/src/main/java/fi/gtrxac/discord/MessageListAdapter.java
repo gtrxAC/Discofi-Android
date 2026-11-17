@@ -632,11 +632,13 @@ public class MessageListAdapter extends BaseAdapter {
         if (embed.author != null) {
             authorName.setText(embed.author.name);
             authorName.setTextColor(textColor);
+
             authorName.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     openInBrowser(embed.author.url);
                 }
             });
+
             if (Settings.showImages) {
                 if (embed.author.proxyIconUrl != null) {
                     loadImage(authorIcon, acc.getCdnAssetUrl(embed.author.proxyIconUrl), true);
@@ -656,9 +658,11 @@ public class MessageListAdapter extends BaseAdapter {
             author.setVisibility(View.GONE);
         }
 
-        String footerText = embed.footer != null ? embed.footer.text : null;
+        String footerText = (embed.footer != null) ? embed.footer.text : null;
+
         if (embed.timestamp != null) {
             String timestamp = formatEmbedTimestamp(embed.timestamp);
+
             if (footerText != null && footerText.length() > 0) {
                 footerText += " \u00b7 ";
             }
@@ -672,7 +676,8 @@ public class MessageListAdapter extends BaseAdapter {
             footer.setVisibility(View.VISIBLE);
             footerContent.setText(footerText);
             footerContent.setTextColor(textColor);
-            if (Settings.showImages) {
+
+            if (Settings.showImages && embed.footer != null) {
                 if (embed.footer.proxyIconUrl != null) {
                     loadImage(footerIcon, acc.getCdnAssetUrl(embed.footer.proxyIconUrl), true);
                 }
