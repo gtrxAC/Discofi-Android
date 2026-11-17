@@ -27,20 +27,28 @@ public class SettingsActivity extends PreferenceActivity
 
         EditTextPreference messageLoadCount =
             (EditTextPreference) findPreference("messageLoadCount");
-        messageLoadCount.setSummary(
-            getString(R.string.message_load_count_summary, messageLoadCount.getText()));
+
         if (messageLoadCount != null) {
+            messageLoadCount.setSummary(
+                getString(R.string.message_load_count_summary, messageLoadCount.getText()));
+
             messageLoadCount.setOnPreferenceChangeListener(
                 new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        int value = Integer.parseInt(newValue.toString().trim());
-                        if (value < Settings.MESSAGE_LOAD_COUNT_MIN ||
-                            value > Settings.MESSAGE_LOAD_COUNT_MAX) {
-                            Toast.makeText(SettingsActivity.this,
-                                R.string.message_load_count_dialog, Toast.LENGTH_LONG).show();
-                            return false;
+                        try {
+                            int value = Integer.parseInt(newValue.toString().trim());
+
+                            if (value >= Settings.MESSAGE_LOAD_COUNT_MIN &&
+                                value <= Settings.MESSAGE_LOAD_COUNT_MAX) {
+                                return true;
+                            }
                         }
-                        return true;
+                        catch (NumberFormatException e) {}
+                        
+                        Toast.makeText(SettingsActivity.this,
+                            R.string.message_load_count_dialog, Toast.LENGTH_LONG).show();
+                            
+                        return false;
                     }
                 });
         }
