@@ -77,7 +77,7 @@ public class SettingsActivity extends PreferenceActivity
         Settings.sendTyping = prefs.getBoolean("sendTyping", true);
         Settings.autoReconnect = prefs.getBoolean("autoReconnect", true);
         Settings.showReplies = prefs.getBoolean("showReplies", true);
-        Settings.useMarkdown = prefs.getBoolean("useMarkdown", true);
+        Settings.useMarkdown = prefs.getBoolean("textFormatting", true);
         Settings.showImages = prefs.getBoolean("showImages", true);
         Settings.compactMode = prefs.getBoolean("compactMode", false);
         Settings.useNameColors = prefs.getBoolean("useNameColors", true);

@@ -336,32 +336,21 @@ public class Account {
     }
 
     private void sortDMChannels(Vector dmChannelsUnsorted) {
-        for (int i = 0; i < dmChannelsUnsorted.size(); i++) {
-            long highestID = 0;
+        while (dmChannelsUnsorted.size() > 0) {
             int highestIndex = 0;
+            DMChannel highest = (DMChannel) dmChannelsUnsorted.elementAt(0);
 
-            for (int u = 0; u < dmChannelsUnsorted.size(); u++) {
-                DMChannel ch = (DMChannel) dmChannelsUnsorted.elementAt(u);
+            for (int i = 1; i < dmChannelsUnsorted.size(); i++) {
+                DMChannel ch = (DMChannel) dmChannelsUnsorted.elementAt(i);
 
-                if (ch.lastMessageID <= highestID) continue;
-
-                // Don't repeat ones that we've already added
-                boolean alreadyHave = false;
-
-                for (int l = 0; l < dmChannels.size(); l++) {
-                    DMChannel compare = (DMChannel) dmChannels.elementAt(l);
-
-                    if (compare.lastMessageID == ch.lastMessageID) {
-                        alreadyHave = true;
-                        break;
-                    }
+                if (ch.lastMessageID > highest.lastMessageID) {
+                    highest = ch;
+                    highestIndex = i;
                 }
-                if (alreadyHave) continue;
-
-                highestID = ch.lastMessageID;
-                highestIndex = u;
             }
-            dmChannels.addElement((DMChannel) dmChannelsUnsorted.elementAt(highestIndex));
+
+            dmChannels.addElement(highest);
+            dmChannelsUnsorted.removeElementAt(highestIndex);
         }
     }
 
@@ -370,6 +359,8 @@ public class Account {
 
         JSONArray inboxJson =
             (JSONArray) fetchJSON("/users/@me/mentions?limit=25&roles=true&everyone=true");
+
+        inbox.setSize(0);
 
         for (int i = 0; i < inboxJson.size(); i++) {
             JSONObject mentionJson = inboxJson.getObject(i);
@@ -526,8 +517,8 @@ public class Account {
                 Vector tips = new Vector();
                 tips.addElement("use a different connection mode");
 
-                throw new DiscordException("Deleting messages is not supported",
-                    "Your device does not support the HTTP DELETE method", tips);
+                throw new DiscordException("Editing messages is not supported",
+                    "Your device does not support the HTTP PATCH method", tips);
             }
             throw new DiscordException(e);
         }

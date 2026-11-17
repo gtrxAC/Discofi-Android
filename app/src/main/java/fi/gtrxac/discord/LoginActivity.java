@@ -210,23 +210,6 @@ public class LoginActivity extends Activity {
         new Thread() {
             @Override
             public void run() {
-                App.pendingAccount.token = token;
-
-                try {
-                    App.pendingAccount.fetchUserProfile();
-                }
-                catch (final DiscordException e) {
-                    App.pendingAccount.token = null;
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            dialog.dismiss();
-                            if (isFinishing()) return;
-                            e.show(c);
-                        }
-                    });
-                    return;
-                }
-
                 completeLogin(c, dialog, token);
             }
         }.start();

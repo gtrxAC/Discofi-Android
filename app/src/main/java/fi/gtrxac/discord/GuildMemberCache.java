@@ -10,7 +10,7 @@ import fi.gtrxac.discord.model.User;
 import fi.gtrxac.discord.util.LRUCache;
 
 public class GuildMemberCache extends LRUCache {
-    private static final int CACHE_SIZE = 10;
+    private static final int CACHE_SIZE = 50;
     public boolean activeRequest;
     private Account account;
 
@@ -46,6 +46,11 @@ public class GuildMemberCache extends LRUCache {
 
         reqData.put("user_ids", requestIds);
 
+        if (requestIds.size() == 0) {
+            activeRequest = false;
+            return;
+        }
+
         JSONObject msg = new JSONObject();
         msg.put("op", 8);
         msg.put("d", reqData);
@@ -63,6 +68,7 @@ public class GuildMemberCache extends LRUCache {
 
         GuildMember result = (GuildMember) super.get(key);
         if (result != null) return result;
+        if (cache.containsKey(key)) return null;
 
         if (!activeRequest) {
             activeRequest = true;

@@ -59,7 +59,7 @@
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="useMarkdown"
+            android:key="textFormatting"
             android:summary="@string/text_formatting_summary"
             android:title="@string/text_formatting" />
 

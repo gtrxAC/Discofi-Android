@@ -78,7 +78,7 @@ public class Settings {
         sendTyping = settings.getBoolean("sendTyping", true);
         autoReconnect = settings.getBoolean("autoReconnect", true);
         showReplies = settings.getBoolean("showReplies", true);
-        useMarkdown = settings.getBoolean("useMarkdown", true);
+        useMarkdown = settings.getBoolean("textFormatting", true);
         showImages = settings.getBoolean("showImages", true);
         compactMode = settings.getBoolean("compactMode", false);
         useNameColors = settings.getBoolean("useNameColors", true);
@@ -114,7 +114,7 @@ public class Settings {
         editor.putBoolean("sendTyping", sendTyping);
         editor.putBoolean("autoReconnect", autoReconnect);
         editor.putBoolean("showReplies", showReplies);
-        editor.putBoolean("useMarkdown", useMarkdown);
+        editor.putBoolean("textFormatting", useMarkdown);
         editor.putBoolean("showImages", showImages);
         editor.putBoolean("compactMode", compactMode);
         editor.putBoolean("useNameColors", useNameColors);

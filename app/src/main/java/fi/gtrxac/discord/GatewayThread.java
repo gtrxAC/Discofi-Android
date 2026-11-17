@@ -287,7 +287,7 @@ public class GatewayThread extends Thread {
             if (!account.useProxy || url == null || url.length() == 0) {
                 url = DEFAULT_GATEWAY_URL;
             }
-            else if (!url.startsWith("socket://") || !url.startsWith("ws://") ||
+            else if (!url.startsWith("socket://") && !url.startsWith("ws://") &&
                 !url.startsWith("wss://")) {
                 url = "socket://" + url; // assume proxied gateway
             }

@@ -181,6 +181,7 @@ public class ChannelCache extends LRUCache {
         if (guildID == 0 || channelID == 0) return null;
 
         Vector categories = get(guildID);
+        if (categories == null) return null;
 
         for (int i = 0; i < categories.size(); i++) {
             ChannelCategory category = (ChannelCategory) categories.elementAt(i);
@@ -211,6 +212,7 @@ public class ChannelCache extends LRUCache {
     }
 
     public long getGuildIDByChannel(Channel channel) {
+        if (channel == null) return 0;
         return getGuildIDByChannel(channel.id);
     }
 }

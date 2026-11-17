@@ -17,7 +17,6 @@ import cc.nnproject.json.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 
-import fi.gtrxac.discord.model.Attachment;
 import fi.gtrxac.discord.model.Channel;
 import fi.gtrxac.discord.model.DMChannel;
 import fi.gtrxac.discord.model.Embed;
@@ -234,15 +233,12 @@ public class Notifications {
         content = content.replace('\n', ' ').replace('\r', ' ');
         StringBuffer attachments = new StringBuffer();
 
-        if (message.attachments != null) {
+        if (message.attachments != null && message.attachments.size() > 0) {
             int attachmentsSize = message.attachments.size();
-            for (int i = 0; i < attachmentsSize; i++) {
-                Attachment attachment = (Attachment) message.attachments.elementAt(i);
-                attachments.append(context.getString(
-                    attachmentsSize == 1 ? R.string.notification_attachments_single
-                        : R.string.notification_attachments_multiple,
-                    new Integer(attachmentsSize)));
-            }
+            attachments.append(context.getString(
+                attachmentsSize == 1 ? R.string.notification_attachments_single
+                    : R.string.notification_attachments_multiple,
+                new Integer(attachmentsSize)));
         }
 
         if (attachments.length() > 0) {

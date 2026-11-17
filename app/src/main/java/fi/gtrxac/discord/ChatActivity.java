@@ -79,6 +79,8 @@ public class ChatActivity extends Activity implements GatewayListener {
             return;
         }
 
+        account.guildMemberCache.activeRequest = false;
+
         messages = new Vector();
         messageList = (ListView) findViewById(R.id.messageList);
 
@@ -126,7 +128,12 @@ public class ChatActivity extends Activity implements GatewayListener {
                 if (now - lastTypingSent < 10000) return;
 
                 lastTypingSent = now;
-                account.sendTyping(channelId);
+                new Thread() {
+                    @Override
+                    public void run() {
+                        account.sendTyping(channelId);
+                    }
+                }.start();
             }
         });
 
@@ -226,6 +233,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     }
 
     public void onGatewayReady(JSONObject data) {
+        account.guildMemberCache.activeRequest = false;
     }
 
     public void onMessageCreate(JSONObject data) {
@@ -248,7 +256,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                 boolean scrollToBottom = atBottom || messages.size() == 0;
                 messages.addElement(message);
                 cluster();
-                adapter.notifyDataSetChanged();
+                if (adapter != null) adapter.notifyDataSetChanged();
 
                 if (scrollToBottom) {
                     messageList.setSelection(messages.size() - 1);
@@ -280,7 +288,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                     }
 
                     cluster();
-                    adapter.notifyDataSetChanged();
+                    if (adapter != null) adapter.notifyDataSetChanged();
                     return;
                 }
             }
@@ -300,7 +308,7 @@ public class ChatActivity extends Activity implements GatewayListener {
 
                     messages.removeElementAt(i);
                     cluster();
-                    adapter.notifyDataSetChanged();
+                    if (adapter != null) adapter.notifyDataSetChanged();
                     return;
                 }
             }
@@ -336,12 +344,16 @@ public class ChatActivity extends Activity implements GatewayListener {
     }
 
     public void onGuildMembersChunk(JSONObject data) {
+        account.guildMemberCache.activeRequest = false;
+
         if (guildId == 0 || guildRoles == null) return;
 
         final JSONArray members = data.getArray("members");
 
         final long gatewayGuildId = Long.parseLong(data.getString("guild_id"));
-        final JSONArray notFound = data.getArray("not_found");
+        if (gatewayGuildId != guildId) return;
+
+        final JSONArray notFound = data.getArray("not_found", new JSONArray());
 
         runOnUiThread(new Runnable() {
             public void run() {
@@ -350,7 +362,6 @@ public class ChatActivity extends Activity implements GatewayListener {
                 for (int i = 0; i < notFound.size(); i++) {
                     long id = Long.parseLong(notFound.getString(i));
                     account.guildMemberCache.set(id + gatewayGuildId, null);
-                    adapter.notifyDataSetChanged();
                 }
 
                 for (int i = 0; i < members.size(); i++) {
@@ -358,11 +369,11 @@ public class ChatActivity extends Activity implements GatewayListener {
                     long id = Long.parseLong(member.getObject("user").getString("id"));
                     account.guildMemberCache.set(id + gatewayGuildId,
                         new GuildMember(member, guildRoles));
-                    adapter.notifyDataSetChanged();
                 }
+
+                if (adapter != null) adapter.notifyDataSetChanged();
             }
         });
-        account.guildMemberCache.activeRequest = false;
     }
 
     public void onPresenceUpdate(JSONObject data) {
@@ -896,7 +907,8 @@ public class ChatActivity extends Activity implements GatewayListener {
                             for (int i = 0; i < messages.size(); i++) {
                                 Message message = (Message) messages.elementAt(i);
                                 if (message.id == edited.id) {
-                                    message = edited;
+                                    messages.setElementAt(edited, i);
+                                    break;
                                 }
                             }
                             cluster();

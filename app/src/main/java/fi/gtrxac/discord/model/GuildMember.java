@@ -30,9 +30,9 @@ public class GuildMember extends User {
                 for (int i = 0; i < guildRoles.size(); i++) {
                     Role role = (Role) guildRoles.elementAt(i);
                     if (roleArray.indexOf(Long.toString(role.id)) == -1) continue;
+                    if (role.color == 0) continue;
 
-                    color = role.color;
-                    if (color != 0) color |= 0xFF000000;
+                    color = role.color | 0xFF000000;
                     break;
                 }
             }

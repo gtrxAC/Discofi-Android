@@ -25,15 +25,27 @@ public class Role {
 
     public static Vector parseRoles(JSONArray arr) {
         Vector result = new Vector();
+        boolean[] used = new boolean[arr.size()];
 
-        for (int i = arr.size() - 1; i >= 0; i--) {
-            for (int a = arr.size() - 1; a >= 0; a--) {
-                JSONObject data = arr.getObject(a);
+        // Sort by position, highest first.
+        for (int i = 0; i < arr.size(); i++) {
+            int highestIndex = -1;
+            int highestPosition = Integer.MIN_VALUE;
 
-                if (data.getInt("position", -1) != i) continue;
+            for (int a = 0; a < arr.size(); a++) {
+                if (used[a]) continue;
 
-                result.addElement(new Role(data));
+                int position = arr.getObject(a).getInt("position", -1);
+                if (position > highestPosition) {
+                    highestPosition = position;
+                    highestIndex = a;
+                }
             }
+
+            if (highestIndex == -1) break;
+
+            used[highestIndex] = true;
+            result.addElement(new Role(arr.getObject(highestIndex)));
         }
 
         return result;
@@ -41,15 +53,12 @@ public class Role {
 
     public static Vector<Role> parseGuildMemberRoles(Vector guildRoles, JSONArray arr) {
         Vector<Role> result = new Vector<Role>();
+        if (guildRoles == null) return result;
 
-        for (int i = arr.size() - 1; i >= 0; i--) {
-            for (int j = 0; j < guildRoles.size(); j++) {
-                Role role = (Role) guildRoles.elementAt(j);
-                if (role.id == Long.parseLong(arr.getString(i))) {
-                    if (role.position != i) continue;
-
-                    result.addElement(role);
-                }
+        for (int i = 0; i < guildRoles.size(); i++) {
+            Role role = (Role) guildRoles.elementAt(i);
+            if (arr.indexOf(Long.toString(role.id)) != -1) {
+                result.addElement(role);
             }
         }
 

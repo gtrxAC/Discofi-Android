@@ -76,6 +76,10 @@ public class FilePickerActivity extends Activity {
         setTitle(directory.getAbsolutePath());
         entries.clear();
 
+        File parent = directory.getParentFile();
+        boolean atExternalStorageRoot = directory.getAbsolutePath()
+            .equals(Environment.getExternalStorageDirectory().getAbsolutePath());
+
         // Display directories before files.
         ArrayList<File> directories = new ArrayList<File>();
         ArrayList<File> regularFiles = new ArrayList<File>();
@@ -100,9 +104,8 @@ public class FilePickerActivity extends Activity {
         Collections.sort(directories, byName);
         Collections.sort(regularFiles, byName);
 
-        if (!currentDirectory.getAbsolutePath()
-            .equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
-            entries.add(currentDirectory.getParentFile());
+        if (parent != null && !atExternalStorageRoot) {
+            entries.add(parent);
         }
         entries.addAll(directories);
         entries.addAll(regularFiles);
@@ -115,8 +118,7 @@ public class FilePickerActivity extends Activity {
 
             if (file.isDirectory()) {
                 name = name + "/";
-                if (file.getAbsolutePath()
-                    .equals(currentDirectory.getParentFile().getAbsolutePath())) {
+                if (parent != null && file.getAbsolutePath().equals(parent.getAbsolutePath())) {
                     name = "../";
                 }
             }
@@ -128,9 +130,13 @@ public class FilePickerActivity extends Activity {
     }
 
     public void onBackPressed() {
-        if (currentDirectory != null && !currentDirectory.getAbsolutePath()
-            .equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
-            browse(currentDirectory.getParentFile());
+        File parent = currentDirectory != null ? currentDirectory.getParentFile() : null;
+        boolean atExternalStorageRoot = currentDirectory != null &&
+            currentDirectory.getAbsolutePath()
+                .equals(Environment.getExternalStorageDirectory().getAbsolutePath());
+
+        if (parent != null && !atExternalStorageRoot) {
+            browse(parent);
         }
         else {
             setResult(Activity.RESULT_CANCELED);

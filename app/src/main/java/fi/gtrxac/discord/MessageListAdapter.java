@@ -453,6 +453,13 @@ public class MessageListAdapter extends BaseAdapter {
         if (isEmbed) columnWidth -= dp(12);
         if (columnWidth <= 0) columnWidth = maxAttachmentWidth;
 
+        if (attachment.width <= 0 || attachment.height <= 0) {
+            // Some embeds omit their dimensions. Use a square placeholder
+            // instead of dividing by zero.
+            int size = Math.min(columnWidth, maxAttachmentHeight);
+            return new int[]{size, size};
+        }
+
         // Small images are shown at their natural size instead of being
         // stretched across the whole column.
         int width = (int) (attachment.width * density + 0.5f);
@@ -574,7 +581,7 @@ public class MessageListAdapter extends BaseAdapter {
             fields.setVisibility(View.GONE);
         }
 
-        if (Settings.showImages && embed.image != null) {
+        if (Settings.showImages && embed.image != null && embed.image.previewable) {
             int[] dims = getAttachmentSize(embed.image, true);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
             if (embed.title != null || embed.description != null) params.topMargin = dp(4);
@@ -585,7 +592,8 @@ public class MessageListAdapter extends BaseAdapter {
             image.setVisibility(View.GONE);
         }
 
-        if (Settings.showImages && (embed.video != null && embed.thumbnail != null)) {
+        if (Settings.showImages && embed.video != null && embed.thumbnail != null &&
+            embed.thumbnail.previewable) {
             int[] dims = getAttachmentSize(embed.thumbnail, true);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
             if (embed.title != null || embed.description != null) params.topMargin = dp(4);
@@ -601,7 +609,8 @@ public class MessageListAdapter extends BaseAdapter {
             video.setVisibility(View.GONE);
         }
 
-        if (Settings.showImages && (embed.video == null && embed.thumbnail != null)) {
+        if (Settings.showImages && embed.video == null && embed.thumbnail != null &&
+            embed.thumbnail.previewable) {
             if (embed.type == Embed.Type.ARTICLE) {
                 int[] dims = getAttachmentSize(embed.thumbnail, true);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dims[0], dims[1]);
