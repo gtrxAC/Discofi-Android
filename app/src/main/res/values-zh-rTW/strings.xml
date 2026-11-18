@@ -79,6 +79,7 @@
     <string name="inbox_empty">No mentions yet.</string>
     <string name="title_activity_chat">Chat</string>
     <string name="msg_composer_hint">訊息 %s</string>
+    <string name="no_send_permission">You do not have permission to send messages in this channel.</string>
     <string name="reply_to">回覆至 &lt;b&gt;%s&lt;/b&gt;</string>
     <string name="editing_message">編輯訊息中</string>
     <string name="ping_off">\@ Off</string>

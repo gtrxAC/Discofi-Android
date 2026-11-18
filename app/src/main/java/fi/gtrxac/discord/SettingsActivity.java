@@ -43,11 +43,12 @@ public class SettingsActivity extends PreferenceActivity
                                 return true;
                             }
                         }
-                        catch (NumberFormatException e) {}
-                        
-                        Toast.makeText(SettingsActivity.this,
-                            R.string.message_load_count_dialog, Toast.LENGTH_LONG).show();
-                            
+                        catch (NumberFormatException e) {
+                        }
+
+                        Toast.makeText(SettingsActivity.this, R.string.message_load_count_dialog,
+                            Toast.LENGTH_LONG).show();
+
                         return false;
                     }
                 });

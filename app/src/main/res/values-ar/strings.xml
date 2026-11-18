@@ -79,6 +79,7 @@
     <string name="inbox_empty">No mentions yet.</string>
     <string name="title_activity_chat">Chat</string>
     <string name="msg_composer_hint">Message %s</string>
+    <string name="no_send_permission">You do not have permission to send messages in this channel.</string>
     <string name="reply_to">ردًا على &lt;b&gt;%s&lt;/b&gt;</string>
     <string name="editing_message">قيد تحرير الرسالة</string>
     <string name="ping_off">\@ Off</string>

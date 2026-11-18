@@ -25,6 +25,7 @@ import java.util.Vector;
 import cc.nnproject.json.JSONObject;
 import fi.gtrxac.discord.model.Channel;
 import fi.gtrxac.discord.model.ChannelCategory;
+import fi.gtrxac.discord.model.Guild;
 
 /**
  * Shows a guild's channels grouped by category.
@@ -127,6 +128,27 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                         Settings.save(ChannelListActivity.this);
                     }
 
+                    try {
+                        Guild guild = account.getGuild(guildId);
+
+                        if (guild != null && guild.permissions != 0) {
+                            for (int i = 0; i < categories.size(); i++) {
+                                ChannelCategory category =
+                                    (ChannelCategory) categories.elementAt(i);
+
+                                for (int j = 0; j < category.children.size(); j++) {
+                                    Channel channel = (Channel) category.children.elementAt(j);
+                                    channel.myPermissions =
+                                        channel.computePermissions(guildId, guild.permissions,
+                                            account.userId);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -158,19 +180,27 @@ public class ChannelListActivity extends Activity implements GatewayListener {
         for (int i = 0; i < categories.size(); i++) {
             ChannelCategory category = (ChannelCategory) categories.elementAt(i);
 
-            if (category.name != null) {
-                Row header = new Row();
-                header.category = true;
-                header.name = category.name;
-                rows.add(header);
-            }
+            // The category header is only shown if the category has any
+            // channels which the user can view
+            boolean headerAdded = false;
 
             for (int j = 0; j < category.children.size(); j++) {
+                Channel channel = (Channel) category.children.elementAt(j);
+                if (!channel.canView()) continue;
+
+                if (!headerAdded && category.name != null) {
+                    Row header = new Row();
+                    header.category = true;
+                    header.name = category.name;
+                    rows.add(header);
+                    headerAdded = true;
+                }
+
                 Row row = new Row();
-                row.channel = (Channel) category.children.elementAt(j);
-                row.name = row.channel.name;
-                row.unread = account.unreadManager.hasUnreads(row.channel);
-                row.mentions = account.unreadManager.getMentionCount(row.channel.id);
+                row.channel = channel;
+                row.name = channel.name;
+                row.unread = account.unreadManager.hasUnreads(channel);
+                row.mentions = account.unreadManager.getMentionCount(channel.id);
                 rows.add(row);
             }
         }

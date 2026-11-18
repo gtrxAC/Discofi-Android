@@ -22,6 +22,8 @@ public class Channel {
     public String parentId;
     public int position;
     public long lastMessageID;
+    public Vector overwrites;
+    public long myPermissions = -1;
 
     public Channel() {
     }
@@ -38,8 +40,90 @@ public class Channel {
             lastMessageID = Long.parseLong(msgIdStr);
         }
 
+        JSONArray overwritesJson = data.getArray("permission_overwrites", null);
+        if (overwritesJson != null) {
+            overwrites = new Vector(overwritesJson.size());
+            for (int i = 0; i < overwritesJson.size(); i++) {
+                overwrites.addElement(new Permissions.Overwrite(overwritesJson.getObject(i)));
+            }
+        }
+
         if (name != null && nameHasHashtag()) name = "#" + name;
         if (name == null) name = "(unknown)";
+    }
+
+    public boolean canView() {
+        return myPermissions == -1 || Permissions.has(myPermissions, Permissions.VIEW_CHANNEL);
+    }
+
+    /**
+     * Calculate a guild member's permissions in this channel.
+     */
+    public long computePermissions(long guildId, GuildMember member, long userId) {
+        return computePermissions(guildId, member.permissions, member.roles, userId);
+    }
+
+    /**
+     * Calculate permissions without role overwrites, for when the user's
+     * roles in the guild are not known.
+     */
+    public long computePermissions(long guildId, long basePermissions, long userId) {
+        return computePermissions(guildId, basePermissions, null, userId);
+    }
+
+    /**
+     * Calculate a user's permissions in this channel, from the user's total
+     * permissions in the guild (e.g. from the user's guild list) and this
+     * channel's permission overwrites.
+     * <p>
+     * https://discord.com/developers/docs/topics/permissions#permission-overwrites
+     */
+    public long computePermissions(long guildId, long basePermissions, Vector roleIds,
+        long userId) {
+        long permissions = basePermissions;
+
+        // Administrator overrides all permission overwrites
+        if (Permissions.has(permissions, Permissions.ADMINISTRATOR)) {
+            return Permissions.ALL;
+        }
+
+        if (overwrites != null) {
+            // Apply the @everyone role's overwrite (its ID is the same as the guild's ID)
+            Permissions.Overwrite overwrite =
+                Permissions.Overwrite.findBySnowflake(overwrites, guildId);
+            if (overwrite != null) {
+                permissions &= ~overwrite.deny;
+                permissions |= overwrite.allow;
+            }
+
+            // Apply overwrites of the user's roles
+            if (roleIds != null) {
+                long allow = 0;
+                long deny = 0;
+
+                for (int i = 0; i < roleIds.size(); i++) {
+                    Role role = (Role) roleIds.elementAt(i);
+                    Permissions.Overwrite roleOverwrite =
+                        Permissions.Overwrite.findBySnowflake(overwrites, role.id);
+                    if (roleOverwrite == null) continue;
+
+                    allow |= roleOverwrite.allow;
+                    deny |= roleOverwrite.deny;
+                }
+
+                permissions &= ~deny;
+                permissions |= allow;
+            }
+
+            // Apply the user's member-specific overwrite, if it exists
+            overwrite = Permissions.Overwrite.findBySnowflake(overwrites, userId);
+            if (overwrite != null) {
+                permissions &= ~overwrite.deny;
+                permissions |= overwrite.allow;
+            }
+        }
+
+        return permissions;
     }
 
     /**

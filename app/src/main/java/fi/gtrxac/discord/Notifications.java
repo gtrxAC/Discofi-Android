@@ -237,8 +237,7 @@ public class Notifications {
             int attachmentsSize = message.attachments.size();
             attachments.append(context.getString(
                 attachmentsSize == 1 ? R.string.notification_attachments_single
-                    : R.string.notification_attachments_multiple,
-                new Integer(attachmentsSize)));
+                    : R.string.notification_attachments_multiple, new Integer(attachmentsSize)));
         }
 
         if (attachments.length() > 0) {

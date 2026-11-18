@@ -12,6 +12,9 @@ public class Role {
     public long permissions;
     public int position;
 
+    public Role() {
+    }
+
     public Role(JSONObject data) {
         id = Long.parseLong(data.getString("id"));
         name = data.getString("name");
@@ -60,6 +63,18 @@ public class Role {
             if (arr.indexOf(Long.toString(role.id)) != -1) {
                 result.addElement(role);
             }
+        }
+
+        return result;
+    }
+
+    public static Vector<Role> parseRoleIDs(JSONArray arr) {
+        Vector<Role> result = new Vector<Role>(arr.size());
+
+        for (int i = 0; i < arr.size(); i++) {
+            Role role = new Role();
+            role.id = Long.parseLong(arr.getString(i));
+            result.addElement(role);
         }
 
         return result;

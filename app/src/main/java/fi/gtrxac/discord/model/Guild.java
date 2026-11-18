@@ -14,6 +14,7 @@ public class Guild {
     public String name;
     public Vector channels;
     public Vector roles;
+    public long permissions;
     public String iconHash;
 
     public Guild(JSONObject data) {
@@ -37,6 +38,10 @@ public class Guild {
             roles = Role.parseRoles(data.getArray("roles"));
         }
 
+        if (data.has("permissions")) {
+            permissions = Long.parseLong(data.getString("permissions", "0"));
+        }
+
         iconHash = data.getString("icon", null);
     }
 
@@ -44,6 +49,7 @@ public class Guild {
         id = saveData.getLong(0);
         name = saveData.getString(1);
         iconHash = saveData.getString(2, null);
+        permissions = saveData.getLong(3, 0);
     }
 
     public String getIconUrl(String cdnUrl) {
@@ -55,7 +61,8 @@ public class Guild {
         JSONArray result = new JSONArray();
         result.add(id);
         result.add(name);
-        if (iconHash != null) result.add(iconHash);
+        result.add(iconHash);
+        result.add(permissions);
         return result;
     }
 }

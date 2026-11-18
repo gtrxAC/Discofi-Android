@@ -7,6 +7,7 @@ import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONObject;
 import fi.gtrxac.discord.model.Channel;
 import fi.gtrxac.discord.model.ChannelCategory;
+import fi.gtrxac.discord.model.Permissions;
 import fi.gtrxac.discord.util.LRUCache;
 import fi.gtrxac.discord.util.LRUCacheEntry;
 
@@ -50,6 +51,17 @@ public class ChannelCache extends LRUCache {
                     channel.type = channelData.getInt(1);
                     channel.name = channelData.getString(2, null);
                     channel.lastMessageID = channelData.getLong(3, 0);
+                    if (channelData.size() > 4) {
+                        channel.overwrites = new Vector();
+                        for (int l = 4; l + 3 < channelData.size(); l += 4) {
+                            Permissions.Overwrite overwrite = new Permissions.Overwrite();
+                            overwrite.id = channelData.getLong(l);
+                            overwrite.allow = channelData.getLong(l + 1);
+                            overwrite.deny = channelData.getLong(l + 2);
+                            overwrite.isMember = channelData.getInt(l + 3) == 1;
+                            channel.overwrites.addElement(overwrite);
+                        }
+                    }
 
                     category.children.addElement(channel);
                 }
@@ -96,6 +108,17 @@ public class ChannelCache extends LRUCache {
                     channelData.add(channel.type);
                     channelData.add(channel.name);
                     channelData.add(channel.lastMessageID);
+                    if (channel.overwrites != null) {
+                        for (int k = 0; k < channel.overwrites.size(); k++) {
+                            Permissions.Overwrite overwrite =
+                                (Permissions.Overwrite) channel.overwrites.elementAt(k);
+
+                            channelData.add(overwrite.id);
+                            channelData.add(overwrite.allow);
+                            channelData.add(overwrite.deny);
+                            channelData.add(overwrite.isMember ? 1 : 0);
+                        }
+                    }
 
                     childrenData.add(channelData);
                 }

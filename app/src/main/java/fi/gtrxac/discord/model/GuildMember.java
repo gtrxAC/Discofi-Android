@@ -23,17 +23,27 @@ public class GuildMember extends User {
 
         if (data.has("nick")) nickname = data.getString("nick", null);
 
+        if (data.has("permissions")) {
+            permissions = Long.parseLong(data.getString("permissions", "0"));
+        }
+
         try {
             if (data.has("roles")) {
                 JSONArray roleArray = data.getArray("roles");
-                roles = Role.parseGuildMemberRoles(guildRoles, roleArray);
-                for (int i = 0; i < guildRoles.size(); i++) {
-                    Role role = (Role) guildRoles.elementAt(i);
-                    if (roleArray.indexOf(Long.toString(role.id)) == -1) continue;
-                    if (role.color == 0) continue;
 
-                    color = role.color | 0xFF000000;
-                    break;
+                if (guildRoles != null) {
+                    roles = Role.parseGuildMemberRoles(guildRoles, roleArray);
+                    for (int i = 0; i < guildRoles.size(); i++) {
+                        Role role = (Role) guildRoles.elementAt(i);
+                        if (roleArray.indexOf(Long.toString(role.id)) == -1) continue;
+                        if (role.color == 0) continue;
+
+                        color = role.color | 0xFF000000;
+                        break;
+                    }
+                }
+                else {
+                    roles = Role.parseRoleIDs(roleArray);
                 }
             }
         }

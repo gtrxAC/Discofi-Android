@@ -29,8 +29,11 @@ import java.util.Vector;
 
 import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONObject;
+import fi.gtrxac.discord.model.Channel;
+import fi.gtrxac.discord.model.Guild;
 import fi.gtrxac.discord.model.GuildMember;
 import fi.gtrxac.discord.model.Message;
+import fi.gtrxac.discord.model.Permissions;
 
 /**
  * Message view for a channel or DM: reading (with pagination), clustering,
@@ -62,6 +65,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     private boolean sending;
     private boolean atBottom = true;
     private long lastTypingSent;
+    private long myPermissions = -1;
 
     private Message activeReply;
     private Message activeEdit;
@@ -122,6 +126,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             }
 
             public void afterTextChanged(Editable s) {
+                if (!canSend()) return;
                 if (!Settings.sendTyping || s.length() == 0) return;
 
                 long now = System.currentTimeMillis();
@@ -152,6 +157,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                 activeReply = null;
                 activeEdit = null;
                 replyPanel.setVisibility(View.GONE);
+                updateComposerState();
             }
         });
 
@@ -446,7 +452,8 @@ public class ChatActivity extends Activity implements GatewayListener {
         try {
             if (message.author.id != account.getUserID()) {
                 menu.findItem(R.id.messageEdit).setVisible(false);
-                menu.findItem(R.id.messageDelete).setVisible(false); // TODO: user permissions
+                menu.findItem(R.id.messageDelete).setVisible(myPermissions != -1 &&
+                    Permissions.has(myPermissions, Permissions.MANAGE_MESSAGES));
             }
         }
         catch (Exception e) {
@@ -462,6 +469,11 @@ public class ChatActivity extends Activity implements GatewayListener {
 
         switch (item.getItemId()) {
             case R.id.messageReply:
+                if (!canSend()) {
+                    Toast.makeText(ChatActivity.this, R.string.no_send_permission,
+                        Toast.LENGTH_SHORT).show();
+                    return true;
+                }
                 activeReply = message;
                 activeEdit = null;
                 replyPanel.setVisibility(View.VISIBLE);
@@ -475,6 +487,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                 pingToggle.setVisibility(View.GONE);
                 replyTo.setText(R.string.editing_message);
                 composer.setText(message.content);
+                updateComposerState();
                 return true;
             case R.id.messageCopy:
                 ClipboardManager clipboard = (ClipboardManager) ChatActivity.this.getSystemService(
@@ -543,12 +556,11 @@ public class ChatActivity extends Activity implements GatewayListener {
 
                     if (guildId != 0) {
                         guildRoles = account.getGuildRoles(guildId);
+                        myPermissions = fetchMyPermissions();
                     }
 
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            composer.setEnabled(true);
-                            sendButton.setEnabled(true);
                             if (isFinishing()) return;
                             showProgress(false);
 
@@ -568,6 +580,8 @@ public class ChatActivity extends Activity implements GatewayListener {
                                 messageList.setSelection(messages.size() - 1);
                             }
                             initialLoadDone = true;
+
+                            updateComposerState();
                         }
                     });
                 }
@@ -682,15 +696,21 @@ public class ChatActivity extends Activity implements GatewayListener {
                         account.getMessages(channelId, 0, 0, messageId, Settings.messageLoadCount);
 
                     if (initial && guildId != 0 && guildRoles == null) {
-                        guildRoles = account.getGuildRoles(guildId);
+                        try {
+                            guildRoles = account.getGuildRoles(guildId);
+                        }
+                        catch (Exception e) {
+                            // Role colors fall back to defaults if roles
+                            // can't be fetched
+                            e.printStackTrace();
+                        }
+
+                        myPermissions = fetchMyPermissions();
                     }
 
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            if (initial) {
-                                composer.setEnabled(true);
-                                sendButton.setEnabled(true);
-                            }
+                            if (initial) updateComposerState();
                             if (isFinishing()) return;
                             showProgress(false);
 
@@ -811,16 +831,58 @@ public class ChatActivity extends Activity implements GatewayListener {
         }.start();
     }
 
+    /**
+     * Whether the current user can send messages in this channel.
+     */
+    private boolean canSend() {
+        return myPermissions == -1 || Permissions.has(myPermissions, Permissions.SEND_MESSAGES);
+    }
+
+    /**
+     * Calculate the current user's permissions in this channel. Returns -1 if
+     * permissions could not be determined.
+     */
+    private long fetchMyPermissions() {
+        Channel channel = account.channelCache.getChannelByIDInGuild(guildId, channelId);
+
+        try {
+            Guild guild = account.getGuild(guildId);
+            if (guild != null && guild.permissions != 0) {
+                return channel.computePermissions(guildId, guild.permissions, account.userId);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    /**
+     * Enable or disable the message composer based on the user's permissions
+     * and whether a message is currently being sent or edited.
+     */
+    private void updateComposerState() {
+        boolean usable = (canSend() || activeEdit != null) && !sending;
+
+        composer.setEnabled(usable);
+        sendButton.setEnabled(usable);
+
+        if (!canSend() && activeEdit == null) {
+            composer.setHint(R.string.no_send_permission);
+        }
+    }
+
     private void sendMessage() {
         if (sending) return;
+        if (!canSend()) return;
 
         final Context c = this;
         final String text = composer.getText().toString().trim();
         if (text.length() == 0) return;
 
         sending = true;
-        composer.setEnabled(false);
-        sendButton.setEnabled(false);
+        updateComposerState();
         replyPanel.setVisibility(View.GONE);
         showProgress(true);
 
@@ -836,8 +898,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                             sending = false;
                             activeReply = null;
                             activeEdit = null;
-                            composer.setEnabled(true);
-                            sendButton.setEnabled(true);
+                            updateComposerState();
                             if (isFinishing()) return;
                             showProgress(false);
 
@@ -862,8 +923,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             sending = false;
-                            composer.setEnabled(true);
-                            sendButton.setEnabled(true);
+                            updateComposerState();
                             if (isFinishing()) return;
                             showProgress(false);
 
@@ -883,8 +943,7 @@ public class ChatActivity extends Activity implements GatewayListener {
         if (text.length() == 0) return;
 
         sending = true;
-        composer.setEnabled(false);
-        sendButton.setEnabled(false);
+        updateComposerState();
         replyPanel.setVisibility(View.GONE);
         showProgress(true);
 
@@ -899,8 +958,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                             sending = false;
                             activeReply = null;
                             activeEdit = null;
-                            composer.setEnabled(true);
-                            sendButton.setEnabled(true);
+                            updateComposerState();
                             if (isFinishing()) return;
                             showProgress(false);
 
@@ -922,8 +980,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             sending = false;
-                            composer.setEnabled(true);
-                            sendButton.setEnabled(true);
+                            updateComposerState();
                             if (isFinishing()) return;
                             showProgress(false);
 

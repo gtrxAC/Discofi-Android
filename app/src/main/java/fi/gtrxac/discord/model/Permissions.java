@@ -58,17 +58,30 @@ public class Permissions {
     public Permissions() {
     }
 
+    public static boolean has(long permissions, long permission) {
+        return (permissions & permission) == permission;
+    }
+
     public static class Overwrite {
         public long id;
         public long allow;
         public long deny;
         public boolean isMember;
 
+        public Overwrite() {
+        }
+
         public Overwrite(JSONObject data) {
             id = Long.parseLong(data.getString("id"));
             allow = Long.parseLong(data.getString("allow"));
             deny = Long.parseLong(data.getString("deny"));
-            isMember = data.getInt("type") == 1;
+            Object type = data.get("type");
+            if (type instanceof String) {
+                isMember = String.valueOf(type).equals("member");
+            }
+            else if (type instanceof Integer) {
+                isMember = data.getInt("type") == 1;
+            }
         }
 
         public static Overwrite findBySnowflake(Vector<Overwrite> overwrites, long snowflake) {
