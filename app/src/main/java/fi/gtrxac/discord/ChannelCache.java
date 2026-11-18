@@ -102,6 +102,7 @@ public class ChannelCache extends LRUCache {
 
                 for (int j = 0; j < category.children.size(); j++) {
                     Channel channel = (Channel) category.children.elementAt(j);
+                    if (!channel.canView()) continue;
 
                     JSONArray channelData = new JSONArray();
                     channelData.add(channel.id);

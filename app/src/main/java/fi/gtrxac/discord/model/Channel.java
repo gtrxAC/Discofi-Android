@@ -16,12 +16,16 @@ public class Channel {
     public static final int TYPE_GUILD_FORUM = 15;
     public static final int TYPE_GUILD_MEDIA = 16;
 
+    public static final int FLAG_CHANNEL_OBFUSCATED = 1 << 17;
+    public static final int FLAG_CHANNEL_SPOILER = 1 << 21;
+
     public long id;
     public String name;
     public int type;
     public String parentId;
     public int position;
     public long lastMessageID;
+    public int flags;
     public Vector overwrites;
     public long myPermissions = -1;
 
@@ -34,6 +38,7 @@ public class Channel {
         name = data.getString("name", null);
         parentId = data.getString("parent_id", null);
         position = data.getInt("position", 0);
+        flags = data.getInt("flags", 0);
 
         String msgIdStr = data.getString("last_message_id");
         if (msgIdStr != null) {
@@ -52,7 +57,24 @@ public class Channel {
         if (name == null) name = "(unknown)";
     }
 
+    /**
+     * Whether this channel's metadata has been obfuscated because the current
+     * user cannot view it. Obfuscated channels are only received over the
+     * Gateway (the HTTP API omits channels the user can't view), and they must
+     * always be hidden. Only the flags field can reliably tell whether a
+     * channel is obfuscated.
+     * https://discord.com/developers/resources/channel#channel-object-obfuscated-channels
+     */
+    public boolean isObfuscated() {
+        return (flags & FLAG_CHANNEL_OBFUSCATED) != 0;
+    }
+
+    public boolean isSpoiler() {
+        return (flags & FLAG_CHANNEL_SPOILER) != 0;
+    }
+
     public boolean canView() {
+        if (isObfuscated()) return false;
         return myPermissions == -1 || Permissions.has(myPermissions, Permissions.VIEW_CHANNEL);
     }
 
