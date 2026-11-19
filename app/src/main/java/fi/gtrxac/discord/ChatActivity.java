@@ -172,9 +172,8 @@ public class ChatActivity extends Activity implements GatewayListener {
 
                 if (!initialLoadDone || loadingOlder || loadingNewer || sending) return;
 
-                // At the top -> fetch the previous page of history
-                if (firstVisibleItem == 0 && !noMoreOlder &&
-                    messages.size() >= Settings.messageLoadCount) {
+                // At the top -> fetch the previous page of history.
+                if (firstVisibleItem == 0 && !noMoreOlder && messages.size() > 0) {
                     loadOlderMessages();
                 }
                 // At the bottom, but the newest messages are not loaded -> fetch the next page
@@ -634,6 +633,10 @@ public class ChatActivity extends Activity implements GatewayListener {
                             showProgress(false);
 
                             if (older.size() > 0) {
+                                // A response shorter than the limit means that
+                                // the start of the channel history was reached
+                                if (older.size() < Settings.messageLoadCount) noMoreOlder = true;
+
                                 for (int i = older.size() - 1; i >= 0; i--) {
                                     messages.insertElementAt(older.elementAt(i), 0);
                                 }
