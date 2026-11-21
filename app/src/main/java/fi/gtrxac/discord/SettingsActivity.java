@@ -2,6 +2,7 @@ package fi.gtrxac.discord;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity
     implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final String TAG = "SettingsActivity";
 
     public void onCreate(Bundle savedInstanceState) {
         Theme.load(this);
@@ -44,6 +47,7 @@ public class SettingsActivity extends PreferenceActivity
                             }
                         }
                         catch (NumberFormatException e) {
+                            Log.w(TAG, "Invalid message load count: " + newValue, e);
                         }
 
                         Toast.makeText(SettingsActivity.this, R.string.message_load_count_dialog,

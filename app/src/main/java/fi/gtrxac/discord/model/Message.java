@@ -1,5 +1,7 @@
 package fi.gtrxac.discord.model;
 
+import android.util.Log;
+
 import fi.gtrxac.discord.DiscordUtil;
 import fi.gtrxac.discord.Settings;
 import cc.nnproject.json.*;
@@ -7,6 +9,8 @@ import cc.nnproject.json.*;
 import java.util.*;
 
 public class Message {
+    private static final String TAG = "Message";
+
     public static final int TYPE_ADDED = 1;  // user added another user to group DM
     public static final int TYPE_REMOVED = 2;  // user left (or removed someone) from group DM
     public static final int TYPE_CALL = 3;
@@ -77,6 +81,8 @@ public class Message {
             isForwarded = true;
         }
         catch (Exception e) {
+            // Not a forwarded message; the message object itself is used.
+            Log.d(TAG, "Message " + id + " is not forwarded");
         }
 
         return result;
@@ -88,6 +94,7 @@ public class Message {
             isReply = true;
         }
         catch (Exception e) {
+            Log.d(TAG, "Message " + id + " has no referenced message");
         }
     }
 
@@ -106,6 +113,7 @@ public class Message {
                 attachments.addElement(attachment);
             }
             catch (Exception e) {
+                Log.w(TAG, "Failed to parse attachment " + i + " of message " + id, e);
             }
         }
     }
@@ -125,6 +133,7 @@ public class Message {
                 embeds.addElement(embed);
             }
             catch (Exception e) {
+                Log.w(TAG, "Failed to parse embed " + i + " of message " + id, e);
             }
         }
     }
@@ -147,8 +156,8 @@ public class Message {
                     if (name == null) name = user.getString("username", null);
                 }
                 catch (Exception e) {
+                    Log.d(TAG, "Mention " + i + " of message " + id + " has no user object");
                 }
-
                 if (name == null) name = mention.getString("global_name", null);
                 if (name == null) name = mention.getString("username", null);
 
@@ -157,6 +166,7 @@ public class Message {
                     if (nick != null) name = nick;
                 }
                 catch (Exception e) {
+                    Log.d(TAG, "Mention " + i + " of message " + id + " has no member nick");
                 }
 
                 if (id == null || name == null) continue;
@@ -166,6 +176,7 @@ public class Message {
                 mentions.put(id, name);
             }
             catch (Exception e) {
+                Log.w(TAG, "Failed to parse mention " + i + " of message " + id, e);
             }
         }
     }
@@ -184,6 +195,7 @@ public class Message {
                 mentionRoles.addElement(Long.parseLong(roleID));
             }
             catch (Exception e) {
+                Log.w(TAG, "Failed to parse mention role " + i + " of message " + id, e);
             }
         }
     }
@@ -200,6 +212,7 @@ public class Message {
             targetID = targetUser.id;
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to parse target of status message " + id, e);
         }
 
         switch (type) {

@@ -3,6 +3,7 @@ package fi.gtrxac.discord;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.util.Vector;
 
@@ -14,6 +15,8 @@ import cc.nnproject.json.JSONArray;
  */
 
 public class Settings {
+    private static final String TAG = "Settings";
+
     public static final int MESSAGE_LOAD_COUNT_MIN = 1;
     public static final int MESSAGE_LOAD_COUNT_MAX = 100;
     public static final int MESSAGE_LOAD_COUNT_DEFAULT = 25;
@@ -89,6 +92,9 @@ public class Settings {
         notifyDirectMessages = settings.getBoolean("notifyDirectMessages", true);
         notificationSound = settings.getBoolean("notificationSound", true);
         notificationVibrate = settings.getBoolean("notificationVibrate", false);
+
+        Log.d(TAG, "Settings loaded (" + Accounts.list.size() + " accounts, active " +
+            Accounts.getActiveIndex() + ")");
     }
 
     public static void save(Context c) {
@@ -126,6 +132,8 @@ public class Settings {
         editor.putBoolean("notificationSound", notificationSound);
         editor.putBoolean("notificationVibrate", notificationVibrate);
 
-        editor.commit();
+        boolean saved = editor.commit();
+        Log.d(TAG, "Settings saved (" + numAccounts + " accounts, active " +
+            Accounts.getActiveIndex() + ", success=" + saved + ")");
     }
 }

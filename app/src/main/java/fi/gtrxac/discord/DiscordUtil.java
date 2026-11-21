@@ -1,5 +1,7 @@
 package fi.gtrxac.discord;
 
+import android.util.Log;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -8,6 +10,8 @@ import java.util.Vector;
 import util.Base64;
 
 public class DiscordUtil {
+    private static final String TAG = "DiscordUtil";
+
     public static final Random random = new Random();
     public static final long DISCORD_EPOCH = 1420070400000L;
 
@@ -39,6 +43,7 @@ public class DiscordUtil {
             return Long.parseLong(id);
         }
         catch (Exception e) {
+            Log.e(TAG, "Failed to decode user ID from token", e);
             throw new DiscordException("Token is written incorrectly",
                 "Failed to decode ID: " + e.toString(), getInvalidTokenTips());
         }

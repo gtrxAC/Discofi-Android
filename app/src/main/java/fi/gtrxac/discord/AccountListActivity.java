@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +29,7 @@ import fi.gtrxac.bluewap.Util;
  */
 
 public class AccountListActivity extends Activity {
+    private static final String TAG = "AccountList";
     private ListView accountList;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class AccountListActivity extends Activity {
         accountList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "Selected account at position " + position);
                 Accounts.setActive(position);
                 Settings.save(view.getContext());
 
@@ -71,6 +74,7 @@ public class AccountListActivity extends Activity {
         addAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "Adding a new account");
                 App.pendingAccount = new Account();
                 Intent intent = new Intent(v.getContext(), ConnectionModeActivity.class);
                 startActivity(intent);
@@ -79,6 +83,7 @@ public class AccountListActivity extends Activity {
     }
 
     private void updateAccountList() {
+        Log.d(TAG, "Updating account list (" + Accounts.list.size() + " accounts)");
         View noAccountsText = findViewById(R.id.noAccountsText);
 
         if (Accounts.list.size() == 0) {
@@ -98,7 +103,7 @@ public class AccountListActivity extends Activity {
                     items.add(acc.getDisplayTitle());
                 }
                 catch (DiscordException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Failed to get account display title", e);
                     items.add("(unknown)");
                 }
             }
@@ -142,7 +147,7 @@ public class AccountListActivity extends Activity {
             name = acc.getDisplayTitle();
         }
         catch (DiscordException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Failed to get account name for delete dialog", e);
             name = "(unknown)";
         }
 
@@ -150,6 +155,7 @@ public class AccountListActivity extends Activity {
             .setMessage(getResources().getString(R.string.account_delete_warning, name))
             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    Log.i(TAG, "Deleting account at position " + position);
                     Accounts.list.removeElement(acc);
                     Settings.save(AccountListActivity.this);
                     updateAccountList();

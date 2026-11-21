@@ -1,5 +1,7 @@
 package fi.gtrxac.discord;
 
+import android.util.Log;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -13,6 +15,8 @@ import fi.gtrxac.discord.model.Guild;
 import fi.gtrxac.discord.model.Message;
 
 public class UnreadManager {
+    private static final String TAG = "Unread";
+
     private final Account account;
     private final Hashtable<Long, Long> channels = new Hashtable<>();
     private final Hashtable<Long, Integer> mentionCounts = new Hashtable<>();
@@ -43,6 +47,8 @@ public class UnreadManager {
     public void fromJSON(JSONArray data) {
         channels.clear();
         mentionCounts.clear();
+
+        Log.d(TAG, "Loading unread state with " + data.size() + " channel entries");
 
         for (int i = 0; i < data.size(); i++) {
             JSONArray entry = data.getArray(i);
@@ -91,6 +97,8 @@ public class UnreadManager {
             final long messageID = markReadMessageID;
             markReadChannelID = 0;
             markReadMessageID = 0;
+
+            Log.d(TAG, "Sending ack for channel " + channelID + ", message " + messageID);
 
             new Thread() {
                 @Override
@@ -270,6 +278,7 @@ public class UnreadManager {
                 }
             }
             catch (Exception e) {
+                Log.w(TAG, "Failed to update DM channel last message ID for " + channelID, e);
             }
         }
 
@@ -279,6 +288,8 @@ public class UnreadManager {
     public boolean onMessageCreate(JSONObject data) {
         long channelID = Long.parseLong(data.getString("channel_id"));
         long messageID = Long.parseLong(data.getString("id"));
+
+        Log.d(TAG, "Gateway message in channel " + channelID + " (message " + messageID + ")");
 
         updateChannelLastMessageID(channelID, messageID);
 
@@ -300,6 +311,7 @@ public class UnreadManager {
             }
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to process message for unread state", e);
         }
 
         return mentioned;
@@ -330,6 +342,7 @@ public class UnreadManager {
             }
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to determine mention state", e);
         }
         return false;
     }
@@ -358,7 +371,7 @@ public class UnreadManager {
                     }
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    Log.w(TAG, "Failed to fetch my roles for guild " + guildId, e);
                 }
 
                 fetchingRoles.removeElement(guildId);
@@ -409,7 +422,7 @@ public class UnreadManager {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.w(TAG, "Failed to apply READY read states", e);
         }
 
         autoSave = true;
@@ -424,6 +437,7 @@ public class UnreadManager {
             setMentionCount(channelID, data.getInt("mention_count", 0));
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to apply MESSAGE_ACK read state", e);
         }
     }
 
@@ -452,6 +466,7 @@ public class UnreadManager {
                 }
             }
             catch (Exception e) {
+                Log.w(TAG, "Failed to apply channel unread update", e);
             }
         }
     }
@@ -482,7 +497,7 @@ public class UnreadManager {
                 }
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.w(TAG, "Failed to mark DMs read", e);
             }
         }
         autoSave = true;

@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.text.Spannable;
+import android.util.Log;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -55,6 +56,8 @@ import fi.gtrxac.discord.model.Message;
 import fi.gtrxac.discord.model.Role;
 
 public class MarkdownRenderer implements MarkdownListener {
+
+    private static final String TAG = "Markdown";
 
     private static final int SPAN_FLAGS = Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
@@ -152,7 +155,13 @@ public class MarkdownRenderer implements MarkdownListener {
         emojiCount = 0;
         out = new SpannableStringBuilder();
 
-        Markdown.parse(this, out, markdown, urls);
+        try {
+            Markdown.parse(this, out, markdown, urls);
+        }
+        catch (RuntimeException e) {
+            Log.e(TAG, "Markdown parsing failed", e);
+            throw e;
+        }
 
         if (enableBigEmoji && (emojiOnly && emojiCount != 0)) {
             for (EmojiSpan emoji : out.getSpans(0, out.length(), EmojiSpan.class)) {
@@ -247,6 +256,7 @@ public class MarkdownRenderer implements MarkdownListener {
             unix = Long.parseLong(timestamp);
         }
         catch (NumberFormatException e) {
+            Log.d(TAG, "Invalid Discord timestamp value, rendering raw");
             return "<t:" + timestamp + (style != null ? ":" + style : "") + ">";
         }
         Date date = new Date(unix * 1000L);
@@ -311,6 +321,7 @@ public class MarkdownRenderer implements MarkdownListener {
             }
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to format Discord timestamp, using default format", e);
         }
         return new SimpleDateFormat("d MMMM yyyy HH:mm").format(date);
     }
@@ -324,9 +335,11 @@ public class MarkdownRenderer implements MarkdownListener {
                 Intent.FLAG_ACTIVITY_NEW_TASK));
         }
         catch (ActivityNotFoundException e) {
+            Log.w(TAG, "No app can open link " + url);
             Toast.makeText(context, "No app can open this link", Toast.LENGTH_LONG).show();
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to open link " + url, e);
             Toast.makeText(context, "Failed to open link: " + e.getMessage(), Toast.LENGTH_LONG)
                 .show();
         }
@@ -444,6 +457,7 @@ public class MarkdownRenderer implements MarkdownListener {
                     widget.invalidate();
                 }
                 catch (Exception ignored) {
+                    Log.w(TAG, "Failed to reveal spoiler", ignored);
                 }
             }
         }, spoilerStart, out.length(), SPAN_FLAGS);
@@ -798,6 +812,7 @@ public class MarkdownRenderer implements MarkdownListener {
 
         @Override
         public void onLoadFailed(Exception e, Drawable errorDrawable) {
+            Log.w(TAG, "Emoji load failed", e);
             if (fallbackUrl != null) {
                 span.load(view.getContext(), view, fallbackUrl, null);
             }

@@ -7,6 +7,8 @@ import android.util.Log;
 import java.util.Vector;
 
 public class DiscordException extends Exception {
+    private static final String TAG = "DiscordException";
+
     public String friendlyMessage;
     public String message;
     public Vector tips;
@@ -65,7 +67,7 @@ public class DiscordException extends Exception {
     }
 
     public void show(Context context) {
-        Log.e("DiscordException", message, this);
+        Log.e(TAG, "Showing error dialog: " + friendlyMessage + " (" + message + ")", this);
         new AlertDialog.Builder(context).setTitle(getTitle()).setMessage(getDisplayMessage())
             .setPositiveButton(android.R.string.ok, null).show();
     }

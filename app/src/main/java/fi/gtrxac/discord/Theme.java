@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import java.util.WeakHashMap;
 
 public class Theme {
+    private static final String TAG = "Theme";
+
     /**
      * Appearance values that each activity was created with, used to recreate
      * activities when the theme or font size changes.
@@ -17,6 +20,7 @@ public class Theme {
     private static final WeakHashMap<Activity, Object[]> appliedAppearances = new WeakHashMap<>();
 
     ;
+
     public static int embedBackground;
     public static int codeBackground;
     public static int quoteColor;
@@ -48,6 +52,9 @@ public class Theme {
     }
 
     public static void load(Activity activity) {
+        Log.d(TAG, "Applying " + (Settings.lightTheme ? "light" : "dark") + " theme, font size " +
+            Settings.fontSize + " to " + activity.getClass().getSimpleName());
+
         if (Settings.lightTheme) {
             loadLightTheme(activity);
             activity.setTheme(R.style.AppTheme_Light);
@@ -76,6 +83,8 @@ public class Theme {
             (FontSize) applied[1] == Settings.fontSize) {
             return false;
         }
+
+        Log.d(TAG, "Appearance changed, recreating " + activity.getClass().getSimpleName());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             activity.recreate();

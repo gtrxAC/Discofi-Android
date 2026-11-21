@@ -1,5 +1,7 @@
 package fi.gtrxac.discord;
 
+import android.util.Log;
+
 import java.util.Vector;
 
 import cc.nnproject.json.JSONArray;
@@ -10,6 +12,7 @@ import fi.gtrxac.discord.model.User;
 import fi.gtrxac.discord.util.LRUCache;
 
 public class GuildMemberCache extends LRUCache {
+    private static final String TAG = "GuildMemberCache";
     private static final int CACHE_SIZE = 50;
     public boolean activeRequest;
     private Account account;
@@ -46,6 +49,8 @@ public class GuildMemberCache extends LRUCache {
 
         reqData.put("user_ids", requestIds);
 
+        Log.d(TAG, "Requesting " + requestIds.size() + " guild members for guild " + guildId);
+
         if (requestIds.size() == 0) {
             activeRequest = false;
             return;
@@ -69,6 +74,8 @@ public class GuildMemberCache extends LRUCache {
         GuildMember result = (GuildMember) super.get(key);
         if (result != null) return result;
         if (cache.containsKey(key)) return null;
+
+        Log.d(TAG, "Member " + userId + " not cached for guild " + guildId);
 
         if (!activeRequest) {
             activeRequest = true;

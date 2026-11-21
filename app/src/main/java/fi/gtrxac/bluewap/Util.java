@@ -1,5 +1,7 @@
 package fi.gtrxac.bluewap;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 public class Util {
+    private static final String TAG = "Util";
     // _________________________________________________________________________
     //
     //  Text encoding
@@ -29,6 +32,7 @@ public class Util {
             return str.getBytes(charset);
         }
         catch (Exception e) {
+            Log.w(TAG, "getBytes(\"" + charset + "\") failed, falling back to default", e);
             return str.getBytes();
         }
     }
@@ -45,6 +49,7 @@ public class Util {
             return new String(bytes, charset);
         }
         catch (Exception e) {
+            Log.w(TAG, "new String(bytes, \"" + charset + "\") failed, falling back to default", e);
             return new String(bytes);
         }
     }
@@ -69,6 +74,7 @@ public class Util {
                 return testEncs[i];
             }
             catch (UnsupportedEncodingException e) {
+                Log.d(TAG, "Encoding " + testEncs[i] + " not supported");
             }
         }
         return "ASCII";  // last resort
@@ -239,6 +245,7 @@ public class Util {
             Thread.sleep(ms);
         }
         catch (Exception e) {
+            Log.w(TAG, "Sleep interrupted", e);
         }
     }
 
@@ -460,6 +467,7 @@ public class Util {
             return result.toString();
         }
         catch (UnsupportedEncodingException e) {
+            Log.w(TAG, "URL encoding failed", e);
             return "";
         }
     }

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.util.Log;
 
 import java.util.Hashtable;
 import java.util.Vector;
@@ -24,6 +25,7 @@ import fi.gtrxac.discord.model.Guild;
 import fi.gtrxac.discord.model.Message;
 
 public class Notifications {
+    private static final String TAG = "Notifications";
     private static final int MAX_TEXT_LENGTH = 120;
 
     public static Context context;
@@ -41,7 +43,10 @@ public class Notifications {
     public static synchronized void onMessageCreate(Account account, JSONObject data,
         boolean mentioned) {
 
-        if (!Settings.notifications || context == null) return;
+        if (!Settings.notifications || context == null) {
+            Log.d(TAG, "Notifications disabled or context missing, skipping");
+            return;
+        }
 
         try {
             JSONObject author = data.getObject("author", null);
@@ -53,20 +58,28 @@ public class Notifications {
             long channelId = Long.parseLong(data.getString("channel_id"));
 
             // Don't notify about messages that are already being read
-            if (channelId == openChannelId) return;
+            if (channelId == openChannelId) {
+                Log.d(TAG, "Channel " + channelId + " is open, not notifying");
+                return;
+            }
 
             String guildIdString = data.getString("guild_id", null);
             boolean isDM = (guildIdString == null);
 
-            if (!shouldNotify(isDM, mentioned)) return;
+            if (!shouldNotify(isDM, mentioned)) {
+                Log.d(TAG, "Notification settings suppress message in channel " + channelId);
+                return;
+            }
 
             long guildId = isDM ? 0 : Long.parseLong(guildIdString);
             Message message = new Message(data);
 
+            Log.d(TAG, "Posting notification for channel " + channelId + " (DM=" + isDM +
+                ", mentioned=" + mentioned + ")");
             send(account, message, guildId, isDM, channelId);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Failed to handle incoming message notification", e);
         }
     }
 
@@ -118,7 +131,7 @@ public class Notifications {
                 icon = guild.getIconUrl(account.getCdnUrl());
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.w(TAG, "Failed to resolve guild " + guildId + " for notification", e);
                 guildName = context.getString(R.string.unknown);
             }
 
@@ -222,7 +235,7 @@ public class Notifications {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Failed to build notification for channel " + notifChannelId, e);
         }
 
         return null;
@@ -276,6 +289,7 @@ public class Notifications {
             }
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to resolve DM channel " + channelId + " for notification", e);
         }
         return null;
     }
@@ -297,6 +311,7 @@ public class Notifications {
      * Remove the notification for a channel, e.g. when it was opened.
      */
     public static synchronized void clear(long channelId) {
+        Log.d(TAG, "Clearing notification for channel " + channelId);
         messageCounts.remove(new Long(channelId));
 
         if (context == null) return;
@@ -310,6 +325,7 @@ public class Notifications {
      * Remove all notifications, e.g. when logging out.
      */
     public static synchronized void clearAll() {
+        Log.d(TAG, "Clearing all notifications");
         messageCounts.clear();
         openChannelId = 0;
 

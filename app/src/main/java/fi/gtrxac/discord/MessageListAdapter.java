@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.Spannable;
+import android.util.Log;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.format.DateFormat;
@@ -46,6 +47,8 @@ import fi.gtrxac.discord.model.Message;
  * Renders message rows for the chat screen.
  */
 public class MessageListAdapter extends BaseAdapter {
+    private static final String TAG = "MessageList";
+
     private final Context context;
     private final Vector messages;
     private final Account acc;
@@ -145,6 +148,7 @@ public class MessageListAdapter extends BaseAdapter {
                 }
             }
             catch (Exception e) {
+                Log.w(TAG, "Failed to set mention background for message " + message.id, e);
                 convertView.setBackgroundResource(0);
             }
         }
@@ -715,7 +719,10 @@ public class MessageListAdapter extends BaseAdapter {
     private Date parseEmbedTimestamp(String timestamp) {
         String value = timestamp.trim();
         int timeSeparator = value.indexOf('T');
-        if (timeSeparator < 0) return null;
+        if (timeSeparator < 0) {
+            Log.d(TAG, "Unparseable embed timestamp (no time separator)");
+            return null;
+        }
 
         if (value.endsWith("Z")) {
             value = value.substring(0, value.length() - 1) + "+0000";
@@ -749,7 +756,11 @@ public class MessageListAdapter extends BaseAdapter {
         parser.setLenient(false);
         ParsePosition position = new ParsePosition(0);
         Date date = parser.parse(value, position);
-        return date != null && position.getIndex() == value.length() ? date : null;
+        if (date == null || position.getIndex() != value.length()) {
+            Log.d(TAG, "Unparseable embed timestamp, falling back to raw value");
+            return null;
+        }
+        return date;
     }
 
     private void loadImage(ImageView view, String url) {
@@ -784,6 +795,7 @@ public class MessageListAdapter extends BaseAdapter {
                     boolean isFirstResource) {
                     // An animated preview can fail (too big for memory, invalid
                     // gif data); show the still frame instead.
+                    Log.w(TAG, "Animated image load failed, falling back to still frame", e);
                     loadImage(view, fallbackUrl, rounded);
                     return true;
                 }
@@ -820,9 +832,11 @@ public class MessageListAdapter extends BaseAdapter {
                 Intent.FLAG_ACTIVITY_NEW_TASK));
         }
         catch (ActivityNotFoundException e) {
+            Log.w(TAG, "No app can open link " + url);
             Toast.makeText(context, "No app can open this link", Toast.LENGTH_LONG).show();
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to open link " + url, e);
             Toast.makeText(context, "Failed to open link: " + e.getMessage(), Toast.LENGTH_LONG)
                 .show();
         }

@@ -4,6 +4,7 @@ import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import fi.gtrxac.discord.model.Guild;
 import fi.gtrxac.discord.model.Message;
 
 public class MainActivity extends TabActivity implements GatewayListener {
+    private static final String TAG = "MainActivity";
     private static final int TAB_GUILDS = 0;
     private static final int TAB_DMS = 1;
     private static final int TAB_INBOX = 2;
@@ -56,9 +58,13 @@ public class MainActivity extends TabActivity implements GatewayListener {
         final Account acc = Accounts.getActive();
 
         if (acc == null) {
+            Log.i(TAG, "No active account, going to account list");
             goToLoginScreen();
             return;
         }
+
+        Log.d(TAG, "Active account: user " + acc.userId + ", gateway active=" +
+            acc.gatewayActive());
 
         if (!acc.gatewayActive()) {
             acc.startGateway();
@@ -68,7 +74,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
             setTitle(acc.getDisplayTitle());
         }
         catch (DiscordException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Failed to get account display title", e);
         }
 
         TabHost tabHost = getTabHost();
@@ -180,6 +186,8 @@ public class MainActivity extends TabActivity implements GatewayListener {
             return;
         }
 
+        Log.d(TAG, "Opening channel from notification");
+
         // Avoid opening the channel again if this activity is recreated
         intent.removeExtra("fromNotification");
 
@@ -256,11 +264,14 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     private void loadGuilds(final Context context, final Account acc) {
+        Log.d(TAG, "Loading guilds (cached=" + acc.guildsAvailable() + ")");
+
         if (acc.guildsAvailable()) {
             try {
                 guildsCallback(context, acc.getGuilds(false));
             }
             catch (DiscordException e) {
+                Log.e(TAG, "Failed to load cached guilds", e);
                 e.show(context);
             }
         }
@@ -277,11 +288,14 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     private void loadDmChannels(final Context context, final Account acc) {
+        Log.d(TAG, "Loading DM channels (cached=" + acc.dmChannelsAvailable() + ")");
+
         if (acc.dmChannelsAvailable()) {
             try {
                 dmChannelsCallback(context, acc.getDmChannels(false));
             }
             catch (DiscordException e) {
+                Log.e(TAG, "Failed to load cached DM channels", e);
                 e.show(context);
             }
         }
@@ -298,11 +312,14 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     private void loadInbox(final Context context, final Account acc) {
+        Log.d(TAG, "Loading inbox (cached=" + acc.inboxAvailable() + ")");
+
         if (acc.inboxAvailable()) {
             try {
                 inboxCallback(context, acc.getInbox(false));
             }
             catch (DiscordException e) {
+                Log.e(TAG, "Failed to load cached inbox", e);
                 e.show(context);
             }
         }
@@ -319,6 +336,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     private void fetchGuilds(final Context context, final Account acc, final boolean refresh) {
+        Log.d(TAG, "Fetching guilds (refresh=" + refresh + ")");
         try {
             final Vector<Guild> guilds = acc.getGuilds(refresh);
 
@@ -330,6 +348,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
             });
         }
         catch (final DiscordException e) {
+            Log.e(TAG, "Failed to fetch guilds", e);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -341,6 +360,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     private void fetchDmChannels(final Context context, final Account acc, final boolean refresh) {
+        Log.d(TAG, "Fetching DM channels (refresh=" + refresh + ")");
         try {
             final Vector<DMChannel> dmChannels = acc.getDmChannels(refresh);
 
@@ -352,6 +372,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
             });
         }
         catch (final DiscordException e) {
+            Log.e(TAG, "Failed to fetch DM channels", e);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -363,6 +384,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     private void fetchInbox(final Context context, final Account acc, final boolean refresh) {
+        Log.d(TAG, "Fetching inbox (refresh=" + refresh + ")");
         try {
             final Vector<Message> inbox = acc.getInbox(refresh);
 
@@ -374,6 +396,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
             });
         }
         catch (final DiscordException e) {
+            Log.e(TAG, "Failed to fetch inbox", e);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -385,6 +408,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     public void guildsCallback(Context c, Vector<Guild> guilds) {
+        Log.d(TAG, "Guild list callback: " + guilds.size() + " guilds");
         this.guilds = guilds;
         Account acc = Accounts.getActive();
 
@@ -411,6 +435,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     public void dmChannelsCallback(Context c, Vector<DMChannel> dmChannels) {
+        Log.d(TAG, "DM channel list callback: " + dmChannels.size() + " channels");
         this.dmChannels = dmChannels;
         Account acc = Accounts.getActive();
 
@@ -439,6 +464,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     public void inboxCallback(Context c, Vector<Message> inbox) {
+        Log.d(TAG, "Inbox callback: " + inbox.size() + " messages");
         this.inbox = inbox;
 
         if (inbox.size() == 0) {
@@ -462,6 +488,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     private void goToLoginScreen() {
+        Log.i(TAG, "Logging out / returning to account list");
         final Account acc = Accounts.getActive();
         if (acc != null) acc.gateway.stop = true;
         Notifications.clearAll();
@@ -501,6 +528,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
             return;
         }
         final Context context = this;
+        Log.d(TAG, "Refreshing tab " + getTabHost().getCurrentTab());
         showProgress(true);
 
         new Thread() {
@@ -536,6 +564,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     public void onMessageCreate(JSONObject message) {
+        Log.d(TAG, "Gateway MESSAGE_CREATE, refreshing unread indicators");
         runOnUiThread(new Runnable() {
             public void run() {
                 refreshUnreadIndicators();
@@ -550,6 +579,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
     }
 
     public void onMessageAck(JSONObject data) {
+        Log.d(TAG, "Gateway MESSAGE_ACK, refreshing unread indicators");
         runOnUiThread(new Runnable() {
             public void run() {
                 refreshUnreadIndicators();

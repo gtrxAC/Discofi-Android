@@ -1,5 +1,7 @@
 package fi.gtrxac.discord.model;
 
+import android.util.Log;
+
 import fi.gtrxac.discord.Settings;
 
 import java.util.Vector;
@@ -8,6 +10,8 @@ import cc.nnproject.json.JSONObject;
 import cc.nnproject.json.JSONArray;
 
 public class GuildMember extends User {
+    private static final String TAG = "GuildMember";
+
     public String nickname;
     public int color;
     public Vector<Role> roles;
@@ -48,7 +52,7 @@ public class GuildMember extends User {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.w(TAG, "Failed to parse roles for guild member " + id, e);
             roles = new Vector<Role>();
         }
 

@@ -1,11 +1,15 @@
 package fi.gtrxac.bluewap.http;
 
+import android.util.Log;
+
 import fi.gtrxac.bluewap.*;
 
 import java.io.*;
 import java.util.*;
 
 public abstract class HTTP {
+    private static final String TAG = "HTTP";
+
     protected String method;
     protected String url;
     protected byte[] data;
@@ -172,6 +176,7 @@ public abstract class HTTP {
             is.close();
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to close response stream for " + url, e);
         }
     }
 }

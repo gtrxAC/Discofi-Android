@@ -1,5 +1,7 @@
 package fi.gtrxac.discord;
 
+import android.util.Log;
+
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -23,6 +25,7 @@ import util.Base64;
  */
 
 public class Account {
+    private static final String TAG = "Account";
     public static final String DEFAULT_CDN_PROXY_URL = "http://cdn.gtrxac.fi";
     public final ChannelCache channelCache = new ChannelCache();
     public final GuildMemberCache guildMemberCache = new GuildMemberCache(this);
@@ -80,6 +83,9 @@ public class Account {
 
         channelCache.fromJSON(data.getArray(11, new JSONArray()));
         unreadManager.fromJSON(data.getArray(12, new JSONArray()));
+
+        Log.d(TAG, "Loaded saved account with " + guilds.size() + " guilds and " +
+            dmChannels.size() + " DM channels");
     }
 
     public JSONArray toJSON() {
@@ -176,6 +182,7 @@ public class Account {
             return json.getString("message");
         }
         catch (JSONException e) {
+            Log.w(TAG, "Could not parse API error response for HTTP " + responseCode, e);
         }
 
         return "HTTP error " + responseCode;
@@ -201,6 +208,8 @@ public class Account {
         int responseCode;
         String responseText;
 
+        Log.d(TAG, "GET " + route);
+
         try {
             HTTP h = createApiRequest("GET", route);
             if (headers != null) h.setHeader(headers);
@@ -208,10 +217,11 @@ public class Account {
             responseText = h.getResponseString();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "GET " + route + " failed", e);
             throw new DiscordException(e);
         }
 
+        Log.d(TAG, "GET " + route + " -> HTTP " + responseCode);
         return handleJSONResponse(responseCode, responseText);
     }
 
@@ -227,6 +237,8 @@ public class Account {
         int responseCode;
         String responseText;
 
+        Log.d(TAG, "POST " + route);
+
         try {
             HTTP h = createApiRequest("POST", route);
             if (headers != null) h.setHeader(headers);
@@ -235,10 +247,11 @@ public class Account {
             responseText = h.getResponseString();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "POST " + route + " failed", e);
             throw new DiscordException(e);
         }
 
+        Log.d(TAG, "POST " + route + " -> HTTP " + responseCode);
         return handleJSONResponse(responseCode, responseText);
     }
 
@@ -263,7 +276,14 @@ public class Account {
     private AbstractJSON handleJSONResponse(int responseCode, String responseText)
         throws DiscordException {
         checkApiResponse(responseCode, responseText);
-        return JSON.get(responseText);
+
+        try {
+            return JSON.get(responseText);
+        }
+        catch (JSONException e) {
+            Log.e(TAG, "Failed to parse API response (HTTP " + responseCode + ")", e);
+            throw e;
+        }
     }
 
     /**
@@ -272,7 +292,10 @@ public class Account {
      * second one is for the user's settings.
      */
     public Vector getGuilds(boolean refresh) throws DiscordException {
-        if (!refresh && guildsAvailable()) return guilds;
+        if (!refresh && guildsAvailable()) {
+            Log.d(TAG, "Using cached guild list (" + guilds.size() + " guilds)");
+            return guilds;
+        }
 
         if (refresh || guildsUnsorted.size() == 0) {
             JSONArray guildsJson = (JSONArray) fetchJSON("/users/@me/guilds");
@@ -282,6 +305,7 @@ public class Account {
                 JSONObject guildJson = guildsJson.getObject(i);
                 guildsUnsorted.addElement(new Guild(guildJson));
             }
+            Log.d(TAG, "Fetched " + guildsUnsorted.size() + " guilds");
         }
 
         // fetch user's guild folders which we can use to sort guilds by
@@ -316,11 +340,15 @@ public class Account {
         }
         guildsUnsorted.setSize(0);
 
+        Log.d(TAG, "Sorted guild list contains " + guilds.size() + " guilds");
         return guilds;
     }
 
     public Vector getDmChannels(boolean refresh) throws DiscordException {
-        if (!refresh && dmChannelsAvailable()) return dmChannels;
+        if (!refresh && dmChannelsAvailable()) {
+            Log.d(TAG, "Using cached DM list (" + dmChannels.size() + " channels)");
+            return dmChannels;
+        }
 
         JSONArray dmChannelsJson = (JSONArray) fetchJSON("/users/@me/channels");
         Vector dmChannelsUnsorted = new Vector();
@@ -332,6 +360,8 @@ public class Account {
 
         dmChannels.setSize(0);
         sortDMChannels(dmChannelsUnsorted);
+
+        Log.d(TAG, "Fetched " + dmChannels.size() + " DM channels");
         return dmChannels;
     }
 
@@ -355,7 +385,10 @@ public class Account {
     }
 
     public Vector getInbox(boolean refresh) throws DiscordException {
-        if (!refresh && inboxAvailable()) return inbox;
+        if (!refresh && inboxAvailable()) {
+            Log.d(TAG, "Using cached inbox (" + inbox.size() + " messages)");
+            return inbox;
+        }
 
         JSONArray inboxJson =
             (JSONArray) fetchJSON("/users/@me/mentions?limit=25&roles=true&everyone=true");
@@ -367,6 +400,7 @@ public class Account {
             inbox.addElement(new Message(mentionJson));
         }
 
+        Log.d(TAG, "Fetched " + inbox.size() + " inbox messages");
         return inbox;
     }
 
@@ -386,7 +420,10 @@ public class Account {
      */
     public Vector getGuildChannels(long guildId) throws DiscordException {
         JSONArray channelsJson = (JSONArray) fetchJSON("/guilds/" + guildId + "/channels");
-        return Channel.parseChannels(channelsJson);
+        Vector categories = Channel.parseChannels(channelsJson);
+        Log.d(TAG, "Parsed " + channelsJson.size() + " channels into " + categories.size() +
+            " categories for guild " + guildId);
+        return categories;
     }
 
     /**
@@ -445,6 +482,8 @@ public class Account {
             result.insertElementAt(new Message(messagesJson.getObject(i)), 0);
         }
 
+        Log.d(TAG, "Loaded " + result.size() + " messages from channel " + channelId +
+            " (before=" + before + ", after=" + after + ", around=" + around + ")");
         return result;
     }
 
@@ -473,11 +512,17 @@ public class Account {
             }
         }
 
+        Log.d(TAG, "Sending message to channel " + channelId + " (" + content.length() +
+            " chars, reply=" + (recipientMessage != null) + ", mention=" + mention + ")");
+
         JSONObject created = (JSONObject) postJSON("/channels/" + channelId + "/messages", body);
+        Log.d(TAG, "Message sent, ID " + created.getString("id", "?"));
         return new Message(created);
     }
 
     public void deleteMessage(Message message) throws DiscordException {
+        Log.d(TAG, "Deleting message " + message.id + " in channel " + message.channelId);
+
         try {
             HTTP h = createApiRequest("DELETE",
                 "/channels/" + message.channelId + "/messages/" + message.id);
@@ -485,6 +530,7 @@ public class Account {
             int responseCode = h.getResponseCode();
             String responseText = h.getResponseString();
             checkApiResponse(responseCode, responseText);
+            Log.d(TAG, "Deleted message " + message.id + " (HTTP " + responseCode + ")");
         }
         catch (Exception e) {
             if (e == StandardHTTP.requestMethodException) {
@@ -499,6 +545,9 @@ public class Account {
     }
 
     public Message editMessage(Message message, String content) throws DiscordException {
+        Log.d(TAG, "Editing message " + message.id + " in channel " + message.channelId +
+            " (" + content.length() + " chars)");
+
         try {
             HTTP h = createApiRequest("PATCH",
                 "/channels/" + message.channelId + "/messages/" + message.id);
@@ -525,6 +574,7 @@ public class Account {
     }
 
     public void startGateway() {
+        Log.i(TAG, "Starting gateway");
         gateway = new GatewayThread(this);
         gateway.start();
     }
@@ -539,13 +589,15 @@ public class Account {
      */
     public void sendTyping(long channelId) {
         try {
+            Log.d(TAG, "Sending typing indicator for channel " + channelId);
             HTTP h = createApiRequest("POST", "/channels/" + channelId + "/typing");
             h.setData("");
-            h.getResponseCode();
+            int responseCode = h.getResponseCode();
+            Log.d(TAG, "Typing indicator response: HTTP " + responseCode);
             h.close();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.w(TAG, "Failed to send typing indicator for channel " + channelId, e);
         }
     }
 
@@ -554,6 +606,7 @@ public class Account {
      */
     public void ackMessage(long channelId, long messageId) {
         try {
+            Log.d(TAG, "Acknowledging message " + messageId + " in channel " + channelId);
             HTTP h = createApiRequest("POST",
                 "/channels/" + channelId + "/messages/" + messageId + "/ack");
 
@@ -561,11 +614,13 @@ public class Account {
             body.put("manual", false);
             h.setData(body.build());
 
-            h.getResponseCode();
+            int responseCode = h.getResponseCode();
+            Log.d(TAG, "Ack response: HTTP " + responseCode);
             h.close();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.w(TAG, "Failed to acknowledge message " + messageId + " in channel " + channelId,
+                e);
         }
     }
 
@@ -573,10 +628,13 @@ public class Account {
      * Fetch the logged in user's profile and cache the username on this account.
      */
     public void fetchUserProfile() throws DiscordException {
+        Log.d(TAG, "Fetching logged in user profile");
         JSONObject me = (JSONObject) fetchJSON("/users/@me");
 
         userId = Long.parseLong(me.getString("id", null));
         String globalName = me.getString("global_name", null);
         username = globalName != null ? globalName : me.getString("username", null);
+
+        Log.d(TAG, "Logged in as user " + userId);
     }
 }

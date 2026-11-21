@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +32,8 @@ import fi.gtrxac.discord.model.Guild;
  * Shows a guild's channels grouped by category.
  */
 public class ChannelListActivity extends Activity implements GatewayListener {
+    private static final String TAG = "ChannelList";
+
     private Account account;
     private long guildId;
     private Vector categories;
@@ -46,11 +49,13 @@ public class ChannelListActivity extends Activity implements GatewayListener {
         account = Accounts.getActive();
 
         if (account == null) {
+            Log.w(TAG, "No active account, finishing");
             finish();
             return;
         }
 
         guildId = getIntent().getLongExtra("guildId", 0);
+        Log.d(TAG, "Showing guild " + guildId);
         String guildName = getIntent().getStringExtra("guildName");
         if (guildName != null) setTitle(guildName);
 
@@ -77,6 +82,8 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                 row.mentions = 0;
                 ((ChannelListAdapter) channelList.getAdapter()).notifyDataSetChanged();
 
+                Log.d(TAG, "Opening channel " + channel.id + " (" + channel.name + ")");
+
                 Intent intent = new Intent(ChannelListActivity.this, ChatActivity.class);
                 intent.putExtra("guildId", guildId);
                 intent.putExtra("channelId", channel.id);
@@ -89,6 +96,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
     }
 
     private void loadChannels(final long guildId, final boolean refresh) {
+        Log.d(TAG, "Loading channels for guild " + guildId + " (refresh=" + refresh + ")");
         showProgress(true);
 
         new Thread() {
@@ -114,6 +122,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
 
                         account.gateway.send(subMsg);
                         account.subscribedGuilds.addElement(guildId);
+                        Log.d(TAG, "Subscribed to typing events for guild " + guildId);
                     }
 
                     Vector cachedCategories = account.channelCache.get(guildId);
@@ -146,7 +155,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                         }
                     }
                     catch (Exception e) {
-                        e.printStackTrace();
+                        Log.w(TAG, "Failed to compute channel permissions for guild " + guildId, e);
                     }
 
                     runOnUiThread(new Runnable() {
@@ -158,6 +167,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                     });
                 }
                 catch (final DiscordException e) {
+                    Log.e(TAG, "Failed to load channels for guild " + guildId, e);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -173,6 +183,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
 
     private void populate(Vector categories) {
         showProgress(false);
+        Log.d(TAG, "Populated " + categories.size() + " channel categories");
 
         this.categories = categories;
         rows.clear();
@@ -279,6 +290,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
     }
 
     public void onMessageCreate(JSONObject message) {
+        Log.d(TAG, "Gateway MESSAGE_CREATE, refreshing unread indicators");
         runOnUiThread(new Runnable() {
             public void run() {
                 refreshUnreadIndicators();
@@ -293,6 +305,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
     }
 
     public void onMessageAck(JSONObject message) {
+        Log.d(TAG, "Gateway MESSAGE_ACK, refreshing unread indicators");
         runOnUiThread(new Runnable() {
             public void run() {
                 refreshUnreadIndicators();
@@ -310,6 +323,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
     }
 
     public void onChannelUnread(JSONObject message) {
+        Log.d(TAG, "Gateway CHANNEL_UNREAD_UPDATE, refreshing unread indicators");
         runOnUiThread(new Runnable() {
             public void run() {
                 refreshUnreadIndicators();
@@ -318,6 +332,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
     }
 
     public void onPassiveUpdateV1(JSONObject data) {
+        Log.d(TAG, "Gateway PASSIVE_UPDATE_V1, refreshing unread indicators");
         runOnUiThread(new Runnable() {
             public void run() {
                 refreshUnreadIndicators();
@@ -326,6 +341,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
     }
 
     public void onPassiveUpdateV2(JSONObject data) {
+        Log.d(TAG, "Gateway PASSIVE_UPDATE_V2, refreshing unread indicators");
         runOnUiThread(new Runnable() {
             public void run() {
                 refreshUnreadIndicators();

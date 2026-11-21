@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.Html;
@@ -40,6 +41,8 @@ import fi.gtrxac.discord.model.Permissions;
  * and sending.
  */
 public class ChatActivity extends Activity implements GatewayListener {
+    private static final String TAG = "Chat";
+
     private final Vector typingUsers = new Vector();
     private final Handler typingHandler = new Handler();
     private Account account;
@@ -79,6 +82,7 @@ public class ChatActivity extends Activity implements GatewayListener {
         account = Accounts.getActive();
 
         if (account == null) {
+            Log.w(TAG, "No active account, finishing");
             finish();
             return;
         }
@@ -102,6 +106,8 @@ public class ChatActivity extends Activity implements GatewayListener {
         guildId = getIntent().getLongExtra("guildId", 0);
         channelId = getIntent().getLongExtra("channelId", 0);
         channelName = getIntent().getStringExtra("channelName");
+        Log.d(TAG, "Opening channel " + channelId + " in guild " + guildId +
+            (channelName != null ? " (" + channelName + ")" : ""));
         if (channelName != null) {
             setTitle(channelName);
             composer.setHint(getResources().getString(R.string.msg_composer_hint, channelName));
@@ -242,6 +248,9 @@ public class ChatActivity extends Activity implements GatewayListener {
     }
 
     public void onMessageCreate(JSONObject data) {
+        Log.d(TAG, "Gateway MESSAGE_CREATE in channel " + data.getString("channel_id", "?") +
+            " (message " + data.getString("id", "?") + ")");
+
         final Message message = new Message(data);
         GuildMember author = account.guildMemberCache.get(guildId, message.author, messages);
         final String name = author.nickname != null ? author.nickname : author.name;
@@ -275,6 +284,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     public void onMessageUpdate(JSONObject data) {
         if (Long.parseLong(data.getString("channel_id", null)) != channelId) return;
         final long messageId = Long.parseLong(data.getString("id"));
+        Log.d(TAG, "Gateway MESSAGE_UPDATE for message " + messageId);
 
         final String newContent = data.getString("content", null);
 
@@ -303,6 +313,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     public void onMessageDelete(JSONObject data) {
         if (Long.parseLong(data.getString("channel_id", null)) != channelId) return;
         final long messageId = Long.parseLong(data.getString("id"));
+        Log.d(TAG, "Gateway MESSAGE_DELETE for message " + messageId);
 
         runOnUiThread(new Runnable() {
             public void run() {
@@ -334,6 +345,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             name = member.nickname != null ? member.nickname : member.name;
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to read member data, ignoring", e);
         }
 
         if (name == null) name = channelName;
@@ -359,6 +371,8 @@ public class ChatActivity extends Activity implements GatewayListener {
         if (gatewayGuildId != guildId) return;
 
         final JSONArray notFound = data.getArray("not_found", new JSONArray());
+        Log.d(TAG, "Gateway GUILD_MEMBERS_CHUNK for guild " + gatewayGuildId + ": " +
+            members.size() + " members, " + notFound.size() + " not found");
 
         runOnUiThread(new Runnable() {
             public void run() {
@@ -456,6 +470,7 @@ public class ChatActivity extends Activity implements GatewayListener {
             }
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to adjust message context menu, ignoring", e);
         }
     }
 
@@ -519,6 +534,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                                         });
                                     }
                                     catch (final DiscordException e) {
+                                        Log.e(TAG, "Failed to delete message " + message.id, e);
                                         runOnUiThread(new Runnable() {
                                             public void run() {
                                                 if (isFinishing()) return;
@@ -542,6 +558,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     }
 
     private void loadInitialMessages() {
+        Log.d(TAG, "Loading initial messages for channel " + channelId);
         composer.setEnabled(false);
         sendButton.setEnabled(false);
         showProgress(true);
@@ -585,6 +602,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                     });
                 }
                 catch (final DiscordException e) {
+                    Log.e(TAG, "Failed to load initial messages for channel " + channelId, e);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (isFinishing()) return;
@@ -611,6 +629,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     }
 
     private void loadOlderMessages() {
+        Log.d(TAG, "Loading older messages before " + ((Message) messages.firstElement()).id);
         loadingOlder = true;
         showProgress(true);
 
@@ -655,6 +674,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                     });
                 }
                 catch (final DiscordException e) {
+                    Log.e(TAG, "Failed to load older messages for channel " + channelId, e);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             loadingOlder = false;
@@ -685,6 +705,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     }
 
     private void loadAroundMessage(final long messageId, final boolean initial) {
+        Log.d(TAG, "Loading messages around " + messageId + " (initial=" + initial + ")");
         if (initial) {
             composer.setEnabled(false);
             sendButton.setEnabled(false);
@@ -705,7 +726,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                         catch (Exception e) {
                             // Role colors fall back to defaults if roles
                             // can't be fetched
-                            e.printStackTrace();
+                            Log.w(TAG, "Failed to get guild roles for guild " + guildId, e);
                         }
 
                         myPermissions = fetchMyPermissions();
@@ -755,6 +776,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                     });
                 }
                 catch (final DiscordException e) {
+                    Log.e(TAG, "Failed to load messages around " + messageId, e);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (isFinishing()) return;
@@ -775,6 +797,7 @@ public class ChatActivity extends Activity implements GatewayListener {
     }
 
     private void loadNewerMessages() {
+        Log.d(TAG, "Loading newer messages after " + ((Message) messages.lastElement()).id);
         loadingNewer = true;
         showProgress(true);
 
@@ -818,6 +841,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                     });
                 }
                 catch (final DiscordException e) {
+                    Log.e(TAG, "Failed to load newer messages for channel " + channelId, e);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             loadingNewer = false;
@@ -855,7 +879,8 @@ public class ChatActivity extends Activity implements GatewayListener {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.w(TAG, "Failed to calculate permissions for channel " + channelId +
+                " in guild " + guildId, e);
         }
 
         return -1;
@@ -884,6 +909,9 @@ public class ChatActivity extends Activity implements GatewayListener {
         final String text = composer.getText().toString().trim();
         if (text.length() == 0) return;
 
+        Log.d(TAG, "Sending message to channel " + channelId + " (" + text.length() +
+            " chars, reply=" + (activeReply != null) + ")");
+
         sending = true;
         updateComposerState();
         replyPanel.setVisibility(View.GONE);
@@ -895,7 +923,6 @@ public class ChatActivity extends Activity implements GatewayListener {
                 try {
                     final Message created =
                         account.sendMessage(channelId, text, activeReply, pingToggle.isChecked());
-
                     runOnUiThread(new Runnable() {
                         public void run() {
                             sending = false;
@@ -923,6 +950,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                     });
                 }
                 catch (final DiscordException e) {
+                    Log.e(TAG, "Failed to send message to channel " + channelId, e);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             sending = false;
@@ -944,6 +972,8 @@ public class ChatActivity extends Activity implements GatewayListener {
         final Context c = this;
         final String text = composer.getText().toString().trim();
         if (text.length() == 0) return;
+
+        Log.d(TAG, "Editing message " + activeEdit.id + " (" + text.length() + " chars)");
 
         sending = true;
         updateComposerState();
@@ -980,6 +1010,7 @@ public class ChatActivity extends Activity implements GatewayListener {
                     });
                 }
                 catch (final DiscordException e) {
+                    Log.e(TAG, "Failed to edit message " + activeEdit.id, e);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             sending = false;

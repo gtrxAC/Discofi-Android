@@ -1,6 +1,7 @@
 package fi.gtrxac.bluewap.http;
 
 import android.os.Build;
+import android.util.Log;
 
 import java.io.*;
 import java.net.URL;
@@ -12,6 +13,8 @@ import javax.net.ssl.HttpsURLConnection;
 import tech.alicesworld.ModernConnector.ModernConnector;
 
 public class StandardHTTP extends HTTP {
+    private static final String TAG = "StandardHTTP";
+
     public static final Exception requestMethodException = new Exception();
 
     private HttpsURLConnection conn;
@@ -23,12 +26,19 @@ public class StandardHTTP extends HTTP {
 
     protected InputStream makeRequest() throws Exception {
         try {
-            return makePlatformRequest();
+            InputStream result = makePlatformRequest();
+            Log.d(TAG, method + " " + url + " -> HTTP " + responseCode + " (platform)");
+            return result;
         }
         catch (Exception e) {
             // Fallback to Modernconnector for older Android versions
+            Log.w(TAG, method + " " + url + " failed on platform HTTP stack, " +
+                "falling back to ModernConnector", e);
             closeTransport();
-            return makeModernConnectorRequest();
+            InputStream result = makeModernConnectorRequest();
+            Log.d(TAG, method + " " + url + " -> HTTP " + responseCode +
+                " (ModernConnector)");
+            return result;
         }
     }
 
@@ -49,6 +59,7 @@ public class StandardHTTP extends HTTP {
                 conn.setRequestMethod(currentMethod);
             }
             catch (Exception e) {
+                Log.w(TAG, "Platform HTTP stack does not support method " + currentMethod, e);
                 throw requestMethodException;
             }
 
@@ -97,6 +108,7 @@ public class StandardHTTP extends HTTP {
                     err = conn.getInputStream();
                 }
                 catch (IOException e) {
+                    Log.d(TAG, "No input stream for HTTP " + responseCode + ", using empty body");
                     err = new ByteArrayInputStream(new byte[0]);
                 }
             }
@@ -117,6 +129,7 @@ public class StandardHTTP extends HTTP {
                     hc.setRequestMethod(method);
                 }
                 catch (Exception e) {
+                    Log.w(TAG, "ModernConnector does not support method " + method, e);
                     throw requestMethodException;
                 }
 
@@ -161,6 +174,7 @@ public class StandardHTTP extends HTTP {
                     hc.close();
                 }
                 catch (Exception ignored) {
+                    Log.d(TAG, "Failed to close ModernConnector request after error", ignored);
                 }
                 throw e;
             }
@@ -179,6 +193,7 @@ public class StandardHTTP extends HTTP {
                 modernConn.close();
             }
             catch (IOException e) {
+                Log.d(TAG, "Failed to close ModernConnector connection", e);
             }
             modernConn = null;
         }

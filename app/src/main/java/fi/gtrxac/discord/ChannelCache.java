@@ -1,5 +1,7 @@
 package fi.gtrxac.discord;
 
+import android.util.Log;
+
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -16,6 +18,7 @@ import fi.gtrxac.discord.util.LRUCacheEntry;
  * the guild's channel list (with category structure).
  */
 public class ChannelCache extends LRUCache {
+    private static final String TAG = "ChannelCache";
     private static final int CACHE_SIZE = 100;
 
     public ChannelCache() {
@@ -24,6 +27,8 @@ public class ChannelCache extends LRUCache {
 
     public void fromJSON(JSONArray data) {
         cache.clear();
+
+        Log.d(TAG, "Loading channel cache with " + data.size() + " guild entries");
 
         for (int i = 0; i < data.size(); i++) {
             JSONArray entryData = data.getArray(i);
@@ -143,14 +148,20 @@ public class ChannelCache extends LRUCache {
         if (data == null || !data.has("guilds")) return;
 
         JSONArray guilds = data.getArray("guilds");
+        int updated = 0;
+
         for (int i = 0; i < guilds.size(); i++) {
             JSONObject guildJSON = guilds.getObject(i);
             long guildID = Long.parseLong(guildJSON.getString("id"));
             if (guildJSON.has("channels")) {
                 Vector channels = Channel.parseChannels(guildJSON.getArray("channels"));
                 set(guildID, channels);
+                updated++;
             }
         }
+
+        Log.d(TAG, "Updated channel cache for " + updated + " of " + guilds.size() +
+            " guilds from READY");
     }
 
     public void setLastMessageID(long channelID, long lastMessageID) {
@@ -166,12 +177,16 @@ public class ChannelCache extends LRUCache {
                     Channel channel = (Channel) category.children.elementAt(j);
 
                     if (channel.id == channelID && lastMessageID > channel.lastMessageID) {
+                        Log.d(TAG, "Channel " + channelID + " last message updated to " +
+                            lastMessageID);
                         channel.lastMessageID = lastMessageID;
                         return;
                     }
                 }
             }
         }
+
+        Log.d(TAG, "Channel " + channelID + " not found in cache while updating last message");
     }
 
     /**
@@ -205,7 +220,11 @@ public class ChannelCache extends LRUCache {
         if (guildID == 0 || channelID == 0) return null;
 
         Vector categories = get(guildID);
-        if (categories == null) return null;
+        if (categories == null) {
+            Log.d(TAG, "Guild " + guildID + " not in channel cache while looking up channel " +
+                channelID);
+            return null;
+        }
 
         for (int i = 0; i < categories.size(); i++) {
             ChannelCategory category = (ChannelCategory) categories.elementAt(i);

@@ -1,5 +1,7 @@
 package tech.alicesworld.ModernConnector;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -33,6 +35,7 @@ import javax.microedition.io.SecurityInfo;
  * redirects; you can inspect 3xx and follow manually if desired.
  */
 public final class ModernHTTPSConnection implements HttpsConnection {
+    private static final String TAG = "ModernHTTPS";
 
     private final SecureConnection sc;
     private final String url;
@@ -81,6 +84,7 @@ public final class ModernHTTPSConnection implements HttpsConnection {
         this.url = url;
 
         parseUrl(url); // fills hostHeader & pathAndQuery
+        Log.d(TAG, "Connecting to " + hostHeader + " (" + url + ")");
 
         // Open underlying streams once
         this.tlsIn = sc.openInputStream();
@@ -263,7 +267,7 @@ public final class ModernHTTPSConnection implements HttpsConnection {
                 contentLength = Long.parseLong(cl);
             }
             catch (NumberFormatException nfe) {
-                /* ignore */
+                Log.w(TAG, "Invalid Content-Length: " + cl);
             }
         }
         contentType = getHeaderField("Content-Type");
@@ -271,6 +275,7 @@ public final class ModernHTTPSConnection implements HttpsConnection {
 
         // Prepare body stream
         String te = getHeaderField("Transfer-Encoding");
+        Log.d(TAG, "Response HTTP " + responseCode + " from " + hostHeader);
         InputStream raw = lr.remainingStream();
         if (te != null && toLower(te).indexOf("chunked") >= 0) {
             responseBodyStream = new ChunkedInputStream(raw);
@@ -298,6 +303,7 @@ public final class ModernHTTPSConnection implements HttpsConnection {
             responseCode = Integer.parseInt(codeStr);
         }
         catch (NumberFormatException nfe) {
+            Log.w(TAG, "Bad status code: " + codeStr);
             throw new IOException("Bad status code: " + codeStr);
         }
         reasonPhraseFromStatus = status.substring(sp2 + 1);
@@ -390,7 +396,7 @@ public final class ModernHTTPSConnection implements HttpsConnection {
                 return Integer.parseInt(hostHeader.substring(idx + 1));
             }
             catch (Exception e) {
-                /* ignore */
+                Log.w(TAG, "Invalid port in Host header, using 443", e);
             }
         }
         return 443;
@@ -504,6 +510,7 @@ public final class ModernHTTPSConnection implements HttpsConnection {
             }
         }
         catch (IOException ignored) {
+            Log.d(TAG, "Error during close before send, ignored", ignored);
         }
         IOException first = null;
         try {

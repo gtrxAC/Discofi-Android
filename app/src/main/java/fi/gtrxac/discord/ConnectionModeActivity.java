@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -16,6 +17,7 @@ import android.widget.RadioGroup;
  */
 
 public class ConnectionModeActivity extends Activity {
+    private static final String TAG = "ConnectionMode";
     private View proxySettings;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class ConnectionModeActivity extends Activity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 App.pendingAccount.useProxy = (checkedId == R.id.proxyOption);
+                Log.d(TAG, "Connection mode changed, useProxy=" + App.pendingAccount.useProxy);
                 proxySettings.setVisibility(App.pendingAccount.useProxy ? View.VISIBLE : View.GONE);
             }
         });
@@ -50,6 +53,7 @@ public class ConnectionModeActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 App.pendingAccount.useGateway = isChecked;
+                Log.d(TAG, "Gateway enabled=" + isChecked);
             }
         });
 
@@ -91,6 +95,9 @@ public class ConnectionModeActivity extends Activity {
                     App.pendingAccount.cdnUrl = cdnUrl;
                 }
 
+                Log.d(TAG, "Connection settings accepted, useProxy=" +
+                    App.pendingAccount.useProxy + ", useGateway=" +
+                    App.pendingAccount.useGateway);
                 Intent intent = new Intent(v.getContext(), LoginActivity.class);
                 startActivity(intent);
             }
@@ -99,6 +106,7 @@ public class ConnectionModeActivity extends Activity {
 
     private void fillConnectionFields() {
         Account acc = App.pendingAccount;
+        Log.d(TAG, "Filling connection fields, useProxy=" + acc.useProxy);
 
         if (acc.useProxy) {
             RadioGroup connectionGroup = (RadioGroup) findViewById(R.id.modeSelection);

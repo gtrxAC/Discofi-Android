@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import fi.gtrxac.bluewap.Util;
  */
 
 public class LoginActivity extends Activity {
+    private static final String TAG = "LoginActivity";
     private static final String TOKEN_REGEX =
         "[A-Za-z0-9-_]{20,28}.[A-Za-z0-9-_]{4,8}.[A-Za-z0-9-_]{32,}";
     private static final int TOKEN_FILE_REQUEST = 1;
@@ -36,13 +38,15 @@ public class LoginActivity extends Activity {
      * Runs on a background thread.
      */
     static void completeLogin(final Context c, final ProgressDialog dialog, final String token) {
+        Log.d(TAG, "Completing login");
         App.pendingAccount.token = token;
 
         try {
             App.pendingAccount.fetchUserProfile();
+            Log.d(TAG, "Login succeeded for user " + App.pendingAccount.userId);
         }
         catch (DiscordException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Failed to fetch user profile after login", e);
         }
 
         runOnUiThreadStatic(c, new Runnable() {
@@ -71,6 +75,7 @@ public class LoginActivity extends Activity {
         // Add the account if it doesn't already exist.
         if (!Accounts.list.contains(App.pendingAccount)) {
             Accounts.list.addElement(App.pendingAccount);
+            Log.d(TAG, "Added new account, total " + Accounts.list.size());
         }
         App.pendingAccount = null;
         Settings.save(c);
@@ -185,18 +190,20 @@ public class LoginActivity extends Activity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TOKEN_FILE_REQUEST && resultCode == RESULT_OK) {
+            Log.d(TAG, "Importing token from file");
             try {
                 InputStream is = this.getContentResolver().openInputStream(data.getData());
                 byte[] tokenBytes = Util.readBytes(is);
                 String token = Util.bytesToString(tokenBytes).trim();
                 if (token == null || token.length() == 0) {
+                    Log.w(TAG, "Imported token file was empty");
                     Toast.makeText(this, "Token file is empty", Toast.LENGTH_LONG).show();
                     return;
                 }
                 loginToken(token);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Failed to read token file", e);
                 new DiscordException(e).show(this);
             }
         }
@@ -204,6 +211,7 @@ public class LoginActivity extends Activity {
 
     private void loginToken(final String token) {
         final Context c = this;
+        Log.d(TAG, "Starting token login");
 
         final ProgressDialog dialog = ProgressDialog.show(c, "", "Logging in...", true);
 
@@ -220,6 +228,7 @@ public class LoginActivity extends Activity {
      */
     private void initiateLogin() {
         final Context c = this;
+        Log.d(TAG, "Starting password login");
 
         final ProgressDialog dialog = ProgressDialog.show(c, "", "Logging in...", true);
 
@@ -251,6 +260,7 @@ public class LoginActivity extends Activity {
                         (JSONObject) acc.postJSON("/auth/login", loginBody, headers);
 
                     if (loginResponse.getBoolean("mfa", false)) {
+                        Log.i(TAG, "Password login requires MFA");
                         // 3a. Multi-factor authentication required -> TOTP screen
                         App.pendingTicket = loginResponse.getString("ticket");
                         App.pendingLoginInstanceID = loginResponse.getString("login_instance_id");
@@ -266,11 +276,13 @@ public class LoginActivity extends Activity {
                     }
                     else {
                         // 3b. No MFA -> token returned directly
+                        Log.i(TAG, "Password login succeeded");
                         final String token = loginResponse.getString("token");
                         completeLogin(c, dialog, token);
                     }
                 }
                 catch (final DiscordException e) {
+                    Log.e(TAG, "Password login failed", e);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             dialog.dismiss();

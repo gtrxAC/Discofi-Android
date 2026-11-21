@@ -5,6 +5,8 @@
  */
 package tech.alicesworld.ModernConnector;
 
+import android.util.Log;
+
 /**
  * @author aliceindisarray/Rafflesia
  */
@@ -21,6 +23,7 @@ import javax.microedition.io.SocketConnection;
 import fi.gtrxac.tinytls.TinyTLS;
 
 public class WebSocketClient {
+    private static final String TAG = "WebSocket";
 
     private String serverUrl;
     private int port;
@@ -54,11 +57,13 @@ public class WebSocketClient {
             // Read handshake response
             String response = readResponse();
             if (response.startsWith("HTTP/1.1 101")) {
+                Log.i(TAG, "WebSocket handshake accepted by " + serverUrl + ":" + port);
                 return true; // Handshake successful
             }
+            Log.w(TAG, "WebSocket handshake rejected by " + serverUrl + ":" + port);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "WebSocket handshake failed for " + serverUrl + ":" + port, e);
         }
         return false;
     }
@@ -79,12 +84,14 @@ public class WebSocketClient {
             // Read handshake response
             String response = readResponse();
             if (response.startsWith("HTTP/1.1 101")) {
+                Log.i(TAG, "WebSocket TLS handshake accepted by " + serverUrl + ":" + port);
                 return true; // Handshake successful
             }
+            Log.w(TAG, "WebSocket TLS handshake rejected by " + serverUrl + ":" + port);
             return false;
         }
         catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "WebSocket TLS handshake failed for " + serverUrl + ":" + port, e);
             return false;
         }
     }
@@ -101,8 +108,10 @@ public class WebSocketClient {
         // Read handshake response
         String response = readResponse();
         if (response.startsWith("HTTP/1.1 101")) {
+            Log.i(TAG, "WebSocket handshake accepted over existing socket");
             return true; // Handshake successful
         }
+        Log.w(TAG, "WebSocket handshake over existing socket was rejected");
         return false;
     }
 
@@ -195,7 +204,7 @@ public class WebSocketClient {
         }
 
         int opcode = firstByte & 0x0F;
-        System.out.println("Opcode: " + opcode);
+        Log.d(TAG, "WebSocket frame received, opcode=" + opcode);
         if (opcode != 0x01 && opcode != 0x02) { // Check if it's a text frame or binary frame
 //            throw new IOException("Unsupported frame type");
             return new byte[0];
@@ -225,6 +234,7 @@ public class WebSocketClient {
 
         int opcode = firstByte & 0x0F;
         if (opcode != 0x01) { // Check if it's a text frame
+            Log.d(TAG, "Ignoring non-text WebSocket frame, opcode=" + opcode);
             return "";
 //            throw new IOException("Unsupported frame type");
 
@@ -262,7 +272,7 @@ public class WebSocketClient {
             }
         }
         catch (IOException e) {
-            e.printStackTrace();
+            Log.w(TAG, "Failed to close WebSocket connection", e);
         }
     }
 }

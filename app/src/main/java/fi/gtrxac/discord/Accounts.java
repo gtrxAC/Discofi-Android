@@ -1,5 +1,7 @@
 package fi.gtrxac.discord;
 
+import android.util.Log;
+
 import java.util.Vector;
 
 /**
@@ -7,6 +9,8 @@ import java.util.Vector;
  */
 
 public class Accounts {
+    private static final String TAG = "Accounts";
+
     public static Vector<Account> list = new Vector<>();
     private static int activeIndex = -1;
 
@@ -22,6 +26,7 @@ public class Accounts {
     }
 
     public static void setActive(int index) {
+        Log.d(TAG, "Active account index set to " + index + " (" + list.size() + " accounts)");
         activeIndex = index;
     }
 }

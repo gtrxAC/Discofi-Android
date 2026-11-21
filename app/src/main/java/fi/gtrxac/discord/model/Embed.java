@@ -1,5 +1,7 @@
 package fi.gtrxac.discord.model;
 
+import android.util.Log;
+
 import java.util.Vector;
 
 import cc.nnproject.json.JSONArray;
@@ -10,6 +12,8 @@ import cc.nnproject.json.JSONObject;
  */
 
 public class Embed {
+    private static final String TAG = "Embed";
+
     public String title;
     public Type type;
     public String description;
@@ -49,10 +53,12 @@ public class Embed {
                         fields.addElement(field);
                     }
                     catch (Exception e) {
+                        Log.w(TAG, "Failed to parse embed field " + i, e);
                     }
                 }
             }
             catch (Exception e) {
+                Log.w(TAG, "Failed to parse embed fields", e);
             }
         }
     }

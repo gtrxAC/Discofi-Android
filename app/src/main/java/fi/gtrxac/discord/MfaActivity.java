@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +17,7 @@ import cc.nnproject.json.JSONObject;
  * TOTP entry screen for the second step of password login.
  */
 public class MfaActivity extends Activity {
+    private static final String TAG = "MfaActivity";
     private EditText totpField;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class MfaActivity extends Activity {
 
     private void submitTotp(final String code) {
         final Context c = this;
+        Log.d(TAG, "Submitting MFA code");
         final ProgressDialog dialog = ProgressDialog.show(this, "", "Logging in...", true);
 
         new Thread() {
@@ -72,11 +75,13 @@ public class MfaActivity extends Activity {
                         (JSONObject) acc.postJSON("/auth/mfa/totp", body, headers);
 
                     final String token = response.getString("token");
+                    Log.i(TAG, "MFA accepted");
 
                     // completeLogin finishes this activity once done
                     LoginActivity.completeLogin(c, dialog, token);
                 }
                 catch (final DiscordException e) {
+                    Log.e(TAG, "MFA login failed", e);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             dialog.dismiss();

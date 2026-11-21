@@ -1,5 +1,7 @@
 package fi.gtrxac.discord;
 
+import android.util.Log;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
@@ -13,6 +15,7 @@ import tech.alicesworld.ModernConnector.ModernConnector;
 import tech.alicesworld.ModernConnector.WebSocketClient;
 
 public class GatewayThread extends Thread {
+    private static final String TAG = "Gateway";
     public static final String DEFAULT_GATEWAY_URL = "wss://gateway.discord.gg/?v=9&encoding=json";
 
     private static final Vector<GatewayListener> listeners = new Vector<GatewayListener>();
@@ -30,6 +33,7 @@ public class GatewayThread extends Thread {
         this.account = account;
         account.subscribedGuilds = new Vector();
         reconnectAttempts++;
+        Log.d(TAG, "Gateway thread created, reconnect attempt " + reconnectAttempts);
     }
 
     public static void addListener(GatewayListener listener) {
@@ -37,13 +41,18 @@ public class GatewayThread extends Thread {
         synchronized (listeners) {
             if (!listeners.contains(listener)) {
                 listeners.addElement(listener);
+                Log.d(TAG, "Listener added: " + listener.getClass().getSimpleName() +
+                    " (total " + listeners.size() + ")");
             }
         }
     }
 
     public static void removeListener(GatewayListener listener) {
         synchronized (listeners) {
-            listeners.removeElement(listener);
+            if (listeners.removeElement(listener)) {
+                Log.d(TAG, "Listener removed: " + listener.getClass().getSimpleName() +
+                    " (total " + listeners.size() + ")");
+            }
         }
     }
 
@@ -62,7 +71,7 @@ public class GatewayThread extends Thread {
                 targets[i].onGatewayConnected();
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling gateway connect", e);
             }
         }
     }
@@ -74,7 +83,7 @@ public class GatewayThread extends Thread {
                 targets[i].onGatewayDisconnected(reason);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling gateway disconnect", e);
             }
         }
     }
@@ -86,7 +95,7 @@ public class GatewayThread extends Thread {
                 targets[i].onGatewayReady(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling READY", e);
             }
         }
     }
@@ -98,7 +107,7 @@ public class GatewayThread extends Thread {
                 targets[i].onMessageCreate(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling MESSAGE_CREATE", e);
             }
         }
     }
@@ -110,7 +119,7 @@ public class GatewayThread extends Thread {
                 targets[i].onMessageUpdate(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling MESSAGE_UPDATE", e);
             }
         }
     }
@@ -122,7 +131,7 @@ public class GatewayThread extends Thread {
                 targets[i].onMessageDelete(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling MESSAGE_DELETE", e);
             }
         }
     }
@@ -134,7 +143,7 @@ public class GatewayThread extends Thread {
                 targets[i].onMessageAck(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling MESSAGE_ACK", e);
             }
         }
     }
@@ -146,7 +155,7 @@ public class GatewayThread extends Thread {
                 targets[i].onTypingStart(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling TYPING_START", e);
             }
         }
     }
@@ -158,7 +167,7 @@ public class GatewayThread extends Thread {
                 targets[i].onGuildMembersChunk(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling GUILD_MEMBERS_CHUNK", e);
             }
         }
     }
@@ -170,7 +179,7 @@ public class GatewayThread extends Thread {
                 targets[i].onPresenceUpdate(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling PRESENCE_UPDATE", e);
             }
         }
     }
@@ -182,7 +191,7 @@ public class GatewayThread extends Thread {
                 targets[i].onChannelUnread(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling CHANNEL_UNREAD_UPDATE", e);
             }
         }
     }
@@ -194,7 +203,7 @@ public class GatewayThread extends Thread {
                 targets[i].onPassiveUpdateV1(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling PASSIVE_UPDATE_V1", e);
             }
         }
     }
@@ -206,7 +215,7 @@ public class GatewayThread extends Thread {
                 targets[i].onPassiveUpdateV2(data);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Listener failed handling PASSIVE_UPDATE_V2", e);
             }
         }
     }
@@ -217,46 +226,60 @@ public class GatewayThread extends Thread {
             os.flush();
         }
         catch (Exception e) {
+            Log.e(TAG, "Failed to send gateway payload over socket", e);
         }
     }
 
     private void disconnect() {
+        Log.d(TAG, "Closing gateway connection");
+
         if (hbThread != null) hbThread.stop = true;
         try {
-            is.close();
+            if (is != null) is.close();
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to close gateway input stream", e);
         }
         try {
-            os.close();
+            if (os != null) os.close();
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to close gateway output stream", e);
         }
         try {
-            ws.close();
+            if (ws != null) ws.close();
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to close WebSocket", e);
         }
         try {
-            sc.close();
+            if (sc != null) sc.close();
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to close gateway socket", e);
         }
     }
 
     public void disconnected(String message) {
+        Log.w(TAG, "Gateway disconnected: " + message);
+
         disconnect();
         stopMessage = message;
         notifyDisconnected(message);
 
         if (Settings.autoReconnect && (!stop || stopMessage != null) && reconnectAttempts < 3) {
             reconnectAttempts++;
+            final int delay = 2000 * reconnectAttempts;
+            Log.i(TAG, "Reconnecting gateway in " + delay + " ms (attempt " + reconnectAttempts +
+                ")");
+
             new Thread() {
                 public void run() {
                     try {
-                        Thread.sleep(2000L * reconnectAttempts);
+                        Thread.sleep(delay);
                     }
                     catch (InterruptedException e) {
+                        Log.w(TAG, "Gateway reconnect sleep interrupted", e);
                     }
                     if (!stop && account.useGateway) {
                         account.startGateway();
@@ -272,6 +295,7 @@ public class GatewayThread extends Thread {
                 ws.sendMessage(msg.build());
             }
             catch (Exception e) {
+                Log.e(TAG, "Failed to send gateway payload over WebSocket", e);
             }
         }
         else {
@@ -280,7 +304,11 @@ public class GatewayThread extends Thread {
     }
 
     public void run() {
-        if (account == null || !account.useGateway) return;
+        if (account == null || !account.useGateway) {
+            Log.d(TAG, "Gateway disabled for this account");
+            return;
+        }
+
         try {
             String url = account.gatewayUrl;
 
@@ -292,17 +320,22 @@ public class GatewayThread extends Thread {
                 url = "socket://" + url; // assume proxied gateway
             }
 
+            Log.i(TAG, "Connecting to gateway: " + url);
+
             Object conn = ModernConnector.open(url);
             if (conn instanceof WebSocketClient) {
+                Log.d(TAG, "Gateway using WebSocket transport");
                 ws = (WebSocketClient) conn;
             }
             else {
+                Log.d(TAG, "Gateway using raw socket transport");
                 sc = (SocketConnection) conn;
                 sc.setSocketOption(SocketConnection.KEEPALIVE, 1);
                 is = sc.openInputStream();
                 os = sc.openOutputStream();
             }
 
+            Log.i(TAG, "Gateway connected");
             notifyConnected();
 
             StringBuffer sb = new StringBuffer();
@@ -351,8 +384,14 @@ public class GatewayThread extends Thread {
                     hbThread.lastReceived = seq;
                 }
 
+                if (op != null && op.length() > 0) {
+                    Log.d(TAG, "Gateway event: " + op + " (seq " + seq + ")");
+                }
+
                 if (op != null) {
                     if (op.equals("GATEWAY_HELLO")) {
+                        Log.d(TAG, "Gateway proxy sent HELLO, subscribing to events");
+
                         // Connect to gateway
                         JSONArray events = new JSONArray();
                         events.add("MESSAGE_CREATE");
@@ -377,11 +416,15 @@ public class GatewayThread extends Thread {
                     }
                     else if (op.equals("GATEWAY_DISCONNECT")) {
                         String reason = message.getObject("d").getString("message");
+                        Log.w(TAG, "Gateway proxy requested disconnect: " + reason);
                         disconnected(reason);
                         return;
                     }
                     else if (op.equals("MESSAGE_CREATE")) {
                         JSONObject data = message.getObject("d");
+                        Log.d(TAG, "MESSAGE_CREATE in channel " + data.getString("channel_id", "?") +
+                            " (message " + data.getString("id", "?") + ")");
+
                         boolean mentioned = account.unreadManager.onMessageCreate(data);
                         Notifications.onMessageCreate(account, data, mentioned);
                         notifyMessageCreate(data);
@@ -419,14 +462,17 @@ public class GatewayThread extends Thread {
                                 account.userId = Long.parseLong(data.getString("id"));
                             }
                             catch (Exception e) {
+                                Log.w(TAG, "READY has no top-level user ID, trying user object", e);
                                 try {
                                     account.userId =
                                         Long.parseLong(data.getObject("user").getString("id"));
                                 }
                                 catch (Exception ignored) {
+                                    Log.w(TAG, "READY did not contain a usable user ID", ignored);
                                 }
                             }
                         }
+                        Log.i(TAG, "Gateway READY for user " + account.userId);
                         account.channelCache.onGatewayReady(data);
                         account.unreadManager.updateReadStatesFromReady(data);
                         notifyReady(data);
@@ -449,6 +495,7 @@ public class GatewayThread extends Thread {
                 }
                 else if (message.getInt("op", 0) == 10) {
                     int heartbeatInterval = message.getObject("d").getInt("heartbeat_interval");
+                    Log.i(TAG, "Gateway HELLO, heartbeat interval " + heartbeatInterval + " ms");
                     hbThread = new HeartbeatThread(this, heartbeatInterval);
                     hbThread.start();
 
@@ -465,8 +512,8 @@ public class GatewayThread extends Thread {
             }
         }
         catch (Exception e) {
+            Log.e(TAG, "Gateway connection failed", e);
             disconnected(e.toString());
-            e.printStackTrace();
         }
     }
 }

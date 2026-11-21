@@ -1,5 +1,7 @@
 package fi.gtrxac.discord.model;
 
+import android.util.Log;
+
 import cc.nnproject.json.*;
 
 /**
@@ -7,6 +9,8 @@ import cc.nnproject.json.*;
  */
 
 public class DMChannel extends Channel {
+    private static final String TAG = "DMChannel";
+
     public String username;
     public boolean isGroup;
     public long iconID;  // for groups, group ID. for users, recipient ID (not DM channel ID)
@@ -81,6 +85,7 @@ public class DMChannel extends Channel {
             iconHash = recipient.getString("avatar", null);
         }
         catch (Exception e) {
+            Log.w(TAG, "Failed to parse recipient info for DM channel " + id, e);
         }
     }
 
