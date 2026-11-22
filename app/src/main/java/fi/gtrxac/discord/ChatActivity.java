@@ -871,11 +871,14 @@ public class ChatActivity extends Activity implements GatewayListener {
      */
     private long fetchMyPermissions() {
         Channel channel = account.channelCache.getChannelByIDInGuild(guildId, channelId);
+        if (channel.myPermissions != -1) return channel.myPermissions;
 
         try {
             Guild guild = account.getGuild(guildId);
-            if (guild != null && guild.permissions != 0) {
-                return channel.computePermissions(guildId, guild.permissions, account.userId);
+            if (guild != null) {
+                GuildMember member = account.getMyGuildMember(guild);
+                channel.myPermissions = channel.computePermissions(guildId, member);
+                return channel.myPermissions;
             }
         }
         catch (Exception e) {

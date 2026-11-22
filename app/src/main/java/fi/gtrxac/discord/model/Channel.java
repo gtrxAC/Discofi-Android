@@ -81,8 +81,8 @@ public class Channel {
     /**
      * Calculate a guild member's permissions in this channel.
      */
-    public long computePermissions(long guildId, GuildMember member, long userId) {
-        return computePermissions(guildId, member.permissions, member.roles, userId);
+    public long computePermissions(long guildId, GuildMember member) {
+        return computePermissions(guildId, member.permissions, member.roles, member.id);
     }
 
     /**

@@ -452,6 +452,20 @@ public class Account {
         return getGuildMember(userId, guild.id, roles);
     }
 
+    public GuildMember getMyGuildMember(long guildId, Vector guildRoles) throws DiscordException {
+        JSONObject guildMemberJson =
+            (JSONObject) fetchJSON("/users/@me/guilds/" + guildId + "/member");
+        return new GuildMember(guildMemberJson, guildRoles);
+    }
+
+    public GuildMember getMyGuildMember(Guild guild) throws DiscordException {
+        Vector roles = guild.roles;
+        if (roles == null) {
+            roles = getGuildRoles(guild.id);
+        }
+        return getMyGuildMember(guild.id, roles);
+    }
+
     /**
      * Fetch messages from a channel. The returned Vector is ordered oldest
      * first, regardless of the order the API returned them in.

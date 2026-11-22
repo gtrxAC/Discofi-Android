@@ -472,8 +472,8 @@ public class GatewayThread extends Thread {
                                 }
                             }
                         }
-                        Log.i(TAG, "Gateway READY for user " + account.userId);
-                        account.channelCache.onGatewayReady(data);
+                        Log.i(TAG, "Gateway READY for user " + account.getUserID());
+                        account.channelCache.onGatewayReady(data, account.getUserID());
                         account.unreadManager.updateReadStatesFromReady(data);
                         notifyReady(data);
                     }

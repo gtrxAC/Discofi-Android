@@ -10,6 +10,7 @@ import cc.nnproject.json.JSONObject;
 import fi.gtrxac.discord.model.Channel;
 import fi.gtrxac.discord.model.ChannelCategory;
 import fi.gtrxac.discord.model.Permissions;
+import fi.gtrxac.discord.model.Role;
 import fi.gtrxac.discord.util.LRUCache;
 import fi.gtrxac.discord.util.LRUCacheEntry;
 
@@ -56,9 +57,10 @@ public class ChannelCache extends LRUCache {
                     channel.type = channelData.getInt(1);
                     channel.name = channelData.getString(2, null);
                     channel.lastMessageID = channelData.getLong(3, 0);
-                    if (channelData.size() > 4) {
+                    channel.myPermissions = channelData.getLong(4, 0);
+                    if (channelData.size() > 5) {
                         channel.overwrites = new Vector();
-                        for (int l = 4; l + 3 < channelData.size(); l += 4) {
+                        for (int l = 5; l + 3 < channelData.size(); l += 4) {
                             Permissions.Overwrite overwrite = new Permissions.Overwrite();
                             overwrite.id = channelData.getLong(l);
                             overwrite.allow = channelData.getLong(l + 1);
@@ -114,6 +116,7 @@ public class ChannelCache extends LRUCache {
                     channelData.add(channel.type);
                     channelData.add(channel.name);
                     channelData.add(channel.lastMessageID);
+                    channelData.add(channel.myPermissions);
                     if (channel.overwrites != null) {
                         for (int k = 0; k < channel.overwrites.size(); k++) {
                             Permissions.Overwrite overwrite =
@@ -144,24 +147,111 @@ public class ChannelCache extends LRUCache {
         return (Vector) super.get(guildID);
     }
 
-    public void onGatewayReady(JSONObject data) {
+    public void onGatewayReady(JSONObject data, long userId) {
         if (data == null || !data.has("guilds")) return;
 
         JSONArray guilds = data.getArray("guilds");
+        JSONArray mergedMembers = data.getArray("merged_members", null);
         int updated = 0;
 
         for (int i = 0; i < guilds.size(); i++) {
             JSONObject guildJSON = guilds.getObject(i);
             long guildID = Long.parseLong(guildJSON.getString("id"));
-            if (guildJSON.has("channels")) {
-                Vector channels = Channel.parseChannels(guildJSON.getArray("channels"));
-                set(guildID, channels);
-                updated++;
+            if (!guildJSON.has("channels")) continue;
+
+            Vector channels = Channel.parseChannels(guildJSON.getArray("channels"));
+
+            try {
+                JSONObject myMember = findMyMember(mergedMembers, i,
+                    guildJSON.getArray("members", null), userId);
+                Log.d(TAG, "READY guild " + guildID + ": " +
+                    (myMember == null ? "no member data" : "found member data"));
+
+                if (myMember != null) {
+                    JSONArray roleArray = myMember.getArray("roles", null);
+                    if (roleArray != null) {
+                        Vector myRoles = Role.parseRoleIDs(roleArray);
+                        long basePermissions = computeBasePermissions(
+                            guildJSON.getArray("roles", null), guildID, myRoles);
+
+                        for (int j = 0; j < channels.size(); j++) {
+                            ChannelCategory category = (ChannelCategory) channels.elementAt(j);
+                            for (int k = 0; k < category.children.size(); k++) {
+                                Channel channel = (Channel) category.children.elementAt(k);
+                                channel.myPermissions = channel.computePermissions(
+                                    guildID, basePermissions, myRoles, userId);
+                            }
+                        }
+                    }
+                }
             }
+            catch (Exception e) {
+                Log.w(TAG, "Failed to calculate permissions for guild " + guildID, e);
+            }
+
+            set(guildID, channels);
+            updated++;
         }
 
         Log.d(TAG, "Updated channel cache for " + updated + " of " + guilds.size() +
             " guilds from READY");
+    }
+
+    private static JSONObject findMyMember(JSONArray mergedMembers, int guildIndex,
+        JSONArray guildMembers, long userId) {
+        if (mergedMembers != null && guildIndex < mergedMembers.size()) {
+            JSONArray members = mergedMembers.getArray(guildIndex, null);
+            if (members != null) {
+                JSONObject member = findMemberById(members, userId);
+                if (member == null && members.size() == 1) {
+                    member = members.getObject(0);
+                }
+                if (member != null) return member;
+            }
+        }
+        if (guildMembers != null) return findMemberById(guildMembers, userId);
+        return null;
+    }
+
+    private static JSONObject findMemberById(JSONArray members, long userId) {
+        for (int i = 0; i < members.size(); i++) {
+            JSONObject member = members.getObject(i);
+            JSONObject user = member.getObject("user", null);
+            String idStr = user != null ? user.getString("id", null)
+                : member.getString("user_id", null);
+            if (idStr != null && Long.parseLong(idStr) == userId) return member;
+        }
+        return null;
+    }
+
+    private static long computeBasePermissions(JSONArray rolesJson, long guildId, Vector myRoles) {
+        if (rolesJson == null) return 0;
+
+        long permissions = 0;
+
+        // @everyone has the same ID as the guild
+        for (int i = 0; i < rolesJson.size(); i++) {
+            JSONObject role = rolesJson.getObject(i);
+            if (Long.parseLong(role.getString("id")) == guildId) {
+                permissions = Long.parseLong(role.getString("permissions", "0"));
+                break;
+            }
+        }
+
+        for (int i = 0; i < rolesJson.size(); i++) {
+            JSONObject role = rolesJson.getObject(i);
+            long roleId = Long.parseLong(role.getString("id"));
+            if (roleId == guildId) continue;
+
+            for (int j = 0; j < myRoles.size(); j++) {
+                if (((Role) myRoles.elementAt(j)).id == roleId) {
+                    permissions |= Long.parseLong(role.getString("permissions", "0"));
+                    break;
+                }
+            }
+        }
+
+        return permissions;
     }
 
     public void setLastMessageID(long channelID, long lastMessageID) {

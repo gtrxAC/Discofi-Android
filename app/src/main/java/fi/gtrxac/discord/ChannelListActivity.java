@@ -27,6 +27,7 @@ import cc.nnproject.json.JSONObject;
 import fi.gtrxac.discord.model.Channel;
 import fi.gtrxac.discord.model.ChannelCategory;
 import fi.gtrxac.discord.model.Guild;
+import fi.gtrxac.discord.model.GuildMember;
 
 /**
  * Shows a guild's channels grouped by category.
@@ -140,16 +141,34 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                     try {
                         Guild guild = account.getGuild(guildId);
 
-                        if (guild != null && guild.permissions != 0) {
-                            for (int i = 0; i < categories.size(); i++) {
+                        if (guild != null) {
+                            boolean needMember = false;
+                            for (int i = 0; i < categories.size() && !needMember; i++) {
                                 ChannelCategory category =
                                     (ChannelCategory) categories.elementAt(i);
-
                                 for (int j = 0; j < category.children.size(); j++) {
-                                    Channel channel = (Channel) category.children.elementAt(j);
-                                    channel.myPermissions =
-                                        channel.computePermissions(guildId, guild.permissions,
-                                            account.userId);
+                                    if (((Channel) category.children.elementAt(j))
+                                        .myPermissions == -1) {
+                                        needMember = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (needMember) {
+                                GuildMember member = account.getMyGuildMember(guild);
+
+                                for (int i = 0; i < categories.size(); i++) {
+                                    ChannelCategory category =
+                                        (ChannelCategory) categories.elementAt(i);
+
+                                    for (int j = 0; j < category.children.size(); j++) {
+                                        Channel channel =
+                                            (Channel) category.children.elementAt(j);
+                                        if (channel.myPermissions != -1) continue;
+                                        channel.myPermissions =
+                                            channel.computePermissions(guildId, member);
+                                    }
                                 }
                             }
                         }
