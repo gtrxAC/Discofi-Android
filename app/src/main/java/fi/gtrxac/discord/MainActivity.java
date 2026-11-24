@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -154,6 +155,16 @@ public class MainActivity extends TabActivity implements GatewayListener {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Message message = inbox.elementAt(position);
                 Channel channel = acc.channelCache.getChannelByID(0, message.channelId);
+
+                // Channel cannot be found if its server is not cached.
+                // The gateway ready event would populate the cache with all servers,
+                // but the servers would have to be manually loaded if gateway is disabled.
+                if (channel == null) {
+                    Toast.makeText(MainActivity.this,
+                        "This server is not cached", Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
 
                 Account acc = Accounts.getActive();
                 if (acc != null) {
