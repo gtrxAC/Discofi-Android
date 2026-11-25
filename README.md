@@ -1,5 +1,7 @@
 # Discofi
 
+**This repo is for the Android version. For the J2ME version, [go here](https://github.com/gtrxAC/Discofi).**
+
 Discofi-Android is a new Discord client for legacy Android devices targeting versions under 5.0, currently in development. Its goal is to be an evolution of [Discord J2ME](https://github.com/gtrxAC/discord-j2me) and [Droidcord](https://github.com/leap0x7b/Droidcord) with a focus on proxyless connectivity, user-friendly UI, and maintainability.
 
 > [!IMPORTANT]
@@ -11,8 +13,6 @@ Discofi-Android is a new Discord client for legacy Android devices targeting ver
 ### <div style="text-align: center;">[Support Server](https://discord.gg/2GKuJjQagp) <small>(go to #discord-j2me-wap)</small></div>
 
 ![](/img/screenshots.png)
-
-This repo is for the Android version. There is a separate repo for the [J2ME version](https://github.com/gtrxAC/Discofi), but the plan is to eventually merge these into one project and potentially add support for other Java-based platforms like desktop.
 
 ## Status
 ### Working
@@ -49,15 +49,6 @@ This repo is for the Android version. There is a separate repo for the [J2ME ver
 ### Not planned
 * Friend requests (unsafe)
 * Joining servers (unsafe)
-
-<!--
-## Build variants
-Official builds are not yet available, this is preliminary information.
-
-| Build | Description |
-|-|-|
-| **discofi** | Generic build for most devices
--->
 
 ## For developers
 The build system used is Gradle 4.9 on Java 8. Android Studio can be used for development though using an older version such as 3.0.1 (171.4443003) is recommended.
