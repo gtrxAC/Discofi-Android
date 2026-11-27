@@ -4,11 +4,13 @@ import android.os.Build;
 import android.util.Log;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
 
 import javax.microedition.io.HttpConnection;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
 
 import tech.alicesworld.ModernConnector.ModernConnector;
 
@@ -17,7 +19,9 @@ public class StandardHTTP extends HTTP {
 
     public static final Exception requestMethodException = new Exception();
 
-    private HttpsURLConnection conn;
+    private static boolean deviceMaySupportTls12 = true;
+
+    private HttpURLConnection conn;
     private HttpConnection modernConn;
 
     public StandardHTTP(String method, String url) {
@@ -25,21 +29,27 @@ public class StandardHTTP extends HTTP {
     }
 
     protected InputStream makeRequest() throws Exception {
-        try {
-            InputStream result = makePlatformRequest();
-            Log.d(TAG, method + " " + url + " -> HTTP " + responseCode + " (platform)");
-            return result;
+        // Try to make this request using platform native HTTP stack if possible
+        if (deviceMaySupportTls12 || !url.startsWith("https://")) {
+            try {
+                InputStream result = makePlatformRequest();
+                Log.d(TAG, method + " " + url + " -> HTTP " + responseCode + " (platform)");
+                return result;
+            }
+            catch (SSLHandshakeException e) {
+                // Fallback to Modernconnector for older Android versions
+                Log.w(TAG, method + " " + url + " failed on platform HTTP stack, " +
+                    "falling back to ModernConnector", e);
+
+                deviceMaySupportTls12 = false;
+                closeTransport();
+            }
         }
-        catch (Exception e) {
-            // Fallback to Modernconnector for older Android versions
-            Log.w(TAG, method + " " + url + " failed on platform HTTP stack, " +
-                "falling back to ModernConnector", e);
-            closeTransport();
-            InputStream result = makeModernConnectorRequest();
-            Log.d(TAG, method + " " + url + " -> HTTP " + responseCode +
-                " (ModernConnector)");
-            return result;
-        }
+
+        InputStream result = makeModernConnectorRequest();
+        Log.d(TAG, method + " " + url + " -> HTTP " + responseCode +
+            " (ModernConnector)");
+        return result;
     }
 
     private InputStream makePlatformRequest() throws Exception {
@@ -48,13 +58,19 @@ public class StandardHTTP extends HTTP {
 
         for (int redirects = 0; redirects < 5; redirects++) {
             URL parsed = new URL(currentUrl);
-            conn = (HttpsURLConnection) parsed.openConnection();
-            // Enable TLS 1.2 on Android 4.1-4.4
+            conn = (HttpURLConnection) parsed.openConnection();
+
+            // Enable TLS 1.2 on Android 4.1-4.4 for HTTPS requests.
+            // Plain HTTP requests (e.g. media proxy, user-configured API proxy) are not affected.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
-                Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-                conn.setSSLSocketFactory(new TLSSocketFactory());
+                Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT &&
+                conn instanceof HttpsURLConnection) {
+
+                ((HttpsURLConnection) conn).setSSLSocketFactory(new TLSSocketFactory());
             }
+
             conn.setInstanceFollowRedirects(false);
+
             try {
                 conn.setRequestMethod(currentMethod);
             }
