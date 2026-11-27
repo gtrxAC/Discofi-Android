@@ -55,11 +55,13 @@ public class ChannelCache extends LRUCache {
                     Channel channel = new Channel();
                     channel.id = channelData.getLong(0);
                     channel.type = channelData.getInt(1);
-                    channel.name = channelData.getString(2, null);
+                    channel.setName(channelData.getString(2, null));
                     channel.lastMessageID = channelData.getLong(3, 0);
                     channel.myPermissions = channelData.getLong(4, 0);
+
                     if (channelData.size() > 5) {
                         channel.overwrites = new Vector();
+
                         for (int l = 5; l + 3 < channelData.size(); l += 4) {
                             Permissions.Overwrite overwrite = new Permissions.Overwrite();
                             overwrite.id = channelData.getLong(l);
@@ -114,7 +116,7 @@ public class ChannelCache extends LRUCache {
                     JSONArray channelData = new JSONArray();
                     channelData.add(channel.id);
                     channelData.add(channel.type);
-                    channelData.add(channel.name);
+                    channelData.add(channel.getRawName());
                     channelData.add(channel.lastMessageID);
                     channelData.add(channel.myPermissions);
                     if (channel.overwrites != null) {

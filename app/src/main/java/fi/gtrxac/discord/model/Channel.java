@@ -20,7 +20,7 @@ public class Channel {
     public static final int FLAG_CHANNEL_SPOILER = 1 << 21;
 
     public long id;
-    public String name;
+    protected String name;
     public int type;
     public String parentId;
     public int position;
@@ -35,7 +35,7 @@ public class Channel {
     public Channel(JSONObject data) {
         id = Long.parseLong(data.getString("id"));
         type = data.getInt("type", 0);
-        name = data.getString("name", null);
+        setName(data.getString("name", null));
         parentId = data.getString("parent_id", null);
         position = data.getInt("position", 0);
         flags = data.getInt("flags", 0);
@@ -52,9 +52,6 @@ public class Channel {
                 overwrites.addElement(new Permissions.Overwrite(overwritesJson.getObject(i)));
             }
         }
-
-        if (name != null && nameHasHashtag()) name = "#" + name;
-        if (name == null) name = "(unknown)";
     }
 
     /**
@@ -240,9 +237,59 @@ public class Channel {
         }
     }
 
-    protected boolean nameHasHashtag() {
-        // Voice channels are displayed without a hashtag
-        return type != TYPE_GUILD_VOICE;
+    public void setName(String newName) {
+        name = newName;
+
+        // For the purposes of our client, a blank name (like an unnamed group chat)
+        // will have the same behavior as no name, so we can easily replace with "(unknown)"
+        if (name != null && name.trim().length() == 0) {
+            name = null;
+        }
+    }
+
+    /**
+     * Get raw unformatted name of the channel that is used for loading/saving data.
+     * The raw name may be null, but the other getName methods will always return a valid string.
+     */
+    public String getRawName() {
+        return name;
+    }
+
+    /**
+     * Get display name of the channel that is shown in title bar.
+     */
+    public String getNameForTitle() {
+        if (name == null) return "(unknown)";
+        return getNamePrefix() + name;
+    }
+
+    /**
+     * Get display name of the channel that is shown in messages mentioning this channel.
+     */
+    public String getNameForMention() {
+        if (name == null) return "(unknown)";
+        // Always with a #, even for voice channels
+        return "#" + name;
+    }
+
+    /**
+     * Get display name of the channel that is shown in notifications.
+     */
+    public String getNameForNotification() {
+        return getNameForTitle();
+    }
+
+    /**
+     * Get display name of the channel that is shown in lists.
+     */
+    public String getNameForList() {
+        return getNameForTitle();
+    }
+
+    protected String getNamePrefix() {
+        // Voice channels don't have a #. Category channels also wouldn't have a #,
+        // but we don't create Channel objects from those, so they are not checked here.
+        return (type != TYPE_GUILD_VOICE) ? "#" : "";
     }
 
     /**

@@ -108,17 +108,19 @@ public class Notifications {
 
         if (isDM) {
             if (isGroupDM) {
+                String name = dm.getNameForNotification();
+
                 icon = dm.getIconUrl(account.getCdnUrl());
-                location = dm.name;
-                channelName = dm.name;
-                title = dm.name;
+                location = name;
+                channelName = name;
+                title = name;
                 text = authorName + ": " + content;
                 ticker =
                     context.getString(R.string.notification_guild, authorName, location, content);
             }
             else {
                 icon = dm != null ? dm.getIconUrl(account.getCdnUrl()) : authorAvatar;
-                channelName = title = "@" + (dm != null ? dm.name : authorName);
+                channelName = title = (dm != null ? dm.getNameForNotification() : "@" + authorName);
                 text = content;
                 ticker = context.getString(R.string.notification_dm, authorName, content);
             }
@@ -136,12 +138,7 @@ public class Notifications {
             }
 
             Channel channel = account.channelCache.getChannelByID(guildId, channelId);
-            if (channel != null && channel.name != null) {
-                channelName = channel.name;
-            }
-            else {
-                channelName = context.getString(R.string.unknown);
-            }
+            channelName = channel.getNameForNotification();
 
             location = guildName + " " + channelName;
             title = location;

@@ -18,7 +18,7 @@ public class DMChannel extends Channel {
 
     public DMChannel(JSONObject data) {
         super(data);
-        isGroup = data.getInt("type") == 3;
+        isGroup = data.getInt("type", TYPE_DM) == TYPE_GROUP_DM;
 
         if (isGroup) {
             populateGroupInfo(data);
@@ -36,10 +36,6 @@ public class DMChannel extends Channel {
         lastMessageID = saveData.getLong(4, 0);
         iconID = saveData.getLong(5, 0);
         iconHash = saveData.getString(6, null);
-    }
-
-    protected boolean nameHasHashtag() {
-        return false;
     }
 
     public boolean isMessageable() {
@@ -105,5 +101,22 @@ public class DMChannel extends Channel {
         if (iconID != 0 || iconHash != null) result.add(iconID);
         if (iconHash != null) result.add(iconHash);
         return result;
+    }
+
+    public String getNameForMention() {
+        if (name == null) return "(unknown)";
+        return "@" + name;
+    }
+
+    public String getNameForNotification() {
+        return (name != null) ? name : "(unknown)";
+    }
+
+    public String getNameForList() {
+        return getNameForNotification();
+    }
+
+    protected String getNamePrefix() {
+        return !isGroup ? "@" : "";
     }
 }

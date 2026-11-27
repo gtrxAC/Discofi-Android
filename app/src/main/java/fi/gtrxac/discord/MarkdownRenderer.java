@@ -552,7 +552,7 @@ public class MarkdownRenderer implements MarkdownListener {
         final Channel channel = account.channelCache.getChannelByID(guildId, Long.parseLong(id));
         if (channel != null) {
             int start = out.length();
-            appendMentionStyled(channel.name, font);
+            appendMentionStyled(channel.getNameForMention(), font);
             int end = out.length();
             out.setSpan(new ClickableSpan() {
                 @Override
@@ -566,7 +566,7 @@ public class MarkdownRenderer implements MarkdownListener {
                     Intent intent = new Intent(context, ChatActivity.class);
                     intent.putExtra("guildId", guildId);
                     intent.putExtra("channelId", channel.id);
-                    intent.putExtra("channelName", channel.name);
+                    intent.putExtra("channelName", channel.getNameForTitle());
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }

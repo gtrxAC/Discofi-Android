@@ -83,12 +83,12 @@ public class ChannelListActivity extends Activity implements GatewayListener {
                 row.mentions = 0;
                 ((ChannelListAdapter) channelList.getAdapter()).notifyDataSetChanged();
 
-                Log.d(TAG, "Opening channel " + channel.id + " (" + channel.name + ")");
+                Log.d(TAG, "Opening channel " + channel.id + " (" + channel.getRawName() + ")");
 
                 Intent intent = new Intent(ChannelListActivity.this, ChatActivity.class);
                 intent.putExtra("guildId", guildId);
                 intent.putExtra("channelId", channel.id);
-                intent.putExtra("channelName", channel.name);
+                intent.putExtra("channelName", channel.getNameForTitle());
                 startActivity(intent);
             }
         });
@@ -228,7 +228,7 @@ public class ChannelListActivity extends Activity implements GatewayListener {
 
                 Row row = new Row();
                 row.channel = channel;
-                row.name = channel.name;
+                row.name = channel.getNameForList();
                 row.unread = account.unreadManager.hasUnreads(channel);
                 row.mentions = account.unreadManager.getMentionCount(channel.id);
                 rows.add(row);

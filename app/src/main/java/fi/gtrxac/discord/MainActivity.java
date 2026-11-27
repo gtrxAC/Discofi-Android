@@ -145,7 +145,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
 
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("channelId", dm.id);
-                intent.putExtra("channelName", (!dm.isGroup ? "@" : "") + dm.name);
+                intent.putExtra("channelName", dm.getNameForTitle());
                 startActivity(intent);
             }
         });
@@ -175,7 +175,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("guildId", acc.channelCache.getGuildIDByChannel(channel));
                 intent.putExtra("channelId", channel.id);
-                intent.putExtra("channelName", channel.name);
+                intent.putExtra("channelName", channel.getNameForTitle());
                 intent.putExtra("messageId", message.id);
                 startActivity(intent);
             }
@@ -457,7 +457,7 @@ public class MainActivity extends TabActivity implements GatewayListener {
 
         for (int i = 0; i < dmChannels.size(); i++) {
             DMChannel dm = dmChannels.elementAt(i);
-            dmChannelItems.add((!dm.isGroup ? "@" : "") + dm.name);
+            dmChannelItems.add(dm.getNameForList());
             dmChannelIcons.add(dm.getIconUrl(acc.getCdnUrl()));
             dmChannelUnread.add(acc.unreadManager.hasUnreads(dm));
             dmChannelMentions.add(acc.unreadManager.getMentionCount(dm.id));
